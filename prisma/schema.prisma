@@ -1,0 +1,58 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat  = "cjs"
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  username      String?   @unique
+  passwordHash  String   
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  files         File[]    // Файлы пользователя
+  folders       Folder[]  // Папки пользователя
+
+  @@index([email])
+}
+
+model File {
+  id          String    @id @default(uuid())
+  name        String
+  path        String    
+  size        BigInt    
+  mimeType    String?   
+  ownerId     String
+  folderId    String?   
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isShared    Boolean   @default(false)  
+  downloadUrl String?  
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  folder      Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId, path])
+}
+
+model Folder {
+  id          String    @id @default(uuid())
+  name        String
+  path        String    
+  ownerId     String
+  parentId    String?   // Для поддиректорий (self-relation)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  isShared    Boolean   @default(false)  // Базовый шаринг
+  owner       User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  parent      Folder?   @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Folder[]  @relation("FolderToParent")
+  files       File[]    // Файлы в папке
+
+  @@index([ownerId, path])
+}
