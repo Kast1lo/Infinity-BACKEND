@@ -5,13 +5,14 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaDatabaseModule } from './prisma-database/prisma-database.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true,
     envFilePath: '.env',
     ignoreEnvFile: false
    }), 
-  PrismaDatabaseModule, AuthModule],
+  PrismaDatabaseModule, AuthModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })
