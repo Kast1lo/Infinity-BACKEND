@@ -6,6 +6,9 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { Response } from 'express';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
+import * as jwt from 'jsonwebtoken';
+import { ref } from 'process';
+
 
 @Injectable()
 export class AuthService {
@@ -67,6 +70,41 @@ export class AuthService {
         }
         const {passwordHash, ...safeUser} = user;
         return await this.generateToken(safeUser, res);
+    }
+
+    async refresh(res: Response){
+        const refreshToken = res.req.cookies['refresh_token'];
+        if(!refreshToken){
+            throw new UnauthorizedException("Refresh token отсутствует");
+        }
+        try{
+            const payload = jwt.verify(refreshToken, this.configService.getOrThrow('JWT_REFRESH_SECRET')) as {sub: string};
+            const user = await this.prisma.user.findUnique({
+                where:{
+                    id: payload.sub
+                },
+                select:{
+                    id: true,
+                    email: true,
+                    username: true
+                }
+            });
+            if(!user){
+                throw new UnauthorizedException("Пользователь не найден");
+            }
+            const newAccessToken = await this.jwtsService.signAsync({
+                sub: user.id,
+                email: user.email,
+                username: user.username
+            },{
+                secret: this.configService.get('JWT_ACCESS_SECRET'),
+                expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION') || '15m',
+            }
+        );
+        return {accessToken: newAccessToken}
+        } catch(err){
+            throw new UnauthorizedException("Неверный или истекший refresh token");
+        }
     }
 
     async generateToken(user: {id: string, email: string, username: string | null}, res: Response){
