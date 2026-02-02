@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config/dist/config.service';
 import { Response } from 'express';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
 import * as jwt from 'jsonwebtoken';
-import { ref } from 'process';
+
 
 
 @Injectable()
@@ -101,6 +101,13 @@ export class AuthService {
                 expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION') || '15m',
             }
         );
+        res.cookie('access_token', newAccessToken, {
+            httpOnly: true,
+            secure: this.configService.get('NODE_ENV') === 'production',
+            sameSite: 'strict',
+            path: '/',
+            maxAge: 15 * 60 * 1000,
+        });
         return {accessToken: newAccessToken}
         } catch(err){
             throw new UnauthorizedException("Неверный или истекший refresh token");
@@ -127,6 +134,12 @@ export class AuthService {
             secure: true,
             sameSite: 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+        res.cookie('access_token', accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            maxAge: 15 * 60 * 1000
         });
         return {accessToken: accessToken };
     }
