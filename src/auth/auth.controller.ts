@@ -28,14 +28,23 @@ export class AuthController {
   }
 
   @Post('logout')
-  async logout(@Res({passthrough:true}) res: Response){
-    res.clearCookie('refresh_token', {
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: this.configService.get('NODE_ENV') === 'production',
-      path: '/',
-      maxAge: 0
-    });
-    return {message: 'Успешный выход из системы'};
-  }
+  async logout(@Res({ passthrough: true }) res: Response) {
+  res.cookie('refresh_token', '', {
+    httpOnly: true,
+    secure: this.configService.get('NODE_ENV') === 'production',
+    sameSite: 'strict',
+    path: '/',                        
+    maxAge: 0,                        
+    expires: new Date(0),             
+  });
+  res.cookie('access_token', '', {
+    httpOnly: true,
+    secure: this.configService.get('NODE_ENV') === 'production',
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 0,
+    expires: new Date(0),
+  });
+  return { message: 'Успешный выход из системы' };
+}
 }
