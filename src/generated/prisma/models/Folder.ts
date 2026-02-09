@@ -206,7 +206,7 @@ export type FolderWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   isShared?: Prisma.BoolFilter<"Folder"> | boolean
-  owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   parent?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
   children?: Prisma.FolderListRelationFilter
   files?: Prisma.FileListRelationFilter
@@ -239,7 +239,7 @@ export type FolderWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   isShared?: Prisma.BoolFilter<"Folder"> | boolean
-  owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   parent?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
   children?: Prisma.FolderListRelationFilter
   files?: Prisma.FileListRelationFilter
@@ -280,7 +280,7 @@ export type FolderCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
-  owner: Prisma.UserCreateNestedOneWithoutFoldersInput
+  owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
@@ -306,7 +306,7 @@ export type FolderUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  owner?: Prisma.UserUpdateOneRequiredWithoutFoldersNestedInput
+  owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
@@ -590,7 +590,7 @@ export type FolderCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
-  owner: Prisma.UserCreateNestedOneWithoutFoldersInput
+  owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
 }
@@ -630,7 +630,7 @@ export type FolderUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  owner?: Prisma.UserUpdateOneRequiredWithoutFoldersNestedInput
+  owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
 }
@@ -654,7 +654,7 @@ export type FolderCreateWithoutChildrenInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
-  owner: Prisma.UserCreateNestedOneWithoutFoldersInput
+  owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
 }
@@ -683,7 +683,7 @@ export type FolderCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
-  owner: Prisma.UserCreateNestedOneWithoutFoldersInput
+  owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
 }
@@ -727,7 +727,7 @@ export type FolderUpdateWithoutChildrenInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  owner?: Prisma.UserUpdateOneRequiredWithoutFoldersNestedInput
+  owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
 }
@@ -821,7 +821,7 @@ export type FolderUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  owner?: Prisma.UserUpdateOneRequiredWithoutFoldersNestedInput
+  owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
 }
@@ -897,7 +897,7 @@ export type FolderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
   children?: boolean | Prisma.Folder$childrenArgs<ExtArgs>
   files?: boolean | Prisma.Folder$filesArgs<ExtArgs>
@@ -913,7 +913,7 @@ export type FolderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
 }, ExtArgs["result"]["folder"]>
 
@@ -926,7 +926,7 @@ export type FolderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
 }, ExtArgs["result"]["folder"]>
 
@@ -943,25 +943,25 @@ export type FolderSelectScalar = {
 
 export type FolderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "ownerId" | "parentId" | "createdAt" | "updatedAt" | "isShared", ExtArgs["result"]["folder"]>
 export type FolderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
   children?: boolean | Prisma.Folder$childrenArgs<ExtArgs>
   files?: boolean | Prisma.Folder$filesArgs<ExtArgs>
   _count?: boolean | Prisma.FolderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FolderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
 }
 export type FolderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
 }
 
 export type $FolderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Folder"
   objects: {
-    owner: Prisma.$UserPayload<ExtArgs>
+    owner: Prisma.$UserPayload<ExtArgs> | null
     parent: Prisma.$FolderPayload<ExtArgs> | null
     children: Prisma.$FolderPayload<ExtArgs>[]
     files: Prisma.$FilePayload<ExtArgs>[]
@@ -1369,7 +1369,7 @@ readonly fields: FolderFieldRefs;
  */
 export interface Prisma__FolderClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  owner<T extends Prisma.Folder$ownerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$ownerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   parent<T extends Prisma.Folder$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$parentArgs<ExtArgs>>): Prisma.Prisma__FolderClient<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Folder$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.Folder$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1801,6 +1801,25 @@ export type FolderDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Limit how many Folders to delete.
    */
   limit?: number
+}
+
+/**
+ * Folder.owner
+ */
+export type Folder$ownerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

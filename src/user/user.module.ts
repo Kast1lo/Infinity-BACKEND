@@ -7,10 +7,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
 import { StorageService } from 'src/services/files.service';
+import { FileSystemService } from 'src/file-system/file-system.service';
 
 @Module({
   imports: [ConfigModule, PrismaDatabaseModule, JwtModule],
   controllers: [UserController],
-  providers: [UserService, AuthService, PrismaDatabaseService, ConfigService, JwtService, StorageService],
+  providers: [UserService, AuthService, PrismaDatabaseService, ConfigService, JwtService, StorageService, FileSystemService],
 })
 export class UserModule {}

@@ -3,7 +3,6 @@ import { AuthService } from './auth.service';
 import type { Response } from 'express';
 import { RegisterDto } from './DTO/register.dto';
 import { loginRequest } from './DTO/login.dto';
-import { ref } from 'process';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Controller('auth')
