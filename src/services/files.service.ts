@@ -23,7 +23,6 @@ export class StorageService {
     async uploadAvatar(file: Express.Multer.File, userId: string): Promise<string> {
     const ext = file.mimetype.split('/')[1] || 'jpg';
     const key = `users/${userId}/avatar-${crypto.randomUUID()}.${ext}`;
-
     const upload = new Upload({
         client: this.S3Client,
         params: {
@@ -34,7 +33,6 @@ export class StorageService {
         ACL: 'private',
         },
     });
-
     await upload.done();
     return key;
     }

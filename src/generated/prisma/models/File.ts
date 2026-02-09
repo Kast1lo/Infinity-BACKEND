@@ -264,7 +264,7 @@ export type FileWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
   isShared?: Prisma.BoolFilter<"File"> | boolean
   downloadUrl?: Prisma.StringNullableFilter<"File"> | string | null
-  owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   folder?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
 }
 
@@ -299,7 +299,7 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
   isShared?: Prisma.BoolFilter<"File"> | boolean
   downloadUrl?: Prisma.StringNullableFilter<"File"> | string | null
-  owner?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   folder?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
 }, "id">
 
@@ -349,7 +349,7 @@ export type FileCreateInput = {
   updatedAt?: Date | string
   isShared?: boolean
   downloadUrl?: string | null
-  owner: Prisma.UserCreateNestedOneWithoutFilesInput
+  owner?: Prisma.UserCreateNestedOneWithoutFilesInput
   folder?: Prisma.FolderCreateNestedOneWithoutFilesInput
 }
 
@@ -377,7 +377,7 @@ export type FileUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  owner?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutFilesNestedInput
   folder?: Prisma.FolderUpdateOneWithoutFilesNestedInput
 }
 
@@ -669,7 +669,7 @@ export type FileCreateWithoutFolderInput = {
   updatedAt?: Date | string
   isShared?: boolean
   downloadUrl?: string | null
-  owner: Prisma.UserCreateNestedOneWithoutFilesInput
+  owner?: Prisma.UserCreateNestedOneWithoutFilesInput
 }
 
 export type FileUncheckedCreateWithoutFolderInput = {
@@ -785,7 +785,7 @@ export type FileUpdateWithoutFolderInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  owner?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
+  owner?: Prisma.UserUpdateOneWithoutFilesNestedInput
 }
 
 export type FileUncheckedUpdateWithoutFolderInput = {
@@ -828,7 +828,7 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   isShared?: boolean
   downloadUrl?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
@@ -844,7 +844,7 @@ export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   isShared?: boolean
   downloadUrl?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
@@ -860,7 +860,7 @@ export type FileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   isShared?: boolean
   downloadUrl?: boolean
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
@@ -880,22 +880,22 @@ export type FileSelectScalar = {
 
 export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "size" | "mimeType" | "ownerId" | "folderId" | "createdAt" | "updatedAt" | "isShared" | "downloadUrl", ExtArgs["result"]["file"]>
 export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
 }
 export type FileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
 }
 export type FileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  owner?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
 }
 
 export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "File"
   objects: {
-    owner: Prisma.$UserPayload<ExtArgs>
+    owner: Prisma.$UserPayload<ExtArgs> | null
     folder: Prisma.$FolderPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1304,7 +1304,7 @@ readonly fields: FileFieldRefs;
  */
 export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  owner<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  owner<T extends Prisma.File$ownerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$ownerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   folder<T extends Prisma.File$folderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$folderArgs<ExtArgs>>): Prisma.Prisma__FolderClient<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1737,6 +1737,25 @@ export type FileDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Files to delete.
    */
   limit?: number
+}
+
+/**
+ * File.owner
+ */
+export type File$ownerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**
