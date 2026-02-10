@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.2.0",
-  "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
+  "clientVersion": "7.3.0",
+  "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "sqlite",
   "inlineSchema": "datasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\nmodel User {\n  id           String   @id @default(uuid())\n  email        String   @unique\n  username     String?  @unique\n  passwordHash String\n  avatarKey    String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  files        File[] // Файлы пользователя\n  folders      Folder[] // Папки пользователя\n\n  @@index([email])\n}\n\nmodel File {\n  id          String   @id @default(uuid())\n  name        String\n  path        String\n  size        BigInt\n  mimeType    String?\n  ownerId     String\n  folderId    String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  isShared    Boolean  @default(false)\n  downloadUrl String?\n  owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)\n  folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)\n\n  @@index([ownerId, path])\n}\n\nmodel Folder {\n  id        String   @id @default(uuid())\n  name      String\n  path      String\n  ownerId   String\n  parentId  String? // Для поддиректорий (self-relation)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  isShared  Boolean  @default(false) // Базовый шаринг\n  owner     User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)\n  parent    Folder?  @relation(\"FolderToParent\", fields: [parentId], references: [id], onDelete: SetNull)\n  children  Folder[] @relation(\"FolderToParent\")\n  files     File[] // Файлы в папке\n\n  @@index([ownerId, path])\n}\n",
   "runtimeDataModel": {
@@ -37,12 +37,14 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.sqlite.js"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.js"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.sqlite.wasm-base64.js")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_fast_bg.sqlite.wasm-base64.js")
     return await decodeBase64AsWasm(wasm)
-  }
+  },
+
+  importName: "./query_compiler_fast_bg.js"
 }
 
 
