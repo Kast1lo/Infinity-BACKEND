@@ -200,6 +200,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
+  tasks?: Prisma.TaskListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -212,6 +213,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   files?: Prisma.FileOrderByRelationAggregateInput
   folders?: Prisma.FolderOrderByRelationAggregateInput
+  tasks?: Prisma.TaskOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -227,6 +229,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
+  tasks?: Prisma.TaskListRelationFilter
 }, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -265,6 +268,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -277,6 +281,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -289,6 +294,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -301,6 +307,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -363,6 +370,11 @@ export type UserMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
+}
+
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
@@ -378,6 +390,20 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type UserCreateNestedOneWithoutTasksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTasksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTasksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTasksInput
+  upsert?: Prisma.UserUpsertWithoutTasksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTasksInput, Prisma.UserUpdateWithoutTasksInput>, Prisma.UserUncheckedUpdateWithoutTasksInput>
 }
 
 export type UserCreateNestedOneWithoutFilesInput = {
@@ -412,6 +438,70 @@ export type UserUpdateOneWithoutFoldersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFoldersInput, Prisma.UserUpdateWithoutFoldersInput>, Prisma.UserUncheckedUpdateWithoutFoldersInput>
 }
 
+export type UserCreateWithoutTasksInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  files?: Prisma.FileCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
+}
+
+export type UserUncheckedCreateWithoutTasksInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
+}
+
+export type UserCreateOrConnectWithoutTasksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+}
+
+export type UserUpsertWithoutTasksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTasksInput, Prisma.UserUncheckedUpdateWithoutTasksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTasksInput, Prisma.UserUncheckedCreateWithoutTasksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTasksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTasksInput, Prisma.UserUncheckedUpdateWithoutTasksInput>
+}
+
+export type UserUpdateWithoutTasksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTasksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
+}
+
 export type UserCreateWithoutFilesInput = {
   id?: string
   email: string
@@ -421,6 +511,7 @@ export type UserCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFilesInput = {
@@ -432,6 +523,7 @@ export type UserUncheckedCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFilesInput = {
@@ -459,6 +551,7 @@ export type UserUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFilesInput = {
@@ -470,6 +563,7 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFoldersInput = {
@@ -481,6 +575,7 @@ export type UserCreateWithoutFoldersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFoldersInput = {
@@ -492,6 +587,7 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFoldersInput = {
@@ -519,6 +615,7 @@ export type UserUpdateWithoutFoldersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFoldersInput = {
@@ -530,6 +627,7 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -540,11 +638,13 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
 export type UserCountOutputType = {
   files: number
   folders: number
+  tasks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   files?: boolean | UserCountOutputTypeCountFilesArgs
   folders?: boolean | UserCountOutputTypeCountFoldersArgs
+  tasks?: boolean | UserCountOutputTypeCountTasksArgs
 }
 
 /**
@@ -571,6 +671,13 @@ export type UserCountOutputTypeCountFoldersArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.FolderWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -582,6 +689,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
+  tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -619,6 +727,7 @@ export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
+  tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -629,6 +738,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     files: Prisma.$FilePayload<ExtArgs>[]
     folders: Prisma.$FolderPayload<ExtArgs>[]
+    tasks: Prisma.$TaskPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1034,6 +1144,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   files<T extends Prisma.User$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   folders<T extends Prisma.User$foldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tasks<T extends Prisma.User$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1501,6 +1612,30 @@ export type User$foldersArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.FolderScalarFieldEnum | Prisma.FolderScalarFieldEnum[]
+}
+
+/**
+ * User.tasks
+ */
+export type User$tasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Task
+   */
+  select?: Prisma.TaskSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Task
+   */
+  omit?: Prisma.TaskOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskInclude<ExtArgs> | null
+  where?: Prisma.TaskWhereInput
+  orderBy?: Prisma.TaskOrderByWithRelationInput | Prisma.TaskOrderByWithRelationInput[]
+  cursor?: Prisma.TaskWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskScalarFieldEnum | Prisma.TaskScalarFieldEnum[]
 }
 
 /**

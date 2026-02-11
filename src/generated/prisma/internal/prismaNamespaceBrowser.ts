@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Task: 'Task',
   File: 'File',
   Folder: 'Folder'
 } as const
@@ -80,6 +81,23 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const TaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  priority: 'priority',
+  notes: 'notes',
+  isCompleted: 'isCompleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  subtasksCount: 'subtasksCount',
+  completedSubtasksCount: 'completedSubtasksCount',
+  parentId: 'parentId',
+  userId: 'userId'
+} as const
+
+export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
 export const FileScalarFieldEnum = {
