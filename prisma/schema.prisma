@@ -18,8 +18,38 @@ model User {
   updatedAt     DateTime  @updatedAt
   files         File[]    // Файлы пользователя
   folders       Folder[]  // Папки пользователя
+  tasks         Task[]    // Задачи пользователя
 
   @@index([email])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String    
+  priority    Priority  @default(MEDIUM)
+  notes       String?  
+  isCompleted Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  subtasksCount          Int       @default(0)
+  completedSubtasksCount Int       @default(0)
+
+  parent      Task?     @relation("SubTasks", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId    String?   
+  subtasks    Task[]    @relation("SubTasks")
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  @@index([userId])
+  @@index([parentId])
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
 }
 
 model File {

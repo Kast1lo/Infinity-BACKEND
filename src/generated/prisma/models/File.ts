@@ -545,10 +545,6 @@ export type BigIntFieldUpdateOperationsInput = {
   divide?: bigint | number
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type FileCreateNestedManyWithoutFolderInput = {
   create?: Prisma.XOR<Prisma.FileCreateWithoutFolderInput, Prisma.FileUncheckedCreateWithoutFolderInput> | Prisma.FileCreateWithoutFolderInput[] | Prisma.FileUncheckedCreateWithoutFolderInput[]
   connectOrCreate?: Prisma.FileCreateOrConnectWithoutFolderInput | Prisma.FileCreateOrConnectWithoutFolderInput[]
