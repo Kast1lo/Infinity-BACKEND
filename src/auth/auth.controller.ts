@@ -7,8 +7,9 @@ import { ConfigService } from '@nestjs/config/dist/config.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService
-    , private readonly configService: ConfigService
+  constructor(
+    private readonly authService: AuthService, 
+    private readonly configService: ConfigService
   ) {}
 
   @Post('register')
@@ -45,5 +46,5 @@ export class AuthController {
     expires: new Date(0),
   });
   return { message: 'Успешный выход из системы' };
-}
+  }
 }
