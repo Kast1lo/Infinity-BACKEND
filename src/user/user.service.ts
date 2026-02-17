@@ -16,19 +16,18 @@ export class UserService {
   async getProfile(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        createdAt: true,
-        avatarKey: true || null,
-      },
+      select: { id: true, email: true, username: true, createdAt: true, avatarKey: true },
     });
-    if (!user) {
-      throw new NotFoundException('Пользователь не найден');
+
+    if (!user) throw new NotFoundException('Пользователь не найден');
+
+    let avatarUrl: string | null = null;
+    if (user.avatarKey) {
+      avatarUrl = await this.storage.getPresignedUrl(user.avatarKey, 3600 * 24);
     }
-    return user;
-  };
+
+    return { ...user, avatarUrl };
+  }
 
   async updateProfile(userId: string, dto: updateProfile) {
     const updateUser = await this.prisma.user.update({
@@ -42,28 +41,22 @@ export class UserService {
 
   async createAvatar(userId: string, file: Express.Multer.File) {
     if (!file) throw new NotFoundException('Файл не предоставлен');
-    const ext = extname(file.originalname) || '.' + (mimeExtension(file.mimetype) || 'jpg');
-    const key = `users/${userId}/avatar-${crypto.randomUUID()}${ext}`;
-    await this.storage.uploadAvatar(file, userId);
+    const uploadedKey = await this.storage.uploadAvatar(file, userId);
     const user = await this.prisma.user.findUnique({ 
-      where: {
-        id: userId
-      },
-      select:{
-        avatarKey: true
-      } 
+      where: { id: userId },
+      select: { avatarKey: true } 
     });
     if (!user) {
       throw new NotFoundException('Пользователь не найден');
     }
     if (user.avatarKey) {
-      await this.storage.deleteFile(user.avatarKey).catch(()=> {});
+      await this.storage.deleteFile(user.avatarKey).catch(() => {});
     }
     await this.prisma.user.update({
       where: { id: userId },
-      data: { avatarKey: key },
+      data: { avatarKey: uploadedKey },
     });
-    const avatarUrl = await this.storage.getPresignedUrl(key);
-    return { avatarUrl };
+    const avatarUrl = await this.storage.getPresignedUrl(uploadedKey, 3600 * 24);
+    return { avatarKey: uploadedKey, avatarUrl };
   }
 }
