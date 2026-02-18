@@ -27,11 +27,12 @@ export class UserController {
 
   @Post('createAvatar')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('avatar'))
+  @UseInterceptors(FileInterceptor('file'))
   async createAvatar(
     @Req() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
+    console.log('Получен файл:', file.originalname);
     return this.userService.createAvatar(req.user.userId, file);
   }
 
