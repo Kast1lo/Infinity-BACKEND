@@ -144,19 +144,21 @@ export class FileSystemService {
           files: true
         }
       });
-      const addUrls = (folders: any[]) => {
-        folders.forEach(folder => {
-          folder.files = folder.files.map((file: any) => ({
-            ...file,
-            size: file.size.toString(),
-            downloadUrl: this.getPresignedUrl(file.path, 3600 * 24)
-          }));
-          if(folder.children && folder.children.length > 0) {
-            addUrls(folder.children);
+      const addUrlsAndConvertSize = async (folders: any[]) => {
+        for (const folder of folders) {
+          folder.files = await Promise.all(
+            folder.files.map(async (file: any) => ({
+              ...file,
+              size: file.size.toString(),
+              downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+            }))
+          );
+          if (folder.children && folder.children.length > 0) {
+            await addUrlsAndConvertSize(folder.children);
           }
-        });  
+        }
       };
-      addUrls(trees);
+      await addUrlsAndConvertSize(trees);
       return trees;
     }
     
@@ -167,12 +169,15 @@ export class FileSystemService {
           folderId
         }
       });
-      return files.map(file => ({
-        ...file,
-        downloadUrl: this.getPresignedUrl(file.path, 3600 * 24),
-        size: file.size.toString()
-      }));
-    }
+        const filesWithUrl = await Promise.all(
+            files.map(async (file) => ({
+              ...file,
+              size: file.size.toString(),                     // BigInt → строка
+              downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24), // 24 часа
+            }))
+          );
+          return filesWithUrl;
+      }
 
     async deleteFile(key: string): Promise<void> {
     await this.S3Client.send(new DeleteObjectCommand({

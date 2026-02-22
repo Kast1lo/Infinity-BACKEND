@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.4.0",
-  "engineVersion": "ab56fe763f921d033a6c195e7ddeb3e255bdbb57",
+  "clientVersion": "7.4.1",
+  "engineVersion": "55ae170b1ced7fc6ed07a15f110549408c501bb3",
   "activeProvider": "sqlite",
   "inlineSchema": "datasource db {\n  provider = \"sqlite\"\n}\n\ngenerator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\nmodel User {\n  id           String   @id @default(uuid())\n  email        String   @unique\n  username     String?  @unique\n  passwordHash String\n  avatarKey    String?\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n  files        File[] // Файлы пользователя\n  folders      Folder[] // Папки пользователя\n  tasks        Task[] // Задачи пользователя\n\n  @@index([email])\n}\n\nmodel Task {\n  id          String   @id @default(uuid())\n  title       String\n  priority    Priority @default(MEDIUM)\n  notes       String?\n  isCompleted Boolean  @default(false)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  subtasksCount          Int @default(0)\n  completedSubtasksCount Int @default(0)\n\n  parent   Task?   @relation(\"SubTasks\", fields: [parentId], references: [id], onDelete: Cascade)\n  parentId String?\n  subtasks Task[]  @relation(\"SubTasks\")\n\n  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)\n  userId String\n\n  @@index([userId])\n  @@index([parentId])\n}\n\nenum Priority {\n  HIGH\n  MEDIUM\n  LOW\n}\n\nmodel File {\n  id          String   @id @default(uuid())\n  name        String\n  path        String\n  size        BigInt\n  mimeType    String?\n  ownerId     String\n  folderId    String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  isShared    Boolean  @default(false)\n  downloadUrl String?\n  owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)\n  folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)\n\n  @@index([ownerId, path])\n}\n\nmodel Folder {\n  id        String   @id @default(uuid())\n  name      String\n  path      String\n  ownerId   String\n  parentId  String? // Для поддиректорий (self-relation)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  isShared  Boolean  @default(false) // Базовый шаринг\n  owner     User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)\n  parent    Folder?  @relation(\"FolderToParent\", fields: [parentId], references: [id], onDelete: SetNull)\n  children  Folder[] @relation(\"FolderToParent\")\n  files     File[] // Файлы в папке\n\n  @@index([ownerId, path])\n}\n",
   "runtimeDataModel": {
@@ -174,7 +174,7 @@ export interface PrismaClient<
    * ])
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/concepts/components/prisma-client/transactions).
+   * Read more in our [docs](https://www.prisma.io/docs/orm/prisma-client/queries/transactions).
    */
   $transaction<P extends Prisma.PrismaPromise<any>[]>(arg: [...P], options?: { isolationLevel?: Prisma.TransactionIsolationLevel }): runtime.Types.Utils.JsPromise<runtime.Types.Utils.UnwrapTuple<P>>
 
