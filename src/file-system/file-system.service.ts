@@ -15,6 +15,7 @@ import { CreateFolderDto } from './DTO/create-folder.dto';
 import { UploadFileDto } from './DTO/upload-file.dto';
 import { extension as mimeExtension } from 'mime-types';
 import { get } from 'http';
+import { Response } from 'express';
 
 @Injectable()
 export class FileSystemService {
@@ -42,6 +43,7 @@ export class FileSystemService {
       }
       if(file.size > 100 * 1024 * 1024) throw new BadRequestException('Максимальный размер файла 100 МБ');
 
+      const originalName = decodeURIComponent(file.originalname || 'file');
       const ext = extname(file.originalname) || '.' + (mimeExtension(file.mimetype) || 'bin');
       const fileName = `${crypto.randomUUID()}${ext}`;
 
@@ -56,16 +58,7 @@ export class FileSystemService {
         folderPath = folder.path;
         folderIdValue = dto.folderId;
       }
-
       const storagePath = `files/${folderPath}/${fileName}`;
-      const existing = await this.prisma.file.findFirst({
-        where:{
-          ownerId: userId, 
-          folderId: folderIdValue,
-          name: file.originalname
-        }
-      });
-      if(existing) throw new BadRequestException('Файл с таким именем уже существует');
       const upload = new Upload({
         client: this.S3Client,
         params:{
@@ -219,6 +212,28 @@ export class FileSystemService {
         await this.deleteFolderRecursive(childFull);
       }
       await this.prisma.folder.delete({ where: { id: folder.id } });
+    }
+
+    async downloadFile(userId: string, id: string, res: Response) {
+      const file = await this.prisma.file.findUnique({ where: { id } });
+      if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: file.path,
+      });
+      try{
+        const { Body, ContentType } = await this.S3Client.send(command);
+        res.set({
+          'Content-Type': ContentType || file.mimeType || 'application/octet-stream',
+          'Content-Disposition': `attachment; filename="${file.name}"`,
+          'Content-Length': file.size.toString(),
+          'Cache-Control': 'no-cache',
+        });
+        const stream = Body as any;
+        stream.pipe(res);
+      } catch (error) {
+        throw new NotFoundException('Ошибка при загрузке файла');
+      }
     }
   }
   
