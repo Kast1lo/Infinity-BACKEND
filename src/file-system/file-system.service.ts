@@ -16,6 +16,7 @@ import { UploadFileDto } from './DTO/upload-file.dto';
 import { extension as mimeExtension } from 'mime-types';
 import { get } from 'http';
 import { Response } from 'express';
+import archiver from 'archiver';
 
 @Injectable()
 export class FileSystemService {
@@ -120,7 +121,6 @@ export class FileSystemService {
         }
       });
     }
-
     async getFolderTree(userId: string) {
       const trees = await this.prisma.folder.findMany({
         where: {
@@ -213,6 +213,86 @@ export class FileSystemService {
       }
       await this.prisma.folder.delete({ where: { id: folder.id } });
     }
+
+    async downloadFolder(userId: string, folderId: string, res: Response) {
+  const folder = await this.prisma.folder.findUnique({
+    where: { id: folderId },
+    include: { files: true, children: { include: { files: true, children: true } } },
+  });
+
+  if (!folder || folder.ownerId !== userId) throw new NotFoundException('Папка не найдена');
+
+  console.log('Скачивание папки:', folder.name, 'ID:', folderId);
+
+  const filesToZip: { path: string; name: string }[] = [];
+
+  const collectFiles = async (current: any, path = '') => {
+    console.log(`Обрабатываю папку: ${path || 'корень'}, файлов: ${current.files.length}`);
+    for (const file of current.files) {
+      filesToZip.push({ path: file.path, name: `${path}${file.name}` });
+      console.log('→ Добавлен:', file.name);
+    }
+    for (const child of current.children) {
+      const childFolder = await this.prisma.folder.findUnique({
+        where: { id: child.id },
+        include: { files: true, children: true },
+      });
+      if (childFolder) await collectFiles(childFolder, `${path}${child.name}/`);
+    }
+  };
+
+  await collectFiles(folder, `${folder.name}/`);
+
+  console.log('Всего файлов для ZIP:', filesToZip.length);
+
+  if (filesToZip.length === 0) {
+    res.status(200).send('Папка пуста');
+    return;
+  }
+
+  res.set({
+    'Content-Type': 'application/zip',
+    'Content-Disposition': `attachment; filename="${folder.name}.zip"`,
+  });
+
+  const archive = archiver('zip', { zlib: { level: 9 } });
+
+  archive.on('error', err => {
+    console.error('Ошибка архива:', err);
+    if (!res.headersSent) res.status(500).send('Ошибка создания ZIP');
+  });
+
+  archive.pipe(res);
+
+  for (const file of filesToZip) {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: this.bucketName,
+        Key: file.path,
+      });
+      const { Body } = await this.S3Client.send(command);
+
+      // Читаем весь поток в Buffer
+      const chunks: Buffer[] = [];
+      for await (const chunk of Body as NodeJS.ReadableStream) {
+        chunks.push(Buffer.from(chunk));
+      }
+      const buffer = Buffer.concat(chunks);
+
+      console.log('→ Добавляю в архив (буфер):', file.name, 'размер:', buffer.length);
+      archive.append(buffer, { name: file.name });
+    } catch (err) {
+      console.error('Ошибка S3:', file.path, err);
+      archive.append(Buffer.from('Ошибка чтения файла'), { name: `${file.name}.error.txt` });
+    }
+  }
+
+  archive.finalize();
+
+  archive.on('end', () => {
+    console.log('Архив успешно отправлен');
+  });
+}
 
     async downloadFile(userId: string, id: string, res: Response) {
       const file = await this.prisma.file.findUnique({ where: { id } });

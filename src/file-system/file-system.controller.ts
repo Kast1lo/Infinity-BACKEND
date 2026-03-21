@@ -52,6 +52,16 @@ export class FileSystemController {
     return this.fileSystemService.getFilesInFolder(req.user.userId, folderId);
   }
 
+  @Get('download-folder/:folderId')
+  @UseGuards(AuthGuard('jwt'))
+  async downloadFolder(
+    @Req() req,
+    @Param('folderId') folderId: string,
+    @Res() res: Response
+  ) {
+    return this.fileSystemService.downloadFolder(req.user.userId, folderId, res);
+  }
+
   @Get('download/:id')
   @UseGuards(AuthGuard('jwt'))
   async downloadFile(
@@ -71,4 +81,6 @@ export class FileSystemController {
   ) {
     return this.fileSystemService.deleteItem(req.user.userId, id, type);
   }
+
+  
 }
