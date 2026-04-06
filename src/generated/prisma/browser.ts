@@ -23,10 +23,20 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
+ * Model TaskColumn
+ * 
+ */
+export type TaskColumn = Prisma.TaskColumnModel
+/**
  * Model Task
  * 
  */
 export type Task = Prisma.TaskModel
+/**
+ * Model Subtask
+ * 
+ */
+export type Subtask = Prisma.SubtaskModel
 /**
  * Model File
  * 

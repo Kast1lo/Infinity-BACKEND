@@ -19,31 +19,58 @@ model User {
   files         File[]    // Файлы пользователя
   folders       Folder[]  // Папки пользователя
   tasks         Task[]    // Задачи пользователя
+  columns       TaskColumn[] // Колонки пользователя
 
   @@index([email])
 }
 
+model TaskColumn {
+  id        String   @id @default(uuid())
+  name      String   
+  order     Int      @default(0)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tasks     Task[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, order])
+}
+
 model Task {
   id          String    @id @default(uuid())
-  title       String    
+  title       String
+  notes       String?
   priority    Priority  @default(MEDIUM)
-  notes       String?  
   isCompleted Boolean   @default(false)
+  columnId    String?
+  userId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  subtasksCount          Int       @default(0)
-  completedSubtasksCount Int       @default(0)
-
-  parent      Task?     @relation("SubTasks", fields: [parentId], references: [id], onDelete: Cascade)
-  parentId    String?   
-  subtasks    Task[]    @relation("SubTasks")
-
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
+  column      TaskColumn? @relation(fields: [columnId], references: [id], onDelete: SetNull)
+  subtasks    Subtask[]
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@index([parentId])
+  @@index([columnId])
+}
+
+model Subtask {
+  id          String    @id @default(uuid())
+  title       String
+  isCompleted Boolean   @default(false)
+  order       Int       @default(0)
+  taskId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
 }
 
 enum Priority {

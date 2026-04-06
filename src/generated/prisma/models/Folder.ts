@@ -1606,6 +1606,11 @@ export type FolderFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Skip the first `n` Folders.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Folders.
+   */
   distinct?: Prisma.FolderScalarFieldEnum | Prisma.FolderScalarFieldEnum[]
 }
 

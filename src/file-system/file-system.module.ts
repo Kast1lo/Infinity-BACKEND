@@ -8,7 +8,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [ConfigModule, PrismaDatabaseModule, JwtModule],
-  controllers: [FileSystemController],
+  controllers: [FileSystemController, ],
   providers: [FileSystemService, PrismaDatabaseService, JwtService],
 })
 export class FileSystemModule {}

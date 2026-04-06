@@ -17,6 +17,7 @@ import { extension as mimeExtension } from 'mime-types';
 import { get } from 'http';
 import { Response } from 'express';
 import archiver from 'archiver';
+import type { Express } from 'express';
 
 @Injectable()
 export class FileSystemService {
@@ -87,7 +88,7 @@ export class FileSystemService {
         size: createdFile.size.toString()
       };
     }
-    private async getPresignedUrl(key: string, expiresIn: number = 3600 * 24) {
+    async getPresignedUrl(key: string, expiresIn: number = 3600 * 24) {
       const command = new GetObjectCommand({
         Bucket: this.bucketName,
         Key: key,
@@ -173,32 +174,34 @@ export class FileSystemService {
       }
 
     async deleteFile(key: string): Promise<void> {
-    await this.S3Client.send(new DeleteObjectCommand({
-        Bucket: this.bucketName,
-        Key: key,
-    }));
-    }
+      await this.S3Client.send(new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+      }));
+      }
 
     async deleteItem(userId: string, id: string, type: 'file' | 'folder') {
       if (type === 'file') {
         const file = await this.prisma.file.findUnique({ where: { id } });
         if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
-        await this.deleteFile(file.path);  // From Selectel
-        await this.prisma.file.delete({ where: { id } });  // From БД
+        await this.deleteFile(file.path);
+        await this.prisma.file.delete({ where: { id } });
         return { message: 'Файл удалён' };
-      } else if (type === 'folder') {
+      }
+      if (type === 'folder') {
         const folder = await this.prisma.folder.findUnique({
           where: { id },
-          include: { children: true, files: true },
+          include: { 
+            files: true, 
+            children: { include: { files: true, children: true } } 
+          },
         });
         if (!folder || folder.ownerId !== userId) throw new NotFoundException('Папка не найдена');
-
         await this.deleteFolderRecursive(folder);
-
         return { message: 'Папка удалена' };
       }
+      throw new BadRequestException('Неверный тип элемента');
     }
-
     private async deleteFolderRecursive(folder: any) {
       for (const file of folder.files) {
         await this.deleteFile(file.path);
@@ -207,14 +210,17 @@ export class FileSystemService {
       for (const child of folder.children) {
         const childFull = await this.prisma.folder.findUnique({
           where: { id: child.id },
-          include: { children: true, files: true },
+          include: { files: true, children: { include: { files: true, children: true } } },
         });
-        await this.deleteFolderRecursive(childFull);
+        if (childFull) {
+          await this.deleteFolderRecursive(childFull);
+        }
       }
       await this.prisma.folder.delete({ where: { id: folder.id } });
     }
 
-    async downloadFolder(userId: string, folderId: string, res: Response) {
+
+  async downloadFolder(userId: string, folderId: string, res: Response) {
   const folder = await this.prisma.folder.findUnique({
     where: { id: folderId },
     include: { files: true, children: { include: { files: true, children: true } } },
@@ -272,7 +278,6 @@ export class FileSystemService {
       });
       const { Body } = await this.S3Client.send(command);
 
-      // Читаем весь поток в Buffer
       const chunks: Buffer[] = [];
       for await (const chunk of Body as NodeJS.ReadableStream) {
         chunks.push(Buffer.from(chunk));
@@ -294,27 +299,78 @@ export class FileSystemService {
   });
 }
 
-    async downloadFile(userId: string, id: string, res: Response) {
-      const file = await this.prisma.file.findUnique({ where: { id } });
-      if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
-      const command = new GetObjectCommand({
-        Bucket: this.bucketName,
-        Key: file.path,
+  async downloadFile(userId: string, id: string, res: Response) {
+    const file = await this.prisma.file.findUnique({ where: { id } });
+    if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: file.path,
+    });
+    try{
+      const { Body, ContentType } = await this.S3Client.send(command);
+      res.set({
+        'Content-Type': ContentType || file.mimeType || 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${file.name}"`,
+        'Content-Length': file.size.toString(),
+        'Cache-Control': 'no-cache',
       });
-      try{
-        const { Body, ContentType } = await this.S3Client.send(command);
-        res.set({
-          'Content-Type': ContentType || file.mimeType || 'application/octet-stream',
-          'Content-Disposition': `attachment; filename="${file.name}"`,
-          'Content-Length': file.size.toString(),
-          'Cache-Control': 'no-cache',
-        });
-        const stream = Body as any;
-        stream.pipe(res);
-      } catch (error) {
-        throw new NotFoundException('Ошибка при загрузке файла');
-      }
+      const stream = Body as any;
+      stream.pipe(res);
+    } catch (error) {
+      throw new NotFoundException('Ошибка при загрузке файла');
     }
   }
+
+  async getFileForShare(username: string, filename: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { username },
+      select: { id: true },
+    });
+    if (!user) throw new NotFoundException('Пользователь не найден');
+    const file = await this.prisma.file.findFirst({
+      where: {
+        ownerId: user.id,
+        name: filename,
+      },
+      select: {
+        id: true,
+        name: true,
+        size: true,
+        mimeType: true,
+        createdAt: true,
+        path: true,
+      },
+    });
+
+    if (!file) throw new NotFoundException('Файл не найден');
+    return {
+      ...file,
+      size: file.size.toString(),
+    };
+  }
+
+  async streamFileForShare(username: string, filename: string, res: Response) {
+    const file = await this.getFileForShare(username, filename); 
+
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: file.path,
+    });
+
+    try {
+      const { Body, ContentType } = await this.S3Client.send(command);
+
+      res.set({
+        'Content-Type': ContentType || file.mimeType || 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${file.name}"`,
+        'Content-Length': file.size.toString(),
+      });
+      (Body as NodeJS.ReadableStream).pipe(res);
+    } catch (error) {
+      throw new NotFoundException('Файл не найден в хранилище');
+    }
+  }
+
+}
   
 

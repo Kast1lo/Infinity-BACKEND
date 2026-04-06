@@ -52,7 +52,9 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  TaskColumn: 'TaskColumn',
   Task: 'Task',
+  Subtask: 'Subtask',
   File: 'File',
   Folder: 'Folder'
 } as const
@@ -83,21 +85,44 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const TaskColumnScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TaskColumnScalarFieldEnum = (typeof TaskColumnScalarFieldEnum)[keyof typeof TaskColumnScalarFieldEnum]
+
+
 export const TaskScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  priority: 'priority',
   notes: 'notes',
+  priority: 'priority',
   isCompleted: 'isCompleted',
+  columnId: 'columnId',
+  userId: 'userId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  subtasksCount: 'subtasksCount',
-  completedSubtasksCount: 'completedSubtasksCount',
-  parentId: 'parentId',
-  userId: 'userId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const SubtaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  isCompleted: 'isCompleted',
+  order: 'order',
+  taskId: 'taskId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubtaskScalarFieldEnum = (typeof SubtaskScalarFieldEnum)[keyof typeof SubtaskScalarFieldEnum]
 
 
 export const FileScalarFieldEnum = {

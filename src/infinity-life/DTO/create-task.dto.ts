@@ -3,23 +3,17 @@ import { Priority } from 'src/generated/prisma/browser';
 
 export class CreateTaskDto {
   @IsString()
-  @IsNotEmpty()
   title: string;
 
-  @IsEnum(Priority)
   @IsOptional()
-  priority?: Priority;
-    
   @IsString()
-  @IsOptional()
   notes?: string;
 
-  @IsBoolean()
   @IsOptional()
-  isCompleted?: boolean;
+  @IsEnum(Priority)
+  priority?: Priority = Priority.MEDIUM;
 
+  @IsOptional()
   @IsUUID()
-  @IsOptional()
-  parentId?: string | null;         
-
+  columnId?: string | null;
 }
