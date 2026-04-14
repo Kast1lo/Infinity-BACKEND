@@ -16,10 +16,10 @@ model User {
   avatarKey     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  files         File[]    // Файлы пользователя
-  folders       Folder[]  // Папки пользователя
-  tasks         Task[]    // Задачи пользователя
-  columns       TaskColumn[] // Колонки пользователя
+  files         File[]
+  folders       Folder[]
+  tasks         Task[]
+  columns       TaskColumn[]
 
   @@index([email])
 }
@@ -30,9 +30,7 @@ model TaskColumn {
   order     Int      @default(0)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   tasks     Task[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -46,6 +44,9 @@ model Task {
   notes       String?
   priority    Priority  @default(MEDIUM)
   isCompleted Boolean   @default(false)
+  dueDate     DateTime? // ← дедлайн
+  color       String?   // ← цветная метка
+  order       Int       @default(0) // ← порядок в колонке
   columnId    String?
   userId      String
   createdAt   DateTime  @default(now())
@@ -67,7 +68,6 @@ model Subtask {
   taskId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
   task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@index([taskId])
@@ -91,7 +91,7 @@ model File {
   updatedAt   DateTime  @updatedAt
   isShared    Boolean   @default(false)  
   downloadUrl String?  
-  owner       User?      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner       User?     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder      Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   @@index([ownerId, path])
@@ -102,14 +102,14 @@ model Folder {
   name        String
   path        String    
   ownerId     String
-  parentId    String?   // Для поддиректорий (self-relation)
+  parentId    String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  isShared    Boolean   @default(false)  // Базовый шаринг
-  owner       User?      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  isShared    Boolean   @default(false)
+  owner       User?     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   parent      Folder?   @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
   children    Folder[]  @relation("FolderToParent")
-  files       File[]    // Файлы в папке
+  files       File[]
 
   @@index([ownerId, path])
 }

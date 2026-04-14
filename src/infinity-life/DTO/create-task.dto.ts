@@ -1,5 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsBoolean, IsEnum, IsUUID } from 'class-validator';
-import { Priority } from 'src/generated/prisma/browser';
+import { IsString, IsOptional, IsBoolean, IsDateString } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -10,10 +9,18 @@ export class CreateTaskDto {
   notes?: string;
 
   @IsOptional()
-  @IsEnum(Priority)
-  priority?: Priority = Priority.MEDIUM;
+  @IsString()
+  priority?: string;
 
   @IsOptional()
-  @IsUUID()
+  @IsString()
   columnId?: string | null;
+
+  @IsOptional()
+  @IsDateString()
+  dueDate?: string | null;
+
+  @IsOptional()
+  @IsString()
+  color?: string | null;
 }

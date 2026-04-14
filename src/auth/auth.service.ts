@@ -19,11 +19,13 @@ export class AuthService {
     ){}
 
     async register(dto: RegisterDto, res: Response){
-        const existUser = await this.prisma.user.findUnique({
-            where:{
-                email: dto.email,
-                username: dto.username
-            }
+        const existUser = await this.prisma.user.findFirst({
+        where: {
+            OR: [
+            { email: dto.email },
+            { username: dto.username }
+            ]
+        }
         });
         if(existUser){
             throw new ConflictException("Пользователь с таким email или username цже существует")
@@ -131,13 +133,13 @@ export class AuthService {
         });
         res.cookie('refresh_token', refresh_Token, {
             httpOnly: true,
-            secure: true,
+            secure: this.configService.get('NODE_ENV') === 'production',
             sameSite: 'strict',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
         res.cookie('access_token', accessToken, {
             httpOnly: true,
-            secure: true,
+            secure: this.configService.get('NODE_ENV') === 'production',
             sameSite: 'strict',
             maxAge: 15 * 60 * 1000
         });

@@ -206,7 +206,7 @@ export type SubtaskGroupByOutputType = {
   _max: SubtaskMaxAggregateOutputType | null
 }
 
-type GetSubtaskGroupByPayload<T extends SubtaskGroupByArgs> = Prisma.PrismaPromise<
+export type GetSubtaskGroupByPayload<T extends SubtaskGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<SubtaskGroupByOutputType, T['by']> &
       {

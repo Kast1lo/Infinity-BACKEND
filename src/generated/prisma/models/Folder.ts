@@ -179,7 +179,7 @@ export type FolderGroupByOutputType = {
   _max: FolderMaxAggregateOutputType | null
 }
 
-type GetFolderGroupByPayload<T extends FolderGroupByArgs> = Prisma.PrismaPromise<
+export type GetFolderGroupByPayload<T extends FolderGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<FolderGroupByOutputType, T['by']> &
       {

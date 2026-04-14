@@ -45,7 +45,7 @@ export class FileSystemService {
       }
       if(file.size > 100 * 1024 * 1024) throw new BadRequestException('Максимальный размер файла 100 МБ');
 
-      const originalName = decodeURIComponent(file.originalname || 'file');
+      const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
       const ext = extname(file.originalname) || '.' + (mimeExtension(file.mimetype) || 'bin');
       const fileName = `${crypto.randomUUID()}${ext}`;
 
@@ -74,7 +74,7 @@ export class FileSystemService {
       await upload.done();
       const createdFile = await this.prisma.file.create({
         data:{
-          name: file.originalname,
+          name: originalName,
           path: storagePath,
           size: BigInt(file.size),
           mimeType: file.mimetype,
@@ -88,6 +88,16 @@ export class FileSystemService {
         size: createdFile.size.toString()
       };
     }
+
+    async uploadFiles(userId: string, files: Express.Multer.File[], dto: UploadFileDto) {
+      const results: any[] = [];
+      for (const file of files) {
+        const result = await this.uploadFile(userId, file, dto);
+        results.push(result);
+      }
+      return results;
+    }
+
     async getPresignedUrl(key: string, expiresIn: number = 3600 * 24) {
       const command = new GetObjectCommand({
         Bucket: this.bucketName,
@@ -97,31 +107,45 @@ export class FileSystemService {
     }
 
     async createFolder(userId: string, dto: CreateFolderDto) {
-      const {name, isShared, parentId} = dto;
-      if(!name || /[^\w- ]/.test(name)) throw new BadRequestException('Недопустимое имя папки');
-      let path = `/${name}`;
-      if(parentId) {
-        const parent = await this.prisma.folder.findUnique({
-          where: {id: parentId}
-        });
-        if(!parent || parent.ownerId !== userId) throw new NotFoundException('Родительская папка не найдена');
-        path = `${parent.path}/${name}`;
-        if (path.split('/').length > 10) throw new BadRequestException('Максимальная глубина папок 10');
+      const { name, isShared, parentId } = dto;
+
+      if (!name || /[^\w\u0400-\u04FF\- ]/.test(name)) {
+        throw new BadRequestException('Недопустимое имя папки');
       }
+
+      let path = `/${name}`;
+
+      if (parentId) {
+        const parent = await this.prisma.folder.findUnique({
+          where: { id: parentId },
+        });
+        if (!parent || parent.ownerId !== userId) {
+          throw new NotFoundException('Родительская папка не найдена');
+        }
+        path = `${parent.path}/${name}`;
+        if (path.split('/').length > 10) {
+          throw new BadRequestException('Максимальная глубина папок 10');
+        }
+      }
+
       const existing = await this.prisma.folder.findFirst({
-        where: {ownerId: userId, path}
+        where: { ownerId: userId, path },
       });
-      if(existing) throw new BadRequestException('Папка с таким именем уже существует');
+      if (existing) {
+        throw new BadRequestException('Папка с таким именем уже существует');
+      }
+
       return this.prisma.folder.create({
-        data:{
+        data: {
           name,
           path,
           ownerId: userId,
           parentId: parentId || null,
-          isShared: isShared || false
-        }
+          isShared: isShared || false,
+        },
       });
     }
+
     async getFolderTree(userId: string) {
       const trees = await this.prisma.folder.findMany({
         where: {
@@ -166,8 +190,8 @@ export class FileSystemService {
         const filesWithUrl = await Promise.all(
             files.map(async (file) => ({
               ...file,
-              size: file.size.toString(),                     // BigInt → строка
-              downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24), // 24 часа
+              size: file.size.toString(),
+              downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
             }))
           );
           return filesWithUrl;
@@ -202,6 +226,7 @@ export class FileSystemService {
       }
       throw new BadRequestException('Неверный тип элемента');
     }
+
     private async deleteFolderRecursive(folder: any) {
       for (const file of folder.files) {
         await this.deleteFile(file.path);
@@ -300,6 +325,7 @@ export class FileSystemService {
 }
 
   async downloadFile(userId: string, id: string, res: Response) {
+    
     const file = await this.prisma.file.findUnique({ where: { id } });
     if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
     const command = new GetObjectCommand({
@@ -316,6 +342,28 @@ export class FileSystemService {
       });
       const stream = Body as any;
       stream.pipe(res);
+    } catch (error) {
+      throw new NotFoundException('Ошибка при загрузке файла');
+    }
+  }
+
+  async getFileBuffer(userId: string, id: string, res: Response) {
+    const file = await this.prisma.file.findUnique({ where: { id } });
+    if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+    
+    const command = new GetObjectCommand({
+      Bucket: this.bucketName,
+      Key: file.path,
+    });
+    
+    try {
+      const { Body, ContentType } = await this.S3Client.send(command);
+      res.set({
+        'Content-Type': ContentType || file.mimeType || 'application/octet-stream',
+        'Access-Control-Allow-Origin': 'http://localhost:4200',
+        'Cache-Control': 'no-cache',
+      });
+      (Body as any).pipe(res);
     } catch (error) {
       throw new NotFoundException('Ошибка при загрузке файла');
     }
@@ -369,6 +417,54 @@ export class FileSystemService {
     } catch (error) {
       throw new NotFoundException('Файл не найден в хранилище');
     }
+  }
+
+  async renameItem(userId: string, id: string, type: 'file' | 'folder', name: string) {
+    if (!name || name.trim().length === 0) {
+      throw new BadRequestException('Имя не может быть пустым');
+    }
+
+    if (type === 'file') {
+      const file = await this.prisma.file.findUnique({ where: { id } });
+      if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+
+      return this.prisma.file.update({
+        where: { id },
+        data: { name: name.trim() },
+      });
+    }
+
+    if (type === 'folder') {
+      const folder = await this.prisma.folder.findUnique({ where: { id } });
+      if (!folder || folder.ownerId !== userId) throw new NotFoundException('Папка не найдена');
+
+      // Проверяем что папки с таким именем нет на том же уровне
+      const newPath = folder.parentId
+        ? folder.path.replace(/[^/]+$/, name.trim())
+        : `/${name.trim()}`;
+
+      const existing = await this.prisma.folder.findFirst({
+        where: { ownerId: userId, path: newPath, NOT: { id } },
+      });
+      if (existing) throw new BadRequestException('Папка с таким именем уже существует');
+
+      return this.prisma.folder.update({
+        where: { id },
+        data: { name: name.trim(), path: newPath },
+      });
+    }
+
+    throw new BadRequestException('Неверный тип элемента');
+  }
+
+  async moveFile(userId: string, fileId: string, targetFolderId: string | null) {
+    const file = await this.prisma.file.findUnique({ where: { id: fileId } });
+    if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+    const updated = await this.prisma.file.update({
+      where: { id: fileId },
+      data: { folderId: targetFolderId },
+    });
+    return { ...updated, size: updated.size.toString() };
   }
 
 }

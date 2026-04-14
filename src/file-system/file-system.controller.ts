@@ -1,24 +1,27 @@
-import { Controller, Post, Get, Param, Body, UseGuards, UseInterceptors, UploadedFile, Req, Delete, Res, Query } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards, UseInterceptors, UploadedFile, Req, Delete, Res, Query, UploadedFiles, Patch } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileSystemService } from './file-system.service';
 import { CreateFolderDto } from './DTO/create-folder.dto';
 import { UploadFileDto } from './DTO/upload-file.dto';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { RenameDto } from './DTO/rename.dto';
 
 @Controller('file-system')
 export class FileSystemController {
   constructor(private readonly fileSystemService: FileSystemService) {}
 
+
   @Post('uploadFile')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FilesInterceptor('file', 20))
   async upload(
     @Req() req,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[], 
     @Body() dto: UploadFileDto
-  ){
-    return this.fileSystemService.uploadFile(req.user.userId, file, dto);
+  ) {
+    return this.fileSystemService.uploadFiles(req.user.userId, files, dto);
   }
 
   @Post('createFolder')
@@ -70,37 +73,68 @@ export class FileSystemController {
   ) {
     return this.fileSystemService.downloadFile(req.user.userId, id, res);
   }
-@Get('share/:username/:filename')
-async getShareFilePublic(
-  @Param('username') username: string,
-  @Param('filename') filename: string,
-) {
-  console.log(`Public share request: ${username}/${filename}`);
+  @Get('share/:username/:filename')
+  async getShareFilePublic(
+    @Param('username') username: string,
+    @Param('filename') filename: string,
+  ) {
+    console.log(`Public share request: ${username}/${filename}`);
 
-  try {
-    const file = await this.fileSystemService.getFileForShare(username, filename);
+    try {
+      const file = await this.fileSystemService.getFileForShare(username, filename);
 
-    const presignedUrl = await this.fileSystemService.getPresignedUrl(file.path);
+      const presignedUrl = await this.fileSystemService.getPresignedUrl(file.path);
 
-    return {
-      success: true,
-      data: {
-        id: file.id,
-        name: file.name,
-        size: file.size,
-        mimeType: file.mimeType,
-        createdAt: file.createdAt,
-        downloadUrl: presignedUrl,
-      }
-    };
-  } catch (error: any) {
-    console.error('Share error:', error.message);
-    return {
-      success: false,
-      message: error.message || 'Файл не найден'
-    };
+      return {
+        success: true,
+        data: {
+          id: file.id,
+          name: file.name,
+          size: file.size,
+          mimeType: file.mimeType,
+          createdAt: file.createdAt,
+          downloadUrl: presignedUrl,
+        }
+      };
+    } catch (error: any) {
+      console.error('Share error:', error.message);
+      return {
+        success: false,
+        message: error.message || 'Файл не найден'
+      };
+    }
   }
-}
+
+  @Get('proxy/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async proxyFile(
+    @Req() req,
+    @Param('id') id: string,
+    @Res() res: Response
+  ) {
+    return this.fileSystemService.getFileBuffer(req.user.userId, id, res);
+  }
+
+  @Patch('rename/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async renameItem(
+    @Req() req,
+    @Param('id') id: string,
+    @Query('type') type: 'file' | 'folder',
+    @Body() dto: RenameDto,
+  ) {
+    return this.fileSystemService.renameItem(req.user.userId, id, type, dto.name);
+  }
+
+  @Patch('move/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async moveFile(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() dto: { folderId: string | null },
+  ) {
+    return this.fileSystemService.moveFile(req.user.userId, id, dto.folderId);
+  }
 
   @Get('share/download/:username/:filename')
   async downloadFilePublic(
