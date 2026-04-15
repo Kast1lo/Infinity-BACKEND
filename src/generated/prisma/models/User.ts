@@ -32,6 +32,10 @@ export type UserMinAggregateOutputType = {
   avatarKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  googleId: string | null
+  isVerified: boolean | null
+  verificationCode: string | null
+  verificationCodeExpiresAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -42,6 +46,10 @@ export type UserMaxAggregateOutputType = {
   avatarKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  googleId: string | null
+  isVerified: boolean | null
+  verificationCode: string | null
+  verificationCodeExpiresAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -52,6 +60,10 @@ export type UserCountAggregateOutputType = {
   avatarKey: number
   createdAt: number
   updatedAt: number
+  googleId: number
+  isVerified: number
+  verificationCode: number
+  verificationCodeExpiresAt: number
   _all: number
 }
 
@@ -64,6 +76,10 @@ export type UserMinAggregateInputType = {
   avatarKey?: true
   createdAt?: true
   updatedAt?: true
+  googleId?: true
+  isVerified?: true
+  verificationCode?: true
+  verificationCodeExpiresAt?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -74,6 +90,10 @@ export type UserMaxAggregateInputType = {
   avatarKey?: true
   createdAt?: true
   updatedAt?: true
+  googleId?: true
+  isVerified?: true
+  verificationCode?: true
+  verificationCodeExpiresAt?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -84,6 +104,10 @@ export type UserCountAggregateInputType = {
   avatarKey?: true
   createdAt?: true
   updatedAt?: true
+  googleId?: true
+  isVerified?: true
+  verificationCode?: true
+  verificationCodeExpiresAt?: true
   _all?: true
 }
 
@@ -167,6 +191,10 @@ export type UserGroupByOutputType = {
   avatarKey: string | null
   createdAt: Date
   updatedAt: Date
+  googleId: string | null
+  isVerified: boolean
+  verificationCode: string | null
+  verificationCodeExpiresAt: Date | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -198,6 +226,10 @@ export type UserWhereInput = {
   avatarKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  googleId?: Prisma.StringNullableFilter<"User"> | string | null
+  isVerified?: Prisma.BoolFilter<"User"> | boolean
+  verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
+  verificationCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -212,6 +244,10 @@ export type UserOrderByWithRelationInput = {
   avatarKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   files?: Prisma.FileOrderByRelationAggregateInput
   folders?: Prisma.FolderOrderByRelationAggregateInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
@@ -222,6 +258,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
   username?: string
+  googleId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -229,11 +266,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   avatarKey?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+  isVerified?: Prisma.BoolFilter<"User"> | boolean
+  verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
+  verificationCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
   columns?: Prisma.TaskColumnListRelationFilter
-}, "id" | "email" | "username">
+}, "id" | "email" | "username" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -243,6 +283,10 @@ export type UserOrderByWithAggregationInput = {
   avatarKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  googleId?: Prisma.SortOrderInput | Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -259,6 +303,10 @@ export type UserScalarWhereWithAggregatesInput = {
   avatarKey?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  verificationCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  verificationCodeExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
@@ -269,6 +317,10 @@ export type UserCreateInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -283,6 +335,10 @@ export type UserUncheckedCreateInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -297,6 +353,10 @@ export type UserUpdateInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -311,6 +371,10 @@ export type UserUncheckedUpdateInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -325,6 +389,10 @@ export type UserCreateManyInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -335,6 +403,10 @@ export type UserUpdateManyMutationInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -345,6 +417,10 @@ export type UserUncheckedUpdateManyInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -355,6 +431,10 @@ export type UserCountOrderByAggregateInput = {
   avatarKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrder
+  verificationCodeExpiresAt?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -365,6 +445,10 @@ export type UserMaxOrderByAggregateInput = {
   avatarKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrder
+  verificationCodeExpiresAt?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -375,6 +459,10 @@ export type UserMinOrderByAggregateInput = {
   avatarKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  googleId?: Prisma.SortOrder
+  isVerified?: Prisma.SortOrder
+  verificationCode?: Prisma.SortOrder
+  verificationCodeExpiresAt?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -397,6 +485,14 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type UserCreateNestedOneWithoutColumnsInput = {
@@ -467,6 +563,10 @@ export type UserCreateWithoutColumnsInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -480,6 +580,10 @@ export type UserUncheckedCreateWithoutColumnsInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -509,6 +613,10 @@ export type UserUpdateWithoutColumnsInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -522,6 +630,10 @@ export type UserUncheckedUpdateWithoutColumnsInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -535,6 +647,10 @@ export type UserCreateWithoutTasksInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
@@ -548,6 +664,10 @@ export type UserUncheckedCreateWithoutTasksInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
@@ -577,6 +697,10 @@ export type UserUpdateWithoutTasksInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
@@ -590,6 +714,10 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
@@ -603,6 +731,10 @@ export type UserCreateWithoutFilesInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
@@ -616,6 +748,10 @@ export type UserUncheckedCreateWithoutFilesInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
@@ -645,6 +781,10 @@ export type UserUpdateWithoutFilesInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
@@ -658,6 +798,10 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
@@ -671,6 +815,10 @@ export type UserCreateWithoutFoldersInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
@@ -684,6 +832,10 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   avatarKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
@@ -713,6 +865,10 @@ export type UserUpdateWithoutFoldersInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
@@ -726,6 +882,10 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
@@ -797,6 +957,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   avatarKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  googleId?: boolean
+  isVerified?: boolean
+  verificationCode?: boolean
+  verificationCodeExpiresAt?: boolean
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
@@ -812,6 +976,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  googleId?: boolean
+  isVerified?: boolean
+  verificationCode?: boolean
+  verificationCodeExpiresAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -822,6 +990,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   avatarKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  googleId?: boolean
+  isVerified?: boolean
+  verificationCode?: boolean
+  verificationCodeExpiresAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -832,9 +1004,13 @@ export type UserSelectScalar = {
   avatarKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  googleId?: boolean
+  isVerified?: boolean
+  verificationCode?: boolean
+  verificationCodeExpiresAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
@@ -861,6 +1037,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     avatarKey: string | null
     createdAt: Date
     updatedAt: Date
+    googleId: string | null
+    isVerified: boolean
+    verificationCode: string | null
+    verificationCodeExpiresAt: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1295,6 +1475,10 @@ export interface UserFieldRefs {
   readonly avatarKey: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly googleId: Prisma.FieldRef<"User", 'String'>
+  readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
+  readonly verificationCode: Prisma.FieldRef<"User", 'String'>
+  readonly verificationCodeExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 

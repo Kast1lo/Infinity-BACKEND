@@ -617,14 +617,6 @@ export type EnumPriorityFieldUpdateOperationsInput = {
   set?: $Enums.Priority
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type TaskCreateNestedOneWithoutSubtasksInput = {
   create?: Prisma.XOR<Prisma.TaskCreateWithoutSubtasksInput, Prisma.TaskUncheckedCreateWithoutSubtasksInput>
   connectOrCreate?: Prisma.TaskCreateOrConnectWithoutSubtasksInput

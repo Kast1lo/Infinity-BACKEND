@@ -7,22 +7,27 @@ import { PrismaDatabaseModule } from 'src/prisma-database/prisma-database.module
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport/dist/passport.module';
 import { JwtStrategy } from './stratigies/jwt.strategy';
-
+import { GoogleStrategy } from './stratigies/google.strategy';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [ConfigModule, PrismaDatabaseModule, 
-  JwtModule.registerAsync({
-    useFactory: async (configService: ConfigService) => ({
-      secret: configService.get<string>('JWT_ACCESS_SECRET'),
-      signOptions: { expiresIn: '15m' },
+  imports: [
+    ConfigModule,
+    PrismaDatabaseModule,
+    MailModule,
+    JwtModule.registerAsync({
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_ACCESS_SECRET'),
+        signOptions: { expiresIn: '15m' },
+      }),
+      imports: [ConfigModule],
+      inject: [ConfigService],
     }),
-    imports: [ConfigModule],
-    inject: [ConfigService],
-  }),
-  PassportModule.register({
-    defaultStrategy: 'jwt',
-  })],
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+    }),
+  ],
   controllers: [AuthController],
-  providers: [AuthService, PrismaDatabaseService, ConfigService, JwtService, JwtStrategy],
+  providers: [AuthService, PrismaDatabaseService, ConfigService, JwtService, JwtStrategy, GoogleStrategy],
 })
 export class AuthModule {}

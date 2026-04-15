@@ -4,5 +4,5 @@ export class RenameDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
-  name: string;
+  name!: string;
 }

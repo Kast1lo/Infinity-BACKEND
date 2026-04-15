@@ -9,17 +9,24 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
-  username      String?   @unique
-  passwordHash  String   
-  avatarKey     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  files         File[]
-  folders       Folder[]
-  tasks         Task[]
-  columns       TaskColumn[]
+  id                        String    @id @default(uuid())
+  email                     String    @unique
+  username                  String?   @unique
+  passwordHash              String   
+  avatarKey                 String?
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
+
+  googleId                  String?   @unique
+
+  isVerified                Boolean   @default(false)
+  verificationCode          String?
+  verificationCodeExpiresAt DateTime?
+
+  files    File[]
+  folders  Folder[]
+  tasks    Task[]
+  columns  TaskColumn[]
 
   @@index([email])
 }
@@ -44,31 +51,31 @@ model Task {
   notes       String?
   priority    Priority  @default(MEDIUM)
   isCompleted Boolean   @default(false)
-  dueDate     DateTime? // ← дедлайн
-  color       String?   // ← цветная метка
-  order       Int       @default(0) // ← порядок в колонке
+  dueDate     DateTime?
+  color       String?
+  order       Int       @default(0)
   columnId    String?
   userId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  column      TaskColumn? @relation(fields: [columnId], references: [id], onDelete: SetNull)
-  subtasks    Subtask[]
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  column   TaskColumn? @relation(fields: [columnId], references: [id], onDelete: SetNull)
+  subtasks Subtask[]
+  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([columnId])
 }
 
 model Subtask {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   title       String
-  isCompleted Boolean   @default(false)
-  order       Int       @default(0)
+  isCompleted Boolean  @default(false)
+  order       Int      @default(0)
   taskId      String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@index([taskId])
 }
@@ -80,36 +87,36 @@ enum Priority {
 }
 
 model File {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   path        String    
   size        BigInt    
   mimeType    String?   
   ownerId     String
   folderId    String?   
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  isShared    Boolean   @default(false)  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isShared    Boolean  @default(false)  
   downloadUrl String?  
-  owner       User?     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  folder      Folder?   @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   @@index([ownerId, path])
 }
 
 model Folder {
-  id          String    @id @default(uuid())
-  name        String
-  path        String    
-  ownerId     String
-  parentId    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  isShared    Boolean   @default(false)
-  owner       User?     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  parent      Folder?   @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
-  children    Folder[]  @relation("FolderToParent")
-  files       File[]
+  id        String   @id @default(uuid())
+  name      String
+  path      String    
+  ownerId   String
+  parentId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isShared  Boolean  @default(false)
+  owner     User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Folder[] @relation("FolderToParent")
+  files     File[]
 
   @@index([ownerId, path])
 }
