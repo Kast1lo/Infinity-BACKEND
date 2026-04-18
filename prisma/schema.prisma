@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 generator client {
@@ -23,14 +23,12 @@ model User {
   verificationCode          String?
   verificationCodeExpiresAt DateTime?
 
-  // ─── Тариф ───
-  planType      String    @default("spark")  // spark | eternal | pulse | horizon
-  planExpiresAt DateTime?                    // для spark — когда истекают 7 дней
-  isFrozen      Boolean   @default(false)    // данные заморожены (spark истёк)
-  frozenAt      DateTime?                    // когда заморозили
-  storageUsed   BigInt    @default(0)        // байты занятого хранилища
+  planType      String    @default("spark")
+  planExpiresAt DateTime?
+  isFrozen      Boolean   @default(false)
+  frozenAt      DateTime?
+  storageUsed   BigInt    @default(0)
 
-  // ─── Промокод (для eternal) ───
   promoCode     PromoCode? @relation("UsedPromo")
 
   files    File[]
@@ -47,7 +45,7 @@ model PromoCode {
   id        String    @id @default(uuid())
   code      String    @unique
   planType  String    @default("eternal")
-  source    String    @default("manual")    // manual | gift | sbp
+  source    String    @default("manual")
   note      String?
 
   usedById  String?   @unique

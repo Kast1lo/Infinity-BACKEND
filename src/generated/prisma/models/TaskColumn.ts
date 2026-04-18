@@ -486,6 +486,7 @@ export type TaskColumnCreateOrConnectWithoutUserInput = {
 
 export type TaskColumnCreateManyUserInputEnvelope = {
   data: Prisma.TaskColumnCreateManyUserInput | Prisma.TaskColumnCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
 export type TaskColumnUpsertWithWhereUniqueWithoutUserInput = {
@@ -1365,6 +1366,7 @@ export type TaskColumnCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * The data used to create many TaskColumns.
    */
   data: Prisma.TaskColumnCreateManyInput | Prisma.TaskColumnCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1383,6 +1385,7 @@ export type TaskColumnCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exte
    * The data used to create many TaskColumns.
    */
   data: Prisma.TaskColumnCreateManyInput | Prisma.TaskColumnCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

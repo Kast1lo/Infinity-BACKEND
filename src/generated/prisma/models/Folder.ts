@@ -551,6 +551,7 @@ export type FolderCreateOrConnectWithoutOwnerInput = {
 
 export type FolderCreateManyOwnerInputEnvelope = {
   data: Prisma.FolderCreateManyOwnerInput | Prisma.FolderCreateManyOwnerInput[]
+  skipDuplicates?: boolean
 }
 
 export type FolderUpsertWithWhereUniqueWithoutOwnerInput = {
@@ -707,6 +708,7 @@ export type FolderCreateOrConnectWithoutParentInput = {
 
 export type FolderCreateManyParentInputEnvelope = {
   data: Prisma.FolderCreateManyParentInput | Prisma.FolderCreateManyParentInput[]
+  skipDuplicates?: boolean
 }
 
 export type FolderUpsertWithoutChildrenInput = {
@@ -1644,6 +1646,7 @@ export type FolderCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * The data used to create many Folders.
    */
   data: Prisma.FolderCreateManyInput | Prisma.FolderCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1662,6 +1665,7 @@ export type FolderCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many Folders.
    */
   data: Prisma.FolderCreateManyInput | Prisma.FolderCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

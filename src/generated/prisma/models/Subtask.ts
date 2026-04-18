@@ -472,6 +472,7 @@ export type SubtaskCreateOrConnectWithoutTaskInput = {
 
 export type SubtaskCreateManyTaskInputEnvelope = {
   data: Prisma.SubtaskCreateManyTaskInput | Prisma.SubtaskCreateManyTaskInput[]
+  skipDuplicates?: boolean
 }
 
 export type SubtaskUpsertWithWhereUniqueWithoutTaskInput = {
@@ -1273,6 +1274,7 @@ export type SubtaskCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many Subtasks.
    */
   data: Prisma.SubtaskCreateManyInput | Prisma.SubtaskCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1291,6 +1293,7 @@ export type SubtaskCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * The data used to create many Subtasks.
    */
   data: Prisma.SubtaskCreateManyInput | Prisma.SubtaskCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

@@ -612,6 +612,7 @@ export type FileCreateOrConnectWithoutOwnerInput = {
 
 export type FileCreateManyOwnerInputEnvelope = {
   data: Prisma.FileCreateManyOwnerInput | Prisma.FileCreateManyOwnerInput[]
+  skipDuplicates?: boolean
 }
 
 export type FileUpsertWithWhereUniqueWithoutOwnerInput = {
@@ -680,6 +681,7 @@ export type FileCreateOrConnectWithoutFolderInput = {
 
 export type FileCreateManyFolderInputEnvelope = {
   data: Prisma.FileCreateManyFolderInput | Prisma.FileCreateManyFolderInput[]
+  skipDuplicates?: boolean
 }
 
 export type FileUpsertWithWhereUniqueWithoutFolderInput = {
@@ -1568,6 +1570,7 @@ export type FileCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * The data used to create many Files.
    */
   data: Prisma.FileCreateManyInput | Prisma.FileCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1586,6 +1589,7 @@ export type FileCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many Files.
    */
   data: Prisma.FileCreateManyInput | Prisma.FileCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

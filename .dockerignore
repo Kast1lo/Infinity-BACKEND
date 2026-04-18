@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+dev.db
+*.db
+coverage
+.git
+.gitignore
+README.md
+k6-test.js
+test

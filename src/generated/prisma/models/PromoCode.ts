@@ -1206,6 +1206,7 @@ export type PromoCodeCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * The data used to create many PromoCodes.
    */
   data: Prisma.PromoCodeCreateManyInput | Prisma.PromoCodeCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1224,6 +1225,7 @@ export type PromoCodeCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Exten
    * The data used to create many PromoCodes.
    */
   data: Prisma.PromoCodeCreateManyInput | Prisma.PromoCodeCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
