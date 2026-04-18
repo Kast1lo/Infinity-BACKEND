@@ -16,7 +16,7 @@ async function bootstrap() {
   }));
 
   app.enableCors({
-    origin:         'http://localhost:4200',
+    origin:         process.env.ALLOWED_ORIGIN || 'http://localhost:4200',
     credentials:    true,
     methods:        ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -53,8 +53,9 @@ async function bootstrap() {
     });
   }
 
-  await app.listen(4400);
-  console.log('Server running on http://localhost:4400');
+    const port = process.env.APPLICATION_PORT || 4400;
+    await app.listen(port);
+  console.log(`Server running on http://localhost:${port}`);
 }
 
 bootstrap();
