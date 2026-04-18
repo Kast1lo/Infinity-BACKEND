@@ -23,7 +23,7 @@ async function bootstrap() {
   });
 
   app.use(cookieParser());
-
+  
   const expressApp  = app.getHttpAdapter().getInstance() as express.Express;
   const staticPath  = join(
     'C:\\Users\\azomg\\Desktop\\Infinity-frontend\\infinity',

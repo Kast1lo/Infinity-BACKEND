@@ -1,28 +1,20 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
-  private transporter: nodemailer.Transporter;
+  private resend: Resend;
 
   constructor(private readonly config: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host:   this.config.getOrThrow('MAIL_HOST'),
-      port:   Number(this.config.get('MAIL_PORT') ?? 587),
-      secure: this.config.get('MAIL_SECURE') === 'true',
-      auth: {
-        user: this.config.getOrThrow('MAIL_USER'),
-        pass: this.config.getOrThrow('MAIL_PASS'),
-      },
-    });
+    this.resend = new Resend(this.config.getOrThrow('RESEND_API_KEY'));
   }
 
   async sendVerificationCode(to: string, code: string): Promise<void> {
-    const from = `"Infinity" <${this.config.get('MAIL_FROM') ?? this.config.get('MAIL_USER')}>`;
+    const from = this.config.get('MAIL_FROM') ?? 'Infinity <noreply@infinity-vault.com>';
 
-    await this.transporter.sendMail({
+    await this.resend.emails.send({
       from,
       to,
       subject: 'Подтверждение email — Infinity',

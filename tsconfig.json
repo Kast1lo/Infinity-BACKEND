@@ -14,6 +14,9 @@
     "sourceMap": true,
     "outDir": "./dist",
     "ignoreDeprecations": "5.0",
+    "paths": {
+  "src/*": ["*"]
+},
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
