@@ -25,4 +25,4 @@ RUN npx prisma generate
 
 EXPOSE 4400
 
-CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
+CMD ["node", "dist/main"]
