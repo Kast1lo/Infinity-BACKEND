@@ -24,6 +24,11 @@ export class AuthService {
     private readonly mailService:   MailService,
   ) {}
 
+  // ─── Вычислить дату окончания Spark (7 дней) ───
+  private getSparkExpiresAt(): Date {
+    return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  }
+
   // ─── Google OAuth ───
   async validateGoogleUser(data: {
     googleId:  string;
@@ -51,16 +56,18 @@ export class AuthService {
       });
     }
 
-    // Новый пользователь через Google
+    // Новый пользователь через Google — выдаём Spark на 7 дней
     const username = await this.generateUniqueUsername(data.username);
 
     return this.prisma.user.create({
       data: {
-        googleId:     data.googleId,
-        email:        data.email,
-        username:     username,
-        passwordHash: '',
-        isVerified:   true,
+        googleId:      data.googleId,
+        email:         data.email,
+        username:      username,
+        passwordHash:  '',
+        isVerified:    true,
+        planType:      'spark',
+        planExpiresAt: this.getSparkExpiresAt(),
       },
     });
   }
@@ -107,6 +114,7 @@ export class AuthService {
     const code      = this.generateCode();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
+    // Spark выдаётся сразу при регистрации, даже до верификации email
     await this.prisma.user.create({
       data: {
         username:                  dto.username,
@@ -115,6 +123,8 @@ export class AuthService {
         isVerified:                false,
         verificationCode:          code,
         verificationCodeExpiresAt: expiresAt,
+        planType:                  'spark',
+        planExpiresAt:             this.getSparkExpiresAt(),
       },
     });
 

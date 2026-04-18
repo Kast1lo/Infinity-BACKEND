@@ -23,6 +23,11 @@ export * from './enums.js';
  */
 export type User = Prisma.UserModel
 /**
+ * Model PromoCode
+ * 
+ */
+export type PromoCode = Prisma.PromoCodeModel
+/**
  * Model TaskColumn
  * 
  */

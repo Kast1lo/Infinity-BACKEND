@@ -12,7 +12,7 @@ model User {
   id                        String    @id @default(uuid())
   email                     String    @unique
   username                  String?   @unique
-  passwordHash              String   
+  passwordHash              String
   avatarKey                 String?
   createdAt                 DateTime  @default(now())
   updatedAt                 DateTime  @updatedAt
@@ -23,17 +23,46 @@ model User {
   verificationCode          String?
   verificationCodeExpiresAt DateTime?
 
+  // ─── Тариф ───
+  planType      String    @default("spark")  // spark | eternal | pulse | horizon
+  planExpiresAt DateTime?                    // для spark — когда истекают 7 дней
+  isFrozen      Boolean   @default(false)    // данные заморожены (spark истёк)
+  frozenAt      DateTime?                    // когда заморозили
+  storageUsed   BigInt    @default(0)        // байты занятого хранилища
+
+  // ─── Промокод (для eternal) ───
+  promoCode     PromoCode? @relation("UsedPromo")
+
   files    File[]
   folders  Folder[]
   tasks    Task[]
   columns  TaskColumn[]
 
   @@index([email])
+  @@index([planType])
+  @@index([planExpiresAt])
+}
+
+model PromoCode {
+  id        String    @id @default(uuid())
+  code      String    @unique
+  planType  String    @default("eternal")
+  source    String    @default("manual")    // manual | gift | sbp
+  note      String?
+
+  usedById  String?   @unique
+  usedBy    User?     @relation("UsedPromo", fields: [usedById], references: [id], onDelete: SetNull)
+  usedAt    DateTime?
+
+  createdAt DateTime  @default(now())
+
+  @@index([code])
+  @@index([usedById])
 }
 
 model TaskColumn {
   id        String   @id @default(uuid())
-  name      String   
+  name      String
   order     Int      @default(0)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -89,15 +118,15 @@ enum Priority {
 model File {
   id          String   @id @default(uuid())
   name        String
-  path        String    
-  size        BigInt    
-  mimeType    String?   
+  path        String
+  size        BigInt
+  mimeType    String?
   ownerId     String
-  folderId    String?   
+  folderId    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  isShared    Boolean  @default(false)  
-  downloadUrl String?  
+  isShared    Boolean  @default(false)
+  downloadUrl String?
   owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
@@ -107,7 +136,7 @@ model File {
 model Folder {
   id        String   @id @default(uuid())
   name      String
-  path      String    
+  path      String
   ownerId   String
   parentId  String?
   createdAt DateTime @default(now())

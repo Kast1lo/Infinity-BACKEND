@@ -537,14 +537,6 @@ export type FileUncheckedUpdateManyWithoutOwnerNestedInput = {
   deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
 }
 
-export type BigIntFieldUpdateOperationsInput = {
-  set?: bigint | number
-  increment?: bigint | number
-  decrement?: bigint | number
-  multiply?: bigint | number
-  divide?: bigint | number
-}
-
 export type FileCreateNestedManyWithoutFolderInput = {
   create?: Prisma.XOR<Prisma.FileCreateWithoutFolderInput, Prisma.FileUncheckedCreateWithoutFolderInput> | Prisma.FileCreateWithoutFolderInput[] | Prisma.FileUncheckedCreateWithoutFolderInput[]
   connectOrCreate?: Prisma.FileCreateOrConnectWithoutFolderInput | Prisma.FileCreateOrConnectWithoutFolderInput[]

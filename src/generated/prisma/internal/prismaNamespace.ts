@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  PromoCode: 'PromoCode',
   TaskColumn: 'TaskColumn',
   Task: 'Task',
   Subtask: 'Subtask',
@@ -405,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "taskColumn" | "task" | "subtask" | "file" | "folder"
+    modelProps: "user" | "promoCode" | "taskColumn" | "task" | "subtask" | "file" | "folder"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -480,6 +481,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PromoCode: {
+      payload: Prisma.$PromoCodePayload<ExtArgs>
+      fields: Prisma.PromoCodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PromoCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PromoCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>
+        }
+        findFirst: {
+          args: Prisma.PromoCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PromoCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>
+        }
+        findMany: {
+          args: Prisma.PromoCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>[]
+        }
+        create: {
+          args: Prisma.PromoCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>
+        }
+        createMany: {
+          args: Prisma.PromoCodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PromoCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>[]
+        }
+        delete: {
+          args: Prisma.PromoCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>
+        }
+        update: {
+          args: Prisma.PromoCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>
+        }
+        deleteMany: {
+          args: Prisma.PromoCodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PromoCodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PromoCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>[]
+        }
+        upsert: {
+          args: Prisma.PromoCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PromoCodePayload>
+        }
+        aggregate: {
+          args: Prisma.PromoCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePromoCode>
+        }
+        groupBy: {
+          args: Prisma.PromoCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PromoCodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PromoCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PromoCodeCountAggregateOutputType> | number
         }
       }
     }
@@ -900,10 +975,29 @@ export const UserScalarFieldEnum = {
   googleId: 'googleId',
   isVerified: 'isVerified',
   verificationCode: 'verificationCode',
-  verificationCodeExpiresAt: 'verificationCodeExpiresAt'
+  verificationCodeExpiresAt: 'verificationCodeExpiresAt',
+  planType: 'planType',
+  planExpiresAt: 'planExpiresAt',
+  isFrozen: 'isFrozen',
+  frozenAt: 'frozenAt',
+  storageUsed: 'storageUsed'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PromoCodeScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  planType: 'planType',
+  source: 'source',
+  note: 'note',
+  usedById: 'usedById',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PromoCodeScalarFieldEnum = (typeof PromoCodeScalarFieldEnum)[keyof typeof PromoCodeScalarFieldEnum]
 
 
 export const TaskColumnScalarFieldEnum = {
@@ -1024,6 +1118,13 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -1034,13 +1135,6 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Priority'
  */
 export type EnumPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Priority'>
-    
-
-
-/**
- * Reference to a field of type 'BigInt'
- */
-export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
     
 
 
@@ -1146,6 +1240,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  promoCode?: Prisma.PromoCodeOmit
   taskColumn?: Prisma.TaskColumnOmit
   task?: Prisma.TaskOmit
   subtask?: Prisma.SubtaskOmit

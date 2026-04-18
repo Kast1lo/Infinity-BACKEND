@@ -5,9 +5,11 @@ import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.servi
 import { ConfigModule } from '@nestjs/config';
 import { PrismaDatabaseModule } from 'src/prisma-database/prisma-database.module';
 import { JwtModule, JwtService } from '@nestjs/jwt';
+import { PlanModule } from 'src/plan/plan.module';
+
 
 @Module({
-  imports: [ConfigModule, PrismaDatabaseModule, JwtModule],
+  imports: [PlanModule, ConfigModule, PrismaDatabaseModule, JwtModule],
   controllers: [FileSystemController, ],
   providers: [FileSystemService, PrismaDatabaseService, JwtService],
 })

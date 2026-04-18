@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  storageUsed: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  storageUsed: bigint | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -36,6 +46,11 @@ export type UserMinAggregateOutputType = {
   isVerified: boolean | null
   verificationCode: string | null
   verificationCodeExpiresAt: Date | null
+  planType: string | null
+  planExpiresAt: Date | null
+  isFrozen: boolean | null
+  frozenAt: Date | null
+  storageUsed: bigint | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -50,6 +65,11 @@ export type UserMaxAggregateOutputType = {
   isVerified: boolean | null
   verificationCode: string | null
   verificationCodeExpiresAt: Date | null
+  planType: string | null
+  planExpiresAt: Date | null
+  isFrozen: boolean | null
+  frozenAt: Date | null
+  storageUsed: bigint | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -64,9 +84,22 @@ export type UserCountAggregateOutputType = {
   isVerified: number
   verificationCode: number
   verificationCodeExpiresAt: number
+  planType: number
+  planExpiresAt: number
+  isFrozen: number
+  frozenAt: number
+  storageUsed: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  storageUsed?: true
+}
+
+export type UserSumAggregateInputType = {
+  storageUsed?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -80,6 +113,11 @@ export type UserMinAggregateInputType = {
   isVerified?: true
   verificationCode?: true
   verificationCodeExpiresAt?: true
+  planType?: true
+  planExpiresAt?: true
+  isFrozen?: true
+  frozenAt?: true
+  storageUsed?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -94,6 +132,11 @@ export type UserMaxAggregateInputType = {
   isVerified?: true
   verificationCode?: true
   verificationCodeExpiresAt?: true
+  planType?: true
+  planExpiresAt?: true
+  isFrozen?: true
+  frozenAt?: true
+  storageUsed?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -108,6 +151,11 @@ export type UserCountAggregateInputType = {
   isVerified?: true
   verificationCode?: true
   verificationCodeExpiresAt?: true
+  planType?: true
+  planExpiresAt?: true
+  isFrozen?: true
+  frozenAt?: true
+  storageUsed?: true
   _all?: true
 }
 
@@ -149,6 +197,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -179,6 +239,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -195,7 +257,14 @@ export type UserGroupByOutputType = {
   isVerified: boolean
   verificationCode: string | null
   verificationCodeExpiresAt: Date | null
+  planType: string
+  planExpiresAt: Date | null
+  isFrozen: boolean
+  frozenAt: Date | null
+  storageUsed: bigint
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -230,6 +299,12 @@ export type UserWhereInput = {
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
   verificationCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  planType?: Prisma.StringFilter<"User"> | string
+  planExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  isFrozen?: Prisma.BoolFilter<"User"> | boolean
+  frozenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  storageUsed?: Prisma.BigIntFilter<"User"> | bigint | number
+  promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -248,6 +323,12 @@ export type UserOrderByWithRelationInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  planType?: Prisma.SortOrder
+  planExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isFrozen?: Prisma.SortOrder
+  frozenAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  storageUsed?: Prisma.SortOrder
+  promoCode?: Prisma.PromoCodeOrderByWithRelationInput
   files?: Prisma.FileOrderByRelationAggregateInput
   folders?: Prisma.FolderOrderByRelationAggregateInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
@@ -269,6 +350,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
   verificationCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  planType?: Prisma.StringFilter<"User"> | string
+  planExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  isFrozen?: Prisma.BoolFilter<"User"> | boolean
+  frozenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  storageUsed?: Prisma.BigIntFilter<"User"> | bigint | number
+  promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -287,9 +374,16 @@ export type UserOrderByWithAggregationInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  planType?: Prisma.SortOrder
+  planExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isFrozen?: Prisma.SortOrder
+  frozenAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  storageUsed?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -307,6 +401,11 @@ export type UserScalarWhereWithAggregatesInput = {
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   verificationCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   verificationCodeExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  planType?: Prisma.StringWithAggregatesFilter<"User"> | string
+  planExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  isFrozen?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  frozenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  storageUsed?: Prisma.BigIntWithAggregatesFilter<"User"> | bigint | number
 }
 
 export type UserCreateInput = {
@@ -321,6 +420,12 @@ export type UserCreateInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -339,6 +444,12 @@ export type UserUncheckedCreateInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -357,6 +468,12 @@ export type UserUpdateInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -375,6 +492,12 @@ export type UserUncheckedUpdateInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -393,6 +516,11 @@ export type UserCreateManyInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
 }
 
 export type UserUpdateManyMutationInput = {
@@ -407,6 +535,11 @@ export type UserUpdateManyMutationInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -421,6 +554,11 @@ export type UserUncheckedUpdateManyInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -435,6 +573,15 @@ export type UserCountOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrder
+  planType?: Prisma.SortOrder
+  planExpiresAt?: Prisma.SortOrder
+  isFrozen?: Prisma.SortOrder
+  frozenAt?: Prisma.SortOrder
+  storageUsed?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  storageUsed?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -449,6 +596,11 @@ export type UserMaxOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrder
+  planType?: Prisma.SortOrder
+  planExpiresAt?: Prisma.SortOrder
+  isFrozen?: Prisma.SortOrder
+  frozenAt?: Prisma.SortOrder
+  storageUsed?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -463,16 +615,25 @@ export type UserMinOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrder
+  planType?: Prisma.SortOrder
+  planExpiresAt?: Prisma.SortOrder
+  isFrozen?: Prisma.SortOrder
+  frozenAt?: Prisma.SortOrder
+  storageUsed?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserSumOrderByAggregateInput = {
+  storageUsed?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
+}
+
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -493,6 +654,30 @@ export type BoolFieldUpdateOperationsInput = {
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
+}
+
+export type BigIntFieldUpdateOperationsInput = {
+  set?: bigint | number
+  increment?: bigint | number
+  decrement?: bigint | number
+  multiply?: bigint | number
+  divide?: bigint | number
+}
+
+export type UserCreateNestedOneWithoutPromoCodeInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPromoCodeInput, Prisma.UserUncheckedCreateWithoutPromoCodeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPromoCodeInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutPromoCodeNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPromoCodeInput, Prisma.UserUncheckedCreateWithoutPromoCodeInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPromoCodeInput
+  upsert?: Prisma.UserUpsertWithoutPromoCodeInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPromoCodeInput, Prisma.UserUpdateWithoutPromoCodeInput>, Prisma.UserUncheckedUpdateWithoutPromoCodeInput>
 }
 
 export type UserCreateNestedOneWithoutColumnsInput = {
@@ -555,6 +740,114 @@ export type UserUpdateOneWithoutFoldersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutFoldersInput, Prisma.UserUpdateWithoutFoldersInput>, Prisma.UserUncheckedUpdateWithoutFoldersInput>
 }
 
+export type UserCreateWithoutPromoCodeInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  files?: Prisma.FileCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPromoCodeInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPromoCodeInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPromoCodeInput, Prisma.UserUncheckedCreateWithoutPromoCodeInput>
+}
+
+export type UserUpsertWithoutPromoCodeInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPromoCodeInput, Prisma.UserUncheckedUpdateWithoutPromoCodeInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPromoCodeInput, Prisma.UserUncheckedCreateWithoutPromoCodeInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPromoCodeInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPromoCodeInput, Prisma.UserUncheckedUpdateWithoutPromoCodeInput>
+}
+
+export type UserUpdateWithoutPromoCodeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPromoCodeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutColumnsInput = {
   id?: string
   email: string
@@ -567,6 +860,12 @@ export type UserCreateWithoutColumnsInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -584,6 +883,12 @@ export type UserUncheckedCreateWithoutColumnsInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -617,6 +922,12 @@ export type UserUpdateWithoutColumnsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -634,6 +945,12 @@ export type UserUncheckedUpdateWithoutColumnsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -651,6 +968,12 @@ export type UserCreateWithoutTasksInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
@@ -668,6 +991,12 @@ export type UserUncheckedCreateWithoutTasksInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
@@ -701,6 +1030,12 @@ export type UserUpdateWithoutTasksInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
@@ -718,6 +1053,12 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
@@ -735,6 +1076,12 @@ export type UserCreateWithoutFilesInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
@@ -752,6 +1099,12 @@ export type UserUncheckedCreateWithoutFilesInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
@@ -785,6 +1138,12 @@ export type UserUpdateWithoutFilesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
@@ -802,6 +1161,12 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
@@ -819,6 +1184,12 @@ export type UserCreateWithoutFoldersInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
@@ -836,6 +1207,12 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
   columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
@@ -869,6 +1246,12 @@ export type UserUpdateWithoutFoldersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
@@ -886,6 +1269,12 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
   columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
@@ -961,6 +1350,12 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  planType?: boolean
+  planExpiresAt?: boolean
+  isFrozen?: boolean
+  frozenAt?: boolean
+  storageUsed?: boolean
+  promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
@@ -980,6 +1375,11 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  planType?: boolean
+  planExpiresAt?: boolean
+  isFrozen?: boolean
+  frozenAt?: boolean
+  storageUsed?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -994,6 +1394,11 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  planType?: boolean
+  planExpiresAt?: boolean
+  isFrozen?: boolean
+  frozenAt?: boolean
+  storageUsed?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1008,10 +1413,16 @@ export type UserSelectScalar = {
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  planType?: boolean
+  planExpiresAt?: boolean
+  isFrozen?: boolean
+  frozenAt?: boolean
+  storageUsed?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
@@ -1024,6 +1435,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    promoCode: Prisma.$PromoCodePayload<ExtArgs> | null
     files: Prisma.$FilePayload<ExtArgs>[]
     folders: Prisma.$FolderPayload<ExtArgs>[]
     tasks: Prisma.$TaskPayload<ExtArgs>[]
@@ -1041,6 +1453,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isVerified: boolean
     verificationCode: string | null
     verificationCodeExpiresAt: Date | null
+    planType: string
+    planExpiresAt: Date | null
+    isFrozen: boolean
+    frozenAt: Date | null
+    storageUsed: bigint
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1435,6 +1852,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  promoCode<T extends Prisma.User$promoCodeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$promoCodeArgs<ExtArgs>>): Prisma.Prisma__PromoCodeClient<runtime.Types.Result.GetResult<Prisma.$PromoCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   files<T extends Prisma.User$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   folders<T extends Prisma.User$foldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tasks<T extends Prisma.User$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1479,6 +1897,11 @@ export interface UserFieldRefs {
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly verificationCode: Prisma.FieldRef<"User", 'String'>
   readonly verificationCodeExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly planType: Prisma.FieldRef<"User", 'String'>
+  readonly planExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly isFrozen: Prisma.FieldRef<"User", 'Boolean'>
+  readonly frozenAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly storageUsed: Prisma.FieldRef<"User", 'BigInt'>
 }
     
 
@@ -1867,6 +2290,25 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Users to delete.
    */
   limit?: number
+}
+
+/**
+ * User.promoCode
+ */
+export type User$promoCodeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PromoCode
+   */
+  select?: Prisma.PromoCodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PromoCode
+   */
+  omit?: Prisma.PromoCodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PromoCodeInclude<ExtArgs> | null
+  where?: Prisma.PromoCodeWhereInput
 }
 
 /**

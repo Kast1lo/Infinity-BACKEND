@@ -45,6 +45,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model PromoCode
+ * 
+ */
+export type PromoCode = Prisma.PromoCodeModel
+/**
  * Model TaskColumn
  * 
  */

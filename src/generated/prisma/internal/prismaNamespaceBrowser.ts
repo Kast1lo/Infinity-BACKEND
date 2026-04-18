@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  PromoCode: 'PromoCode',
   TaskColumn: 'TaskColumn',
   Task: 'Task',
   Subtask: 'Subtask',
@@ -83,10 +84,29 @@ export const UserScalarFieldEnum = {
   googleId: 'googleId',
   isVerified: 'isVerified',
   verificationCode: 'verificationCode',
-  verificationCodeExpiresAt: 'verificationCodeExpiresAt'
+  verificationCodeExpiresAt: 'verificationCodeExpiresAt',
+  planType: 'planType',
+  planExpiresAt: 'planExpiresAt',
+  isFrozen: 'isFrozen',
+  frozenAt: 'frozenAt',
+  storageUsed: 'storageUsed'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PromoCodeScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  planType: 'planType',
+  source: 'source',
+  note: 'note',
+  usedById: 'usedById',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PromoCodeScalarFieldEnum = (typeof PromoCodeScalarFieldEnum)[keyof typeof PromoCodeScalarFieldEnum]
 
 
 export const TaskColumnScalarFieldEnum = {
