@@ -16,7 +16,7 @@ import { PlanModule } from './plan/plan.module';
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal:      true,
-      envFilePath:   '.env',
+      envFilePath:   ['.env.local', '.env'],
       ignoreEnvFile: false,
     }),
     PrismaDatabaseModule,

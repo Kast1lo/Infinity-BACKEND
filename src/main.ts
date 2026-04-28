@@ -15,47 +15,53 @@ async function bootstrap() {
     forbidNonWhitelisted: true,
   }));
 
+  const isProd        = process.env.NODE_ENV === 'production';
+  const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://localhost:4200';
+
   app.enableCors({
-    origin:         process.env.ALLOWED_ORIGIN || 'http://localhost:4200',
+    origin:         allowedOrigin,
     credentials:    true,
     methods:        ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   app.use(cookieParser());
-  
-  const expressApp  = app.getHttpAdapter().getInstance() as express.Express;
-  const staticPath  = join(
-    'C:\\Users\\azomg\\Desktop\\Infinity-frontend\\infinity',
-    'dist',
-    'infinity',
-    'browser',
-  );
 
-  if (fs.existsSync(staticPath)) {
-    expressApp.use(express.static(staticPath));
+  if (isProd) {
+    const expressApp = app.getHttpAdapter().getInstance() as express.Express;
+    const staticPath = join(
+      'C:\\Users\\azomg\\Desktop\\Infinity-frontend\\infinity',
+      'dist',
+      'infinity',
+      'browser',
+    );
 
-    expressApp.use((req, res, next) => {
-      const apiPrefixes = [
-        '/auth',
-        '/file-system',
-        '/infinity-life',
-        '/user',
-        '/plan',
-        '/api',
-      ];
+    if (fs.existsSync(staticPath)) {
+      expressApp.use(express.static(staticPath));
 
-      const isApi = apiPrefixes.some(prefix => req.url.startsWith(prefix));
-      if (isApi) return next();
+      expressApp.use((req, res, next) => {
+        const apiPrefixes = [
+          '/auth',
+          '/file-system',
+          '/infinity-life',
+          '/user',
+          '/plan',
+          '/api',
+        ];
 
-      const indexPath = join(staticPath, 'index.html');
-      res.sendFile(indexPath);
-    });
+        const isApi = apiPrefixes.some(prefix => req.url.startsWith(prefix));
+        if (isApi) return next();
+
+        const indexPath = join(staticPath, 'index.html');
+        res.sendFile(indexPath);
+      });
+    }
   }
 
-    const port = process.env.APPLICATION_PORT || 4400;
-    await app.listen(port);
+  const port = process.env.APPLICATION_PORT || 4400;
+  await app.listen(port);
   console.log(`Server running on http://localhost:${port}`);
+  console.log(`NODE_ENV=${process.env.NODE_ENV ?? 'undefined'} | CORS origin=${allowedOrigin}`);
 }
 
 bootstrap();
