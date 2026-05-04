@@ -1,8 +1,12 @@
+import * as crypto from 'crypto';
 import { DeleteObjectCommand, GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 
+const ALLOWED_AVATAR_MIME_TYPES = new Set([
+  'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/bmp',
+]);
 
 @Injectable()
 export class StorageService {
@@ -21,6 +25,9 @@ export class StorageService {
         });
     }
     async uploadAvatar(file: Express.Multer.File, userId: string): Promise<string> {
+    if (!ALLOWED_AVATAR_MIME_TYPES.has(file.mimetype)) {
+      throw new BadRequestException('Аватар должен быть изображением (JPEG, PNG, GIF, WebP, BMP)');
+    }
     const ext = file.mimetype.split('/')[1] || 'jpg';
     const key = `users/${userId}/avatar-${crypto.randomUUID()}.${ext}`;
     const upload = new Upload({

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import type { Response } from 'express';
 import { RegisterDto } from './DTO/register.dto';
@@ -14,12 +15,13 @@ export class AuthController {
     private readonly configService:  ConfigService,
   ) {}
 
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
-  // Подтверждение кода из письма
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
   @Post('verify-email')
   async verifyEmail(
     @Body() dto: VerifyEmailDto,
@@ -28,12 +30,13 @@ export class AuthController {
     return this.authService.verifyEmail(dto, res);
   }
 
-  // Повторная отправка кода
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })
   @Post('resend-code')
   async resendCode(@Body('email') email: string) {
     return this.authService.resendCode(email);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @Post('login')
   async login(
     @Body() dto: loginRequest,
@@ -47,11 +50,10 @@ export class AuthController {
     return this.authService.refresh(res);
   }
 
-  // ─── Google OAuth ───
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth() {
-    // Passport перенаправляет на Google
+
   }
 
   @Get('google/callback')
@@ -61,8 +63,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     await this.authService.generateToken(req.user, res as any);
-    // Редирект на фронтенд после успешного входа
-    (res as any).redirect('http://localhost:4200/file-system');
+    const frontendOrigin = this.configService.get<string>('ALLOWED_ORIGIN') || 'http://localhost:4200';
+    (res as any).redirect(`${frontendOrigin}/file-system`);
   }
 
   @Post('logout')

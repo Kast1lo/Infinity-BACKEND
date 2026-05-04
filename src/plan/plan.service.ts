@@ -4,17 +4,15 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaDatabaseService } from '../prisma-database/prisma-database.service';
 import { PLAN_LIMITS, PlanType } from './plan.constants';
 import { PlanInfoResponse } from './interfaces/plan-info.response ';
 
-
 @Injectable()
 export class PlanService {
   constructor(private readonly prisma: PrismaDatabaseService) {}
-
-  // ─── Получить информацию о тарифе ───
 
   async getPlanInfo(userId: string): Promise<PlanInfoResponse> {
     const user = await this.prisma.user.findUnique({
@@ -33,14 +31,12 @@ export class PlanService {
     const planType = (user.planType ?? 'spark') as PlanType;
     const limits   = PLAN_LIMITS[planType] ?? PLAN_LIMITS.spark;
 
-    // Дней до конца триала (spark)
     let daysLeft: number | null = null;
     if (planType === 'spark' && user.planExpiresAt) {
       const diff = user.planExpiresAt.getTime() - Date.now();
       daysLeft   = Math.max(0, Math.ceil(diff / 86_400_000));
     }
 
-    // Дней до удаления данных (frozen)
     let freezeDaysLeft: number | null = null;
     if (user.isFrozen && user.frozenAt) {
       const deleteAt     = new Date(user.frozenAt.getTime() + 14 * 86_400_000);
@@ -69,12 +65,10 @@ export class PlanService {
     };
   }
 
-  // ─── Проверить лимит хранилища ───
-
   async checkStorageLimit(userId: string, fileSize: bigint): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where:  { id: userId },
-      select: { planType: true, storageUsed: true, isFrozen: true },
+      select: { planType: true, storageUsed: true, isFrozen: true, planExpiresAt: true },
     });
 
     if (!user) throw new NotFoundException('Пользователь не найден');
@@ -82,6 +76,12 @@ export class PlanService {
     if (user.isFrozen) {
       throw new ForbiddenException(
         'Ваши данные заморожены. Оформите подписку для восстановления доступа.',
+      );
+    }
+
+    if (user.planType !== 'eternal' && user.planExpiresAt && user.planExpiresAt < new Date()) {
+      throw new ForbiddenException(
+        'Ваша подписка истекла. Оформите подписку для продолжения загрузки файлов.',
       );
     }
 
@@ -96,12 +96,10 @@ export class PlanService {
     }
   }
 
-  // ─── Проверить лимит задач ───
-
   async checkTaskLimit(userId: string): Promise<void> {
     const user = await this.prisma.user.findUnique({
       where:  { id: userId },
-      select: { planType: true, isFrozen: true },
+      select: { planType: true, isFrozen: true, planExpiresAt: true },
     });
 
     if (!user) throw new NotFoundException('Пользователь не найден');
@@ -109,6 +107,12 @@ export class PlanService {
     if (user.isFrozen) {
       throw new ForbiddenException(
         'Ваши данные заморожены. Оформите подписку для восстановления доступа.',
+      );
+    }
+
+    if (user.planType !== 'eternal' && user.planExpiresAt && user.planExpiresAt < new Date()) {
+      throw new ForbiddenException(
+        'Ваша подписка истекла. Оформите подписку для создания новых задач.',
       );
     }
 
@@ -125,15 +129,12 @@ export class PlanService {
     }
   }
 
-  // ─── Обновить занятое хранилище ───
-
   async updateStorageUsed(userId: string, delta: bigint): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
       data:  { storageUsed: { increment: delta } },
     });
 
-    // Защита от отрицательного значения
     const user = await this.prisma.user.findUnique({
       where:  { id: userId },
       select: { storageUsed: true },
@@ -147,21 +148,7 @@ export class PlanService {
     }
   }
 
-  // ─── Активировать промокод ───
-
   async activatePromoCode(userId: string, code: string): Promise<{ message: string }> {
-    const promo = await this.prisma.promoCode.findUnique({
-      where: { code },
-    });
-
-    if (!promo) {
-      throw new BadRequestException('Промокод не найден или недействителен');
-    }
-
-    if (promo.usedById) {
-      throw new BadRequestException('Этот промокод уже был использован');
-    }
-
     const user = await this.prisma.user.findUnique({
       where:  { id: userId },
       select: { planType: true },
@@ -173,12 +160,30 @@ export class PlanService {
       throw new BadRequestException('У вас уже активирован тариф Eternal');
     }
 
-    await this.prisma.$transaction([
-      this.prisma.promoCode.update({
-        where: { code: promo.code },
+    let activatedPlanType: string;
+
+    await this.prisma.$transaction(async (tx) => {
+      const promo = await tx.promoCode.findUnique({
+        where:  { code },
+        select: { usedById: true, planType: true, code: true },
+      });
+
+      if (!promo) {
+        throw new BadRequestException('Промокод не найден или недействителен');
+      }
+
+      if (promo.usedById) {
+        throw new BadRequestException('Этот промокод уже был использован');
+      }
+
+      activatedPlanType = promo.planType;
+
+      await tx.promoCode.update({
+        where: { code },
         data:  { usedById: userId, usedAt: new Date() },
-      }),
-      this.prisma.user.update({
+      });
+
+      await tx.user.update({
         where: { id: userId },
         data:  {
           planType:      promo.planType,
@@ -186,14 +191,12 @@ export class PlanService {
           isFrozen:      false,
           frozenAt:      null,
         },
-      }),
-    ]);
+      });
+    });
 
-    const label = PLAN_LIMITS[promo.planType as PlanType]?.label ?? promo.planType;
+    const label = PLAN_LIMITS[activatedPlanType! as PlanType]?.label ?? activatedPlanType!;
     return { message: `Тариф ${label} успешно активирован!` };
   }
-
-  // ─── Сгенерировать промокоды (только для админа) ───
 
   async generatePromoCodes(
     count:   number,
@@ -215,24 +218,17 @@ export class PlanService {
   }
 
   private generateCode(): string {
-    // Формат: INF-XXXX-XXXX
-    const chars   = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const segment = (len: number) =>
-      Array.from(
-        { length: len },
-        () => chars[Math.floor(Math.random() * chars.length)],
-      ).join('');
-
-    return `INF-${segment(4)}-${segment(4)}`;
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const bytes = crypto.randomBytes(8);
+    const seg   = (offset: number, len: number) =>
+      Array.from({ length: len }, (_, i) => chars[bytes[offset + i] % chars.length]).join('');
+    return `INF-${seg(0, 4)}-${seg(4, 4)}`;
   }
-
-  // ─── CRON: заморозка и удаление истёкших Spark ───
 
   @Cron(CronExpression.EVERY_HOUR)
   async handleExpiredSpark(): Promise<void> {
     const now = new Date();
 
-    // 1. Заморозить пользователей у которых истёк spark
     const toFreeze = await this.prisma.user.findMany({
       where: {
         planType:      'spark',
@@ -247,10 +243,9 @@ export class PlanService {
         where: { id: { in: toFreeze.map(u => u.id) } },
         data:  { isFrozen: true, frozenAt: now },
       });
-      console.log(`[PlanService] Заморожено: ${toFreeze.length} пользователей`);
+      process.stdout.write(`[PlanService] Заморожено: ${toFreeze.length} пользователей\n`);
     }
 
-    // 2. Удалить данные пользователей заморожённых > 14 дней
     const deleteThreshold = new Date(now.getTime() - 14 * 86_400_000);
 
     const toDelete = await this.prisma.user.findMany({
@@ -276,7 +271,7 @@ export class PlanService {
     }
 
     if (toDelete.length > 0) {
-      console.log(`[PlanService] Удалены данные: ${toDelete.length} пользователей`);
+      process.stdout.write(`[PlanService] Удалены данные: ${toDelete.length} пользователей\n`);
     }
   }
 }

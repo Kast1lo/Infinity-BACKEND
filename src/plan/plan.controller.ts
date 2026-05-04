@@ -16,23 +16,20 @@ import { GeneratePromoDto } from './DTO/generate-promo.dto';
 export class PlanController {
   constructor(private readonly planService: PlanService) {}
 
-  // GET /plan/info — информация о тарифе текущего юзера
   @Get('info')
   @UseGuards(JwtAuthGuard)
   getPlanInfo(@Req() req: any) {
     return this.planService.getPlanInfo(req.user.userId);
   }
 
-  // POST /plan/activate-promo — активировать промокод
   @Post('activate-promo')
   @UseGuards(JwtAuthGuard)
   activatePromo(@Req() req: any, @Body() dto: ActivatePromoDto) {
     return this.planService.activatePromoCode(req.user.userId, dto.code);
   }
 
-  // POST /plan/admin/generate-promo — сгенерировать промокоды (только админ)
   @Post('admin/generate-promo')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   generatePromo(@Body() dto: GeneratePromoDto) {
     return this.planService.generatePromoCodes(dto.count, dto.note, dto.source);
   }

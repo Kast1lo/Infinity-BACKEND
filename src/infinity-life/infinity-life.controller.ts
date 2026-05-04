@@ -5,12 +5,14 @@ import { CreateTaskDto } from './DTO/create-task.dto';
 import { UpdateTaskDto } from './DTO/update-task.dto';
 import { CreateSubtaskDto } from './DTO/create-subtask.dto';
 import { UpdateSubtaskDto } from './DTO/update-subtask.dto';
+import { CreateColumnDto } from './DTO/create-column.dto';
+import { UpdateColumnDto } from './DTO/update-column.dto';
+import { MoveTaskDto } from './DTO/move-task.dto';
 
 @Controller('infinity-life')
 export class InfinityLifeController {
   constructor(private readonly infinityLifeService: InfinityLifeService) {}
 
-  // Tasks
   @Post('tasks')
   @UseGuards(AuthGuard('jwt'))
   async createTask(@Req() req, @Body() dto: CreateTaskDto) {
@@ -44,14 +46,13 @@ export class InfinityLifeController {
   @Patch('tasks/:taskId/move')
   @UseGuards(AuthGuard('jwt'))
   async moveTaskToColumn(
-    @Req() req, 
-    @Param('taskId') taskId: string, 
-    @Body() body: { columnId: string }
+    @Req() req,
+    @Param('taskId') taskId: string,
+    @Body() dto: MoveTaskDto,
   ) {
-    return this.infinityLifeService.moveTaskToColumn(taskId, body.columnId, req.user.userId);
+    return this.infinityLifeService.moveTaskToColumn(taskId, dto.columnId, req.user.userId);
   }
 
-  // Subtasks
   @Post('subtasks')
   @UseGuards(AuthGuard('jwt'))
   async createSubtask(@Req() req, @Body() dto: CreateSubtaskDto) {
@@ -70,10 +71,9 @@ export class InfinityLifeController {
     return this.infinityLifeService.deleteSubtask(subtaskId, req.user.userId);
   }
 
-  // Columns
   @Post('columns')
   @UseGuards(AuthGuard('jwt'))
-  async createColumn(@Req() req, @Body() dto: { name: string }) {
+  async createColumn(@Req() req, @Body() dto: CreateColumnDto) {
     return this.infinityLifeService.createColumn(dto, req.user.userId);
   }
 
@@ -85,7 +85,7 @@ export class InfinityLifeController {
 
   @Patch('columns/:columnId')
   @UseGuards(AuthGuard('jwt'))
-  async updateColumn(@Req() req, @Param('columnId') columnId: string, @Body() dto: { name: string }) {
+  async updateColumn(@Req() req, @Param('columnId') columnId: string, @Body() dto: UpdateColumnDto) {
     return this.infinityLifeService.updateColumn(columnId, dto, req.user.userId);
   }
 

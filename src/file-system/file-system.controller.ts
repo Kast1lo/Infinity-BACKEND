@@ -12,13 +12,12 @@ import { RenameDto } from './DTO/rename.dto';
 export class FileSystemController {
   constructor(private readonly fileSystemService: FileSystemService) {}
 
-
   @Post('uploadFile')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FilesInterceptor('file', 20))
   async upload(
     @Req() req,
-    @UploadedFiles() files: Express.Multer.File[], 
+    @UploadedFiles() files: Express.Multer.File[],
     @Body() dto: UploadFileDto
   ) {
     return this.fileSystemService.uploadFiles(req.user.userId, files, dto);
@@ -67,7 +66,7 @@ export class FileSystemController {
   @Get('download/:id')
   @UseGuards(AuthGuard('jwt'))
   async downloadFile(
-    @Req() req, 
+    @Req() req,
     @Param('id') id: string,
     @Res() res: Response
   ) {
@@ -78,8 +77,6 @@ export class FileSystemController {
     @Param('username') username: string,
     @Param('filename') filename: string,
   ) {
-    console.log(`Public share request: ${username}/${filename}`);
-
     try {
       const file = await this.fileSystemService.getFileForShare(username, filename);
 
@@ -97,10 +94,9 @@ export class FileSystemController {
         }
       };
     } catch (error: any) {
-      console.error('Share error:', error.message);
       return {
         success: false,
-        message: error.message || 'Файл не найден'
+        message: error.message || 'Файл не найден',
       };
     }
   }
@@ -152,8 +148,7 @@ export class FileSystemController {
     @Param('id') id: string,
     @Query('type') type: 'file' | 'folder'
   ) {
-    console.log('Удаление:', id, type);
     return this.fileSystemService.deleteItem(req.user.userId, id, type);
   }
-  
+
 }

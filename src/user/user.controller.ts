@@ -33,7 +33,6 @@ export class UserController {
     return this.userService.updateProfile(req.user.userId, dto);
   }
 
-  // ─── Смена пароля ───
   @Patch('changePassword')
   @UseGuards(AuthGuard('jwt'))
   async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {

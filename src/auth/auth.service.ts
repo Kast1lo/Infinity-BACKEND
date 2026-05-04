@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { RegisterDto } from './DTO/register.dto';
 import * as argon2 from 'argon2';
+import * as crypto from 'crypto';
 import { loginRequest } from './DTO/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config/dist/config.service';
@@ -24,39 +25,35 @@ export class AuthService {
     private readonly mailService:   MailService,
   ) {}
 
-  // ─── Вычислить дату окончания Spark (7 дней) ───
   private getSparkExpiresAt(): Date {
     return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   }
 
-  // ─── Google OAuth ───
   async validateGoogleUser(data: {
     googleId:  string;
     email:     string;
     username:  string;
     avatarUrl: string | null;
   }) {
-    // Ищем по googleId
+
     let user = await this.prisma.user.findUnique({
       where: { googleId: data.googleId },
     });
 
     if (user) return user;
 
-    // Ищем по email — может уже зарегистрирован обычным способом
     user = await this.prisma.user.findUnique({
       where: { email: data.email },
     });
 
     if (user) {
-      // Привязываем Google к существующему аккаунту
+
       return this.prisma.user.update({
         where: { id: user.id },
         data:  { googleId: data.googleId },
       });
     }
 
-    // Новый пользователь через Google — выдаём Spark на 7 дней
     const username = await this.generateUniqueUsername(data.username);
 
     return this.prisma.user.create({
@@ -85,12 +82,10 @@ export class AuthService {
     }
   }
 
-  // ─── Генерация 6-значного кода ───
   private generateCode(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return crypto.randomInt(100_000, 1_000_000).toString();
   }
 
-  // ─── Регистрация ───
   async register(dto: RegisterDto) {
     const existUser = await this.prisma.user.findFirst({
       where: {
@@ -114,7 +109,6 @@ export class AuthService {
     const code      = this.generateCode();
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
-    // Spark выдаётся сразу при регистрации, даже до верификации email
     await this.prisma.user.create({
       data: {
         username:                  dto.username,
@@ -133,7 +127,6 @@ export class AuthService {
     return { message: 'Код подтверждения отправлен на почту', email: dto.email };
   }
 
-  // ─── Верификация email ───
   async verifyEmail(dto: VerifyEmailDto, res: Response) {
     const user = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -171,7 +164,6 @@ export class AuthService {
     return this.generateToken(verified, res);
   }
 
-  // ─── Повторная отправка кода ───
   async resendCode(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
 
@@ -199,7 +191,6 @@ export class AuthService {
     return { message: 'Новый код отправлен' };
   }
 
-  // ─── Вход ───
   async login(dto: loginRequest, res: Response) {
     const user = await this.prisma.user.findUnique({
       where: { username: dto.username },
@@ -230,7 +221,6 @@ export class AuthService {
     return this.generateToken(safeUser, res);
   }
 
-  // ─── Refresh ───
   async refresh(res: Response) {
     const refreshToken = res.req.cookies['refresh_token'];
 
@@ -269,13 +259,12 @@ export class AuthService {
         maxAge:   15 * 60 * 1000,
       });
 
-      return { accessToken: newAccessToken };
+      return { message: 'Токен обновлён' };
     } catch {
       throw new UnauthorizedException('Неверный или истекший refresh token');
     }
   }
 
-  // ─── Генерация токенов ───
   async generateToken(
     user: { id: string; email: string; username: string | null },
     res: Response,
@@ -299,6 +288,7 @@ export class AuthService {
       httpOnly: true,
       secure:   this.configService.get('NODE_ENV') === 'production',
       sameSite: 'strict',
+      path:     '/',
       maxAge:   7 * 24 * 60 * 60 * 1000,
     });
 
@@ -306,9 +296,10 @@ export class AuthService {
       httpOnly: true,
       secure:   this.configService.get('NODE_ENV') === 'production',
       sameSite: 'strict',
+      path:     '/',
       maxAge:   15 * 60 * 1000,
     });
 
-    return { accessToken };
+    return { message: 'Успешная авторизация' };
   }
 }

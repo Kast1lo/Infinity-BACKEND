@@ -18,6 +18,22 @@ import archiver from 'archiver';
 import type { Express } from 'express';
 import { PlanService } from '../plan/plan.service';
 
+const ALLOWED_MIME_TYPES = new Set([
+  'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'text/plain', 'text/csv',
+  'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed',
+  'application/x-tar', 'application/gzip',
+  'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/flac',
+  'video/mp4', 'video/webm', 'video/avi', 'video/quicktime',
+]);
+
 @Injectable()
 export class FileSystemService {
   private readonly S3Client: S3Client;
@@ -43,7 +59,10 @@ export class FileSystemService {
     if (!file) throw new BadRequestException('Файл не найден');
     if (file.size > 100 * 1024 * 1024) throw new BadRequestException('Максимальный размер файла 100 МБ');
 
-    // ─── Проверка лимита хранилища ───
+    if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
+      throw new BadRequestException(`Тип файла не поддерживается: ${file.mimetype}`);
+    }
+
     await this.planService.checkStorageLimit(userId, BigInt(file.size));
 
     const originalName  = Buffer.from(file.originalname, 'latin1').toString('utf8');
@@ -74,20 +93,25 @@ export class FileSystemService {
     });
     await upload.done();
 
-    const createdFile = await this.prisma.file.create({
-      data: {
-        name:     originalName,
-        path:     storagePath,
-        size:     BigInt(file.size),
-        mimeType: file.mimetype,
-        ownerId:  userId,
-        folderId: folderIdValue,
-        isShared: dto.isShared || false,
-      },
+    const fileSizeBig = BigInt(file.size);
+    const createdFile = await this.prisma.$transaction(async (tx) => {
+      const f = await tx.file.create({
+        data: {
+          name:     originalName,
+          path:     storagePath,
+          size:     fileSizeBig,
+          mimeType: file.mimetype,
+          ownerId:  userId,
+          folderId: folderIdValue,
+          isShared: dto.isShared || false,
+        },
+      });
+      await tx.user.update({
+        where: { id: userId },
+        data:  { storageUsed: { increment: fileSizeBig } },
+      });
+      return f;
     });
-
-    // ─── Обновить занятое хранилище ───
-    await this.planService.updateStorageUsed(userId, BigInt(file.size));
 
     const downloadUrl = await this.getPresignedUrl(storagePath, 3600 * 24);
     return { ...createdFile, downloadUrl, size: createdFile.size.toString() };
@@ -195,7 +219,6 @@ export class FileSystemService {
       await this.deleteFile(file.path);
       await this.prisma.file.delete({ where: { id } });
 
-      // ─── Освободить хранилище ───
       await this.planService.updateStorageUsed(userId, -BigInt(file.size));
 
       return { message: 'Файл удалён' };
@@ -211,7 +234,6 @@ export class FileSystemService {
       const totalSize = await this.getFolderTotalSize(folder);
       await this.deleteFolderRecursive(folder);
 
-      // ─── Освободить хранилище ───
       if (totalSize > 0n) {
         await this.planService.updateStorageUsed(userId, -totalSize);
       }
@@ -222,7 +244,6 @@ export class FileSystemService {
     throw new BadRequestException('Неверный тип элемента');
   }
 
-  // Считаем суммарный размер всех файлов в папке рекурсивно
   private async getFolderTotalSize(folder: any): Promise<bigint> {
     let total = 0n;
     for (const file of folder.files) {
@@ -331,9 +352,8 @@ export class FileSystemService {
     );
 
     res.set({
-      'Content-Type':              ContentType || file.mimeType || 'application/octet-stream',
-      'Access-Control-Allow-Origin': 'http://localhost:4200',
-      'Cache-Control':             'no-cache',
+      'Content-Type':  ContentType || file.mimeType || 'application/octet-stream',
+      'Cache-Control': 'no-cache',
     });
     (Body as any).pipe(res);
   }

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
 import { updateProfile } from './DTO/update-profile.dto';
 import { StorageService } from 'src/services/files.service';
@@ -29,14 +29,19 @@ export class UserService {
   }
 
   async updateProfile(userId: string, dto: updateProfile) {
-    const updated = await this.prisma.user.update({
-      where: { id: userId },
-      data:  { username: dto.username },
-    });
-    return updated;
+    try {
+      return await this.prisma.user.update({
+        where: { id: userId },
+        data:  { username: dto.username },
+      });
+    } catch (e: any) {
+      if (e?.code === 'P2002') {
+        throw new ConflictException('Пользователь с таким именем уже существует');
+      }
+      throw e;
+    }
   }
 
-  // ─── Смена пароля ───
   async changePassword(userId: string, dto: ChangePasswordDto) {
     const user = await this.prisma.user.findUnique({
       where:  { id: userId },

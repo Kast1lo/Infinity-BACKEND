@@ -12,5 +12,5 @@ export class GeneratePromoDto {
 
   @IsOptional()
   @IsString()
-  source?: string; // manual | gift | sbp
+  source?: string;
 }

@@ -10,7 +10,7 @@ export interface PlanInfoResponse {
   planExpiresAt:  Date | null;
   isFrozen:       boolean;
   frozenAt:       Date | null;
-  daysLeft:       number | null;  // для spark — дней до конца триала
-  freezeDaysLeft: number | null;  // для frozen — дней до удаления данных
+  daysLeft:       number | null;
+  freezeDaysLeft: number | null;
   storage:        StorageInfo;
 }

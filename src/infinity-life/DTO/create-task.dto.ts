@@ -1,11 +1,14 @@
-import { IsString, IsOptional, IsBoolean, IsDateString } from 'class-validator';
+import { IsString, IsOptional, IsDateString, MaxLength, MinLength, Matches } from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
+  @MinLength(1)
+  @MaxLength(255)
   title: string;
 
   @IsOptional()
   @IsString()
+  @MaxLength(5000)
   notes?: string;
 
   @IsOptional()
@@ -22,5 +25,6 @@ export class CreateTaskDto {
 
   @IsOptional()
   @IsString()
+  @Matches(/^#[0-9A-Fa-f]{6}$/, { message: 'color должен быть hex-цветом вида #RRGGBB' })
   color?: string | null;
 }

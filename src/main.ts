@@ -29,12 +29,7 @@ async function bootstrap() {
 
   if (isProd) {
     const expressApp = app.getHttpAdapter().getInstance() as express.Express;
-    const staticPath = join(
-      'C:\\Users\\azomg\\Desktop\\Infinity-frontend\\infinity',
-      'dist',
-      'infinity',
-      'browser',
-    );
+    const staticPath = process.env.FRONTEND_DIST_PATH || join(__dirname, '..', 'frontend', 'browser');
 
     if (fs.existsSync(staticPath)) {
       expressApp.use(express.static(staticPath));
