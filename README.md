@@ -8,26 +8,26 @@
 <h1 align="center">Infinity — Backend</h1>
 
 <p align="center">
-  REST API для платформы <strong>Infinity Vault</strong> — облачное хранилище файлов и Kanban-доска в одном сервисе.
+  REST API for the <strong>Infinity</strong> platform — cloud file storage and Kanban board in one service.
 </p>
 
 ---
 
 ## Overview
 
-**Infinity Backend** — это NestJS-приложение, предоставляющее полный API для SaaS-платформы Infinity Vault. Реализует:
+**Infinity Backend** is a NestJS application that provides the full API for the Infinity platform. It covers:
 
-- Cookie-based JWT аутентификацию с refresh-токенами и Google OAuth
-- Облачное хранилище файлов поверх S3-совместимого Selectel Object Storage
-- Kanban-доску с колонками, задачами и подзадачами
-- Систему тарифных планов с квотами на хранилище и задачи
-- Email-верификацию через Resend API
+- Cookie-based JWT authentication with refresh tokens and Google OAuth
+- Cloud file storage backed by Selectel S3-compatible Object Storage
+- Kanban board with columns, tasks, and subtasks
+- Subscription plan system with storage and task quotas
+- Email verification via Resend API
 
-Является частью монорепозитория **Infinity Vault**:
+Part of the **Infinity** monorepo:
 
-| Сервис | Стек | Порт |
+| Service | Stack | Port |
 |---|---|---|
-| **Backend** (этот репозиторий) | NestJS 11 · Prisma 7 · PostgreSQL | `4400` |
+| **Backend** (this repo) | NestJS 11 · Prisma 7 · PostgreSQL | `4400` |
 | **Frontend** | Angular 21 · PrimeNG 21 · TypeScript | `4200` |
 
 ---
@@ -35,38 +35,38 @@
 ## Features
 
 ### Auth
-- Регистрация с верификацией email (6-значный код, 15 мин)
-- Вход по username + password (argon2id хэширование)
-- Google OAuth 2.0 (автосвязывание аккаунтов по email)
-- Silent refresh — access token 15 мин, refresh token 7 дней в httpOnly cookie
-- Глобальный rate limiting (30 req/60s), усиленный на auth-эндпоинтах
+- Registration with email verification (6-digit code, 15-minute expiry)
+- Login with username + password (argon2id hashing)
+- Google OAuth 2.0 (auto-links to existing accounts by email)
+- Silent token refresh — access token 15 min, refresh token 7 days in httpOnly cookie
+- Global rate limiting (30 req/60s) with stricter limits on auth endpoints
 
 ### File Storage
-- Загрузка до 20 файлов за один запрос (до 100 МБ каждый)
-- Иерархия папок с рекурсивным деревом
-- Presigned URLs (24 ч) для безопасного доступа к файлам
-- Публичные ссылки на файлы (без авторизации)
-- Скачивание папок как ZIP-архив
-- Inline-проксирование файлов для предпросмотра в браузере
+- Upload up to 20 files per request (up to 100 MB each)
+- Nested folder hierarchy with recursive tree
+- Presigned URLs (24 h) for secure file access
+- Public file sharing links (no auth required)
+- Download entire folders as ZIP archives
+- File proxying for inline browser previews
 
 ### Kanban (Infinity Life)
-- Создание пользовательских колонок
-- Задачи с приоритетом (High/Medium/Low), дедлайном, цветовой меткой и описанием
-- Подзадачи с inline прогресс-баром
-- Перемещение задач между колонками
+- Custom user-defined columns
+- Tasks with priority (High / Medium / Low), deadline, color label, and description
+- Subtasks with inline progress tracking
+- Move tasks between columns
 
 ### Plans & Quotas
 
-| Тариф | Хранилище | Задачи | Срок |
+| Plan | Storage | Tasks | Duration |
 |---|---|---|---|
-| **Spark** | 5 ГБ | до 30 | 7 дней (пробный) |
-| **Pulse** | 250 ГБ | ∞ | Ежемесячно |
-| **Horizon** | 1 ТБ | ∞ | Ежегодно |
-| **Eternal** | 1 ТБ | ∞ | Бессрочно |
+| **Spark** | 5 GB | up to 30 | 7-day free trial |
+| **Pulse** | 250 GB | unlimited | Monthly |
+| **Horizon** | 1 TB | unlimited | Annual |
+| **Eternal** | 1 TB | unlimited | Lifetime |
 
-- Автозаморозка истёкших Spark-аккаунтов (cron каждый час)
-- Удаление данных через 14 дней после заморозки
-- Промокоды для активации планов
+- Automatic freeze of expired Spark accounts (hourly cron)
+- Data deletion 14 days after freeze
+- Promo codes for plan activation
 
 ---
 
@@ -76,8 +76,8 @@
 
 - Node.js 20+
 - PostgreSQL
-- S3-совместимое хранилище (Selectel или любое другое)
-- Аккаунт Resend для отправки email
+- S3-compatible storage (Selectel or any other provider)
+- Resend account for transactional email
 - Google OAuth credentials
 
 ### Install & run
@@ -89,12 +89,12 @@ npx prisma generate
 npm run start:dev
 ```
 
-API будет доступен на `http://localhost:4400`.  
-Swagger UI — на `http://localhost:4400/api/docs`.
+The API will be available at `http://localhost:4400`.  
+Swagger UI is at `http://localhost:4400/api/docs`.
 
 ### Environment variables
 
-Создайте файл `.env` в директории проекта:
+Create a `.env` file in the project directory:
 
 ```env
 # App
@@ -129,7 +129,7 @@ GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_CALLBACK_URL=http://localhost:4400/auth/google/callback
 
 # Admin
-ADMIN_EMAILS=admin@example.com,another@example.com
+ADMIN_EMAILS=admin@example.com
 ```
 
 ### Database migrations
@@ -142,7 +142,7 @@ npx prisma migrate dev --name init
 
 ## API Documentation
 
-После запуска сервера Swagger UI доступен по адресу:
+Once the server is running, Swagger UI is available at:
 
 ```
 http://localhost:4400/api/docs
@@ -153,74 +153,74 @@ http://localhost:4400/api/docs
 #### Auth `/auth`
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| POST | `/auth/register` | — | Регистрация (5 req/min) |
-| POST | `/auth/verify-email` | — | Верификация email (10 req/min) |
-| POST | `/auth/resend-code` | — | Повторная отправка кода (3 req/min) |
-| POST | `/auth/login` | — | Вход (5 req/min) |
-| POST | `/auth/refresh` | Cookie | Обновление access-токена |
-| GET | `/auth/google` | — | OAuth Google — редирект |
-| GET | `/auth/google/callback` | Google | OAuth Google — callback |
-| POST | `/auth/logout` | Cookie | Выход |
+| POST | `/auth/register` | — | Register a new user (5 req/min) |
+| POST | `/auth/verify-email` | — | Verify email with 6-digit code (10 req/min) |
+| POST | `/auth/resend-code` | — | Resend verification code (3 req/min) |
+| POST | `/auth/login` | — | Login (5 req/min) |
+| POST | `/auth/refresh` | Cookie | Refresh access token |
+| GET | `/auth/google` | — | Initiate Google OAuth |
+| GET | `/auth/google/callback` | Google | Google OAuth callback |
+| POST | `/auth/logout` | Cookie | Logout and clear cookies |
 
 #### User `/user`
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/user/profile` | JWT | Получить профиль |
-| PATCH | `/user/updateProfile` | JWT | Обновить username/email |
-| PATCH | `/user/changePassword` | JWT | Сменить пароль |
-| POST | `/user/createAvatar` | JWT | Загрузить аватар |
+| GET | `/user/profile` | JWT | Get current user profile |
+| PATCH | `/user/updateProfile` | JWT | Update username / email |
+| PATCH | `/user/changePassword` | JWT | Change password |
+| POST | `/user/createAvatar` | JWT | Upload avatar image |
 
 #### File System `/file-system`
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| POST | `/file-system/uploadFile` | JWT | Загрузить файлы (до 20) |
-| POST | `/file-system/createFolder` | JWT | Создать папку |
-| GET | `/file-system/tree` | JWT | Дерево папок и файлов |
-| GET | `/file-system/files` | JWT | Файлы в корне |
-| GET | `/file-system/files/:folderId` | JWT | Файлы в папке |
-| GET | `/file-system/download/:id` | JWT | Скачать файл |
-| GET | `/file-system/download-folder/:folderId` | JWT | Скачать папку как ZIP |
-| GET | `/file-system/proxy/:id` | JWT | Проксировать файл (предпросмотр) |
-| PATCH | `/file-system/rename/:id` | JWT | Переименовать файл/папку |
-| PATCH | `/file-system/move/:id` | JWT | Переместить файл |
-| DELETE | `/file-system/delete/:id` | JWT | Удалить файл/папку |
-| GET | `/file-system/share/:username/:filename` | — | Метаданные публичного файла |
-| GET | `/file-system/share/download/:username/:filename` | — | Скачать публичный файл |
+| POST | `/file-system/uploadFile` | JWT | Upload files (up to 20) |
+| POST | `/file-system/createFolder` | JWT | Create a folder |
+| GET | `/file-system/tree` | JWT | Get full folder tree |
+| GET | `/file-system/files` | JWT | Get root-level files |
+| GET | `/file-system/files/:folderId` | JWT | Get files inside a folder |
+| GET | `/file-system/download/:id` | JWT | Download a file |
+| GET | `/file-system/download-folder/:folderId` | JWT | Download folder as ZIP |
+| GET | `/file-system/proxy/:id` | JWT | Proxy file for inline preview |
+| PATCH | `/file-system/rename/:id` | JWT | Rename a file or folder |
+| PATCH | `/file-system/move/:id` | JWT | Move a file to another folder |
+| DELETE | `/file-system/delete/:id` | JWT | Delete a file or folder |
+| GET | `/file-system/share/:username/:filename` | — | Get public file metadata |
+| GET | `/file-system/share/download/:username/:filename` | — | Download a public file |
 
 #### Infinity Life `/infinity-life`
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/infinity-life/tasks` | JWT | Все задачи |
-| POST | `/infinity-life/tasks` | JWT | Создать задачу |
-| PATCH | `/infinity-life/tasks/:taskId` | JWT | Обновить задачу |
-| PATCH | `/infinity-life/tasks/:taskId/toggle` | JWT | Переключить выполнение |
-| PATCH | `/infinity-life/tasks/:taskId/move` | JWT | Переместить в колонку |
-| DELETE | `/infinity-life/tasks/:taskId` | JWT | Удалить задачу |
-| POST | `/infinity-life/subtasks` | JWT | Создать подзадачу |
-| PATCH | `/infinity-life/subtasks/:subtaskId/toggle` | JWT | Переключить подзадачу |
-| DELETE | `/infinity-life/subtasks/:subtaskId` | JWT | Удалить подзадачу |
-| GET | `/infinity-life/columns` | JWT | Все колонки |
-| POST | `/infinity-life/columns` | JWT | Создать колонку |
-| PATCH | `/infinity-life/columns/:columnId` | JWT | Переименовать колонку |
-| DELETE | `/infinity-life/columns/:columnId` | JWT | Удалить колонку |
+| GET | `/infinity-life/tasks` | JWT | Get all user tasks |
+| POST | `/infinity-life/tasks` | JWT | Create a task |
+| PATCH | `/infinity-life/tasks/:taskId` | JWT | Update a task |
+| PATCH | `/infinity-life/tasks/:taskId/toggle` | JWT | Toggle task completion |
+| PATCH | `/infinity-life/tasks/:taskId/move` | JWT | Move task to a column |
+| DELETE | `/infinity-life/tasks/:taskId` | JWT | Delete a task |
+| POST | `/infinity-life/subtasks` | JWT | Create a subtask |
+| PATCH | `/infinity-life/subtasks/:subtaskId/toggle` | JWT | Toggle subtask completion |
+| DELETE | `/infinity-life/subtasks/:subtaskId` | JWT | Delete a subtask |
+| GET | `/infinity-life/columns` | JWT | Get all columns |
+| POST | `/infinity-life/columns` | JWT | Create a column |
+| PATCH | `/infinity-life/columns/:columnId` | JWT | Rename a column |
+| DELETE | `/infinity-life/columns/:columnId` | JWT | Delete a column |
 
 #### Plan `/plan`
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/plan/info` | JWT | Информация о плане и хранилище |
-| POST | `/plan/activate-promo` | JWT | Активировать промокод |
-| POST | `/plan/admin/generate-promo` | JWT + Admin | Сгенерировать промокоды |
+| GET | `/plan/info` | JWT | Get plan and storage info |
+| POST | `/plan/activate-promo` | JWT | Activate a promo code |
+| POST | `/plan/admin/generate-promo` | JWT + Admin | Generate promo codes |
 
 ---
 
 ## Authentication
 
-API использует **cookie-based JWT аутентификацию**:
+The API uses **cookie-based JWT authentication**:
 
-- `access_token` — httpOnly cookie, живёт 15 минут
-- `refresh_token` — httpOnly cookie, живёт 7 дней
+- `access_token` — httpOnly cookie, expires in 15 minutes
+- `refresh_token` — httpOnly cookie, expires in 7 days
 
-Для работы в dev-режиме фронтенд должен отправлять запросы с `withCredentials: true`, а оба сервиса должны работать на одном хосте (`localhost`).
+The frontend must send requests with `withCredentials: true`. Both services must run on the same host (`localhost`) in development for cookies to work correctly.
 
 ---
 
@@ -228,28 +228,28 @@ API использует **cookie-based JWT аутентификацию**:
 
 ```
 src/
-├── auth/               # JWT + Google OAuth, верификация email
+├── auth/               # JWT + Google OAuth, email verification
 │   ├── DTO/
 │   ├── guards/
 │   └── strategies/
-├── user/               # Профиль, аватар, смена пароля
+├── user/               # Profile, avatar, password change
 │   └── DTO/
-├── file-system/        # Файлы, папки, S3-хранилище
+├── file-system/        # Files, folders, S3 storage
 │   └── DTO/
-├── infinity-life/      # Kanban: задачи, подзадачи, колонки
+├── infinity-life/      # Kanban: tasks, subtasks, columns
 │   └── DTO/
-├── plan/               # Тарифы, промокоды, квоты
+├── plan/               # Plans, promo codes, quotas
 │   ├── DTO/
 │   ├── guards/
 │   └── interfaces/
-├── mail/               # Email через Resend
+├── mail/               # Email via Resend
 ├── services/           # StorageService (S3)
 ├── prisma-database/    # PrismaClient singleton
 ├── app.module.ts
 └── main.ts
 
 prisma/
-└── schema.prisma       # Схема БД
+└── schema.prisma       # Database schema
 ```
 
 ---
@@ -257,15 +257,15 @@ prisma/
 ## Commands
 
 ```bash
-npm run start:dev       # Запуск в watch-режиме
-npm run build           # Сборка в dist/
-npm run start:prod      # Запуск production-сборки
-npm test                # Unit-тесты (Jest)
-npm run test:e2e        # E2E-тесты
-npm run lint            # ESLint с автофиксом
+npm run start:dev       # Run in watch mode
+npm run build           # Compile to dist/
+npm run start:prod      # Run production build
+npm test                # Unit tests (Jest)
+npm run test:e2e        # E2E tests
+npm run lint            # ESLint with auto-fix
 npm run format          # Prettier
-npx prisma generate     # Регенерация Prisma Client
-npx prisma migrate dev  # Создание миграции
+npx prisma generate     # Regenerate Prisma Client
+npx prisma migrate dev  # Create a new migration
 ```
 
 ---
@@ -277,19 +277,19 @@ docker build -t infinity-backend .
 docker run -p 4400:4400 --env-file .env infinity-backend
 ```
 
-Dockerfile выполняет двухэтапную сборку (Node 20 Alpine): `prisma generate` → `nest build` → production-образ.
+The Dockerfile performs a two-stage build (Node 20 Alpine): `prisma generate` → `nest build` → production image.
 
 ---
 
 ## Tech Stack
 
-- **NestJS 11** — модульный фреймворк
-- **Prisma 7** + **pg** — ORM с нативным PostgreSQL-адаптером
-- **Passport.js** — JWT и Google OAuth стратегии
-- **argon2** — хэширование паролей
-- **@aws-sdk/client-s3** — S3-совместимое хранилище (Selectel)
-- **archiver** — генерация ZIP-архивов на лету
-- **Resend** — транзакционные email
-- **@nestjs/swagger** — Swagger / OpenAPI документация
+- **NestJS 11** — modular Node.js framework
+- **Prisma 7** + **pg** — ORM with native PostgreSQL adapter
+- **Passport.js** — JWT and Google OAuth strategies
+- **argon2** — password hashing
+- **@aws-sdk/client-s3** — S3-compatible storage (Selectel)
+- **archiver** — on-the-fly ZIP generation
+- **Resend** — transactional email
+- **@nestjs/swagger** — Swagger / OpenAPI documentation
 - **@nestjs/throttler** — rate limiting
-- **@nestjs/schedule** — cron-задачи
+- **@nestjs/schedule** — cron jobs
