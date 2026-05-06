@@ -78,6 +78,7 @@ async function bootstrap() {
   const port = process.env.APPLICATION_PORT || 4400;
   await app.listen(port);
   console.log(`Server running on http://localhost:${port}`);
+  console.log(`Swagger UI:  http://localhost:${port}/api/docs`);
   console.log(`NODE_ENV=${process.env.NODE_ENV ?? 'undefined'} | CORS origin=${allowedOrigin}`);
 }
 
