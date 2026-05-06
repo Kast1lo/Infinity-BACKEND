@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import * as express from 'express';
 import { join } from 'path';
 import * as fs from 'fs';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +27,27 @@ async function bootstrap() {
   });
 
   app.use(cookieParser());
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Infinity API')
+    .setDescription(
+      'REST API для платформы Infinity Vault — облачное хранилище файлов и Kanban-доска.\n\n' +
+      'Аутентификация выполняется через cookie (`access_token` / `refresh_token`). ' +
+      'Для защищённых эндпоинтов передайте валидный `access_token` в cookie или через Bearer-заголовок.'
+    )
+    .setVersion('1.0')
+    .addCookieAuth('access_token')
+    .addTag('Auth', 'Регистрация, вход, OAuth Google, верификация email')
+    .addTag('User', 'Профиль пользователя, аватар, смена пароля')
+    .addTag('File System', 'Загрузка файлов, папки, публичные ссылки')
+    .addTag('Infinity Life', 'Kanban-доска: задачи, подзадачи, колонки')
+    .addTag('Plan', 'Тарифные планы, промокоды')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: { withCredentials: true },
+  });
 
   if (isProd) {
     const expressApp = app.getHttpAdapter().getInstance() as express.Express;

@@ -15,11 +15,34 @@ import { AuthGuard } from '@nestjs/passport';
 import { updateProfile } from './DTO/update-profile.dto';
 import { ChangePasswordDto } from './DTO/change-password.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiCookieAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 
+@ApiTags('User')
+@ApiCookieAuth('access_token')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOperation({ summary: 'Получить профиль текущего пользователя' })
+  @ApiResponse({
+    status: 200,
+    description: 'Данные профиля',
+    schema: {
+      example: {
+        id: 'uuid', email: 'user@example.com', username: 'john_doe',
+        createdAt: '2025-01-01T00:00:00.000Z', avatarKey: 'avatars/uuid.jpg',
+        avatarUrl: 'https://storage.example.com/signed-url',
+      },
+    },
+  })
+  @ApiResponse({ status: 401, description: 'Не аутентифицирован' })
   @Get('profile')
   @UseGuards(AuthGuard('jwt'))
   async getProfile(@Req() req) {
@@ -27,18 +50,37 @@ export class UserController {
     return this.userService.getProfile(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Обновить имя пользователя / email' })
+  @ApiBody({ type: updateProfile })
+  @ApiResponse({ status: 200, description: 'Профиль обновлён' })
+  @ApiResponse({ status: 400, description: 'Некорректные данные' })
   @Patch('updateProfile')
   @UseGuards(AuthGuard('jwt'))
   async updateProfile(@Req() req, @Body() dto: updateProfile) {
     return this.userService.updateProfile(req.user.userId, dto);
   }
 
+  @ApiOperation({ summary: 'Сменить пароль' })
+  @ApiBody({ type: ChangePasswordDto })
+  @ApiResponse({ status: 200, description: 'Пароль успешно изменён', schema: { example: { message: 'Пароль успешно изменён' } } })
+  @ApiResponse({ status: 400, description: 'Неверный текущий пароль' })
   @Patch('changePassword')
   @UseGuards(AuthGuard('jwt'))
   async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
     return this.userService.changePassword(req.user.userId, dto);
   }
 
+  @ApiOperation({ summary: 'Загрузить аватар пользователя' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: { type: 'string', format: 'binary', description: 'Файл изображения (JPEG, PNG, GIF, WebP, BMP)' },
+      },
+    },
+  })
+  @ApiResponse({ status: 201, description: 'Аватар загружен', schema: { example: { avatarKey: 'avatars/uuid.jpg', avatarUrl: 'https://...' } } })
   @Post('createAvatar')
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(FileInterceptor('file'))
