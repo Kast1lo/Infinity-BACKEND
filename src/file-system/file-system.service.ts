@@ -6,6 +6,7 @@ import {
   PutObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
+  GetObjectCommandOutput,
 } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -19,7 +20,9 @@ import type { Express } from 'express';
 import { PlanService } from '../plan/plan.service';
 
 const ALLOWED_MIME_TYPES = new Set([
-  'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff',
+  'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+  'image/svg+xml', 'image/bmp', 'image/tiff', 'image/heic', 'image/heif',
+  'image/avif', 'image/jxl',
   'application/pdf',
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -27,11 +30,23 @@ const ALLOWED_MIME_TYPES = new Set([
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.ms-powerpoint',
   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-  'text/plain', 'text/csv',
-  'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed',
-  'application/x-tar', 'application/gzip',
-  'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/flac',
-  'video/mp4', 'video/webm', 'video/avi', 'video/quicktime',
+  'text/plain', 'text/csv', 'text/markdown', 'text/x-markdown',
+  'application/json', 'application/xml', 'text/xml',
+  'application/zip', 'application/x-zip', 'application/x-zip-compressed',
+  'application/x-rar-compressed', 'application/x-7z-compressed',
+  'application/x-tar', 'application/gzip', 'application/x-bzip2',
+  'audio/mpeg', 'audio/mp3', 'audio/x-mp3',
+  'audio/wav', 'audio/x-wav', 'audio/wave',
+  'audio/ogg', 'audio/flac', 'audio/x-flac',
+  'audio/aac', 'audio/x-aac',
+  'audio/mp4', 'audio/x-m4a',
+  'audio/opus', 'audio/webm',
+  'video/mp4', 'video/webm', 'video/ogg',
+  'video/avi', 'video/x-msvideo',
+  'video/quicktime', 'video/x-matroska',
+  'video/x-flv', 'video/x-ms-wmv',
+  'video/3gpp', 'video/3gpp2',
+  'application/octet-stream',
 ]);
 
 @Injectable()
@@ -135,9 +150,9 @@ export class FileSystemService {
   }
 
   async createFolder(userId: string, dto: CreateFolderDto) {
-    const { name, isShared, parentId } = dto;
-
-    if (!name || /[^\w\u0400-\u04FF\- ]/.test(name)) {
+    const { isShared, parentId } = dto;
+    const name = dto.name.trim();
+    if (!name || name.length > 255 || /[/:*?"<>|]/.test(name)) {
       throw new BadRequestException('Недопустимое имя папки');
     }
 
@@ -330,13 +345,19 @@ export class FileSystemService {
     const file = await this.prisma.file.findUnique({ where: { id } });
     if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
 
-    const { Body, ContentType } = await this.S3Client.send(
-      new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }),
-    );
+    let s3Response: GetObjectCommandOutput;
+    try {
+      s3Response = await this.S3Client.send(
+        new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }),
+      );
+    } catch {
+      throw new NotFoundException('Файл не найден в хранилище');
+    }
 
+    const { Body, ContentType } = s3Response as any;
     res.set({
       'Content-Type':        ContentType || file.mimeType || 'application/octet-stream',
-      'Content-Disposition': `attachment; filename="${file.name}"`,
+      'Content-Disposition': `attachment; filename="${encodeURIComponent(file.name)}"`,
       'Content-Length':      file.size.toString(),
       'Cache-Control':       'no-cache',
     });
@@ -347,10 +368,16 @@ export class FileSystemService {
     const file = await this.prisma.file.findUnique({ where: { id } });
     if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
 
-    const { Body, ContentType } = await this.S3Client.send(
-      new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }),
-    );
+    let s3Response: GetObjectCommandOutput;
+    try {
+      s3Response = await this.S3Client.send(
+        new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }),
+      );
+    } catch {
+      throw new NotFoundException('Файл не найден в хранилище');
+    }
 
+    const { Body, ContentType } = s3Response as any;
     res.set({
       'Content-Type':  ContentType || file.mimeType || 'application/octet-stream',
       'Cache-Control': 'no-cache',
@@ -363,7 +390,7 @@ export class FileSystemService {
     if (!user) throw new NotFoundException('Пользователь не найден');
 
     const file = await this.prisma.file.findFirst({
-      where:  { ownerId: user.id, name: filename },
+      where:  { ownerId: user.id, name: filename, isShared: true },
       select: { id: true, name: true, size: true, mimeType: true, createdAt: true, path: true },
     });
     if (!file) throw new NotFoundException('Файл не найден');
@@ -374,9 +401,15 @@ export class FileSystemService {
   async streamFileForShare(username: string, filename: string, res: Response) {
     const file = await this.getFileForShare(username, filename);
 
-    const { Body, ContentType } = await this.S3Client.send(
-      new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }),
-    );
+    let s3Response: GetObjectCommandOutput;
+    try {
+      s3Response = await this.S3Client.send(
+        new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }),
+      );
+    } catch {
+      throw new NotFoundException('Файл не найден в хранилище');
+    }
+    const { Body, ContentType } = s3Response as any;
 
     res.set({
       'Content-Type':        ContentType || file.mimeType || 'application/octet-stream',

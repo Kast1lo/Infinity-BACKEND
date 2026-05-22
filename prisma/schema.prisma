@@ -147,3 +147,4 @@ model Folder {
 
   @@index([ownerId, path])
 }
+
