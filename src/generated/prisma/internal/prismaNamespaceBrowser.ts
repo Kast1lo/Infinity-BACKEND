@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   PromoCode: 'PromoCode',
+  Project: 'Project',
   TaskColumn: 'TaskColumn',
   Task: 'Task',
   Subtask: 'Subtask',
@@ -92,7 +93,9 @@ export const UserScalarFieldEnum = {
   planExpiresAt: 'planExpiresAt',
   isFrozen: 'isFrozen',
   frozenAt: 'frozenAt',
-  storageUsed: 'storageUsed'
+  storageUsed: 'storageUsed',
+  aiCallsToday: 'aiCallsToday',
+  aiCallsResetAt: 'aiCallsResetAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -112,11 +115,25 @@ export const PromoCodeScalarFieldEnum = {
 export type PromoCodeScalarFieldEnum = (typeof PromoCodeScalarFieldEnum)[keyof typeof PromoCodeScalarFieldEnum]
 
 
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  color: 'color',
+  icon: 'icon',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
 export const TaskColumnScalarFieldEnum = {
   id: 'id',
   name: 'name',
   order: 'order',
-  userId: 'userId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -134,6 +151,7 @@ export const TaskScalarFieldEnum = {
   color: 'color',
   order: 'order',
   columnId: 'columnId',
+  projectId: 'projectId',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

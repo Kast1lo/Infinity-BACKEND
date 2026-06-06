@@ -385,6 +385,18 @@ export class FileSystemService {
     (Body as any).pipe(res);
   }
 
+  async setFileShared(userId: string, id: string, isShared: boolean) {
+    const file = await this.prisma.file.findUnique({ where: { id } });
+    if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+
+    const updated = await this.prisma.file.update({
+      where: { id },
+      data:  { isShared },
+      select: { id: true, name: true, isShared: true },
+    });
+    return { success: true, data: updated };
+  }
+
   async getFileForShare(username: string, filename: string) {
     const user = await this.prisma.user.findUnique({ where: { username }, select: { id: true } });
     if (!user) throw new NotFoundException('Пользователь не найден');

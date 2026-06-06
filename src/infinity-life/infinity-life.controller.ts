@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { InfinityLifeService } from './infinity-life.service';
 import { CreateTaskDto } from './DTO/create-task.dto';
 import { UpdateTaskDto } from './DTO/update-task.dto';
 import { CreateSubtaskDto } from './DTO/create-subtask.dto';
-import { UpdateSubtaskDto } from './DTO/update-subtask.dto';
 import { CreateColumnDto } from './DTO/create-column.dto';
 import { UpdateColumnDto } from './DTO/update-column.dto';
 import { MoveTaskDto } from './DTO/move-task.dto';
@@ -14,6 +13,7 @@ import {
   ApiResponse,
   ApiBody,
   ApiParam,
+  ApiQuery,
   ApiCookieAuth,
 } from '@nestjs/swagger';
 
@@ -136,12 +136,13 @@ export class InfinityLifeController {
     return this.infinityLifeService.createColumn(dto, req.user.userId);
   }
 
-  @ApiOperation({ summary: 'Получить все колонки пользователя' })
-  @ApiResponse({ status: 200, description: 'Список колонок' })
+  @ApiOperation({ summary: 'Получить колонки проекта' })
+  @ApiQuery({ name: 'projectId', description: 'UUID проекта', required: true })
+  @ApiResponse({ status: 200, description: 'Список колонок проекта' })
   @Get('columns')
   @UseGuards(AuthGuard('jwt'))
-  async getUserColumns(@Req() req) {
-    return this.infinityLifeService.getUserColumns(req.user.userId);
+  async getProjectColumns(@Req() req, @Query('projectId') projectId: string) {
+    return this.infinityLifeService.getProjectColumns(projectId, req.user.userId);
   }
 
   @ApiOperation({ summary: 'Переименовать колонку' })

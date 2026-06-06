@@ -5,9 +5,10 @@ import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
 import { PrismaDatabaseModule } from 'src/prisma-database/prisma-database.module';
 import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { PlanModule } from 'src/plan/plan.module';
+import { ProjectModule } from 'src/project/project.module';
 
 @Module({
-  imports: [PlanModule, ConfigModule, PrismaDatabaseModule, JwtModule],
+  imports: [PlanModule, ProjectModule, ConfigModule, PrismaDatabaseModule, JwtModule],
   controllers: [InfinityLifeController],
   providers: [InfinityLifeService],
 })

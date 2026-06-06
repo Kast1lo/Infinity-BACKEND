@@ -38,7 +38,7 @@ export type TaskColumnMinAggregateOutputType = {
   id: string | null
   name: string | null
   order: number | null
-  userId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,7 +47,7 @@ export type TaskColumnMaxAggregateOutputType = {
   id: string | null
   name: string | null
   order: number | null
-  userId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,7 +56,7 @@ export type TaskColumnCountAggregateOutputType = {
   id: number
   name: number
   order: number
-  userId: number
+  projectId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -75,7 +75,7 @@ export type TaskColumnMinAggregateInputType = {
   id?: true
   name?: true
   order?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -84,7 +84,7 @@ export type TaskColumnMaxAggregateInputType = {
   id?: true
   name?: true
   order?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -93,7 +93,7 @@ export type TaskColumnCountAggregateInputType = {
   id?: true
   name?: true
   order?: true
-  userId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -189,7 +189,7 @@ export type TaskColumnGroupByOutputType = {
   id: string
   name: string
   order: number
-  userId: string
+  projectId: string
   createdAt: Date
   updatedAt: Date
   _count: TaskColumnCountAggregateOutputType | null
@@ -221,10 +221,10 @@ export type TaskColumnWhereInput = {
   id?: Prisma.StringFilter<"TaskColumn"> | string
   name?: Prisma.StringFilter<"TaskColumn"> | string
   order?: Prisma.IntFilter<"TaskColumn"> | number
-  userId?: Prisma.StringFilter<"TaskColumn"> | string
+  projectId?: Prisma.StringFilter<"TaskColumn"> | string
   createdAt?: Prisma.DateTimeFilter<"TaskColumn"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaskColumn"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   tasks?: Prisma.TaskListRelationFilter
 }
 
@@ -232,10 +232,10 @@ export type TaskColumnOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
 }
 
@@ -246,10 +246,10 @@ export type TaskColumnWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.TaskColumnWhereInput | Prisma.TaskColumnWhereInput[]
   name?: Prisma.StringFilter<"TaskColumn"> | string
   order?: Prisma.IntFilter<"TaskColumn"> | number
-  userId?: Prisma.StringFilter<"TaskColumn"> | string
+  projectId?: Prisma.StringFilter<"TaskColumn"> | string
   createdAt?: Prisma.DateTimeFilter<"TaskColumn"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaskColumn"> | Date | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   tasks?: Prisma.TaskListRelationFilter
 }, "id">
 
@@ -257,7 +257,7 @@ export type TaskColumnOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TaskColumnCountOrderByAggregateInput
@@ -274,7 +274,7 @@ export type TaskColumnScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"TaskColumn"> | string
   name?: Prisma.StringWithAggregatesFilter<"TaskColumn"> | string
   order?: Prisma.IntWithAggregatesFilter<"TaskColumn"> | number
-  userId?: Prisma.StringWithAggregatesFilter<"TaskColumn"> | string
+  projectId?: Prisma.StringWithAggregatesFilter<"TaskColumn"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"TaskColumn"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"TaskColumn"> | Date | string
 }
@@ -285,7 +285,7 @@ export type TaskColumnCreateInput = {
   order?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutColumnsInput
+  project: Prisma.ProjectCreateNestedOneWithoutColumnsInput
   tasks?: Prisma.TaskCreateNestedManyWithoutColumnInput
 }
 
@@ -293,7 +293,7 @@ export type TaskColumnUncheckedCreateInput = {
   id?: string
   name: string
   order?: number
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutColumnInput
@@ -305,7 +305,7 @@ export type TaskColumnUpdateInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutColumnsNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutColumnsNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutColumnNestedInput
 }
 
@@ -313,7 +313,7 @@ export type TaskColumnUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutColumnNestedInput
@@ -323,7 +323,7 @@ export type TaskColumnCreateManyInput = {
   id?: string
   name: string
   order?: number
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -340,7 +340,7 @@ export type TaskColumnUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -359,7 +359,7 @@ export type TaskColumnCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -372,7 +372,7 @@ export type TaskColumnMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -381,7 +381,7 @@ export type TaskColumnMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   order?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -395,54 +395,46 @@ export type TaskColumnNullableScalarRelationFilter = {
   isNot?: Prisma.TaskColumnWhereInput | null
 }
 
-export type TaskColumnCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutUserInput, Prisma.TaskColumnUncheckedCreateWithoutUserInput> | Prisma.TaskColumnCreateWithoutUserInput[] | Prisma.TaskColumnUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutUserInput | Prisma.TaskColumnCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.TaskColumnCreateManyUserInputEnvelope
+export type TaskColumnCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutProjectInput, Prisma.TaskColumnUncheckedCreateWithoutProjectInput> | Prisma.TaskColumnCreateWithoutProjectInput[] | Prisma.TaskColumnUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutProjectInput | Prisma.TaskColumnCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.TaskColumnCreateManyProjectInputEnvelope
   connect?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
 }
 
-export type TaskColumnUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutUserInput, Prisma.TaskColumnUncheckedCreateWithoutUserInput> | Prisma.TaskColumnCreateWithoutUserInput[] | Prisma.TaskColumnUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutUserInput | Prisma.TaskColumnCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.TaskColumnCreateManyUserInputEnvelope
+export type TaskColumnUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutProjectInput, Prisma.TaskColumnUncheckedCreateWithoutProjectInput> | Prisma.TaskColumnCreateWithoutProjectInput[] | Prisma.TaskColumnUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutProjectInput | Prisma.TaskColumnCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.TaskColumnCreateManyProjectInputEnvelope
   connect?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
 }
 
-export type TaskColumnUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutUserInput, Prisma.TaskColumnUncheckedCreateWithoutUserInput> | Prisma.TaskColumnCreateWithoutUserInput[] | Prisma.TaskColumnUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutUserInput | Prisma.TaskColumnCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.TaskColumnUpsertWithWhereUniqueWithoutUserInput | Prisma.TaskColumnUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.TaskColumnCreateManyUserInputEnvelope
+export type TaskColumnUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutProjectInput, Prisma.TaskColumnUncheckedCreateWithoutProjectInput> | Prisma.TaskColumnCreateWithoutProjectInput[] | Prisma.TaskColumnUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutProjectInput | Prisma.TaskColumnCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.TaskColumnUpsertWithWhereUniqueWithoutProjectInput | Prisma.TaskColumnUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.TaskColumnCreateManyProjectInputEnvelope
   set?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
   disconnect?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
   delete?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
   connect?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
-  update?: Prisma.TaskColumnUpdateWithWhereUniqueWithoutUserInput | Prisma.TaskColumnUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.TaskColumnUpdateManyWithWhereWithoutUserInput | Prisma.TaskColumnUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.TaskColumnUpdateWithWhereUniqueWithoutProjectInput | Prisma.TaskColumnUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.TaskColumnUpdateManyWithWhereWithoutProjectInput | Prisma.TaskColumnUpdateManyWithWhereWithoutProjectInput[]
   deleteMany?: Prisma.TaskColumnScalarWhereInput | Prisma.TaskColumnScalarWhereInput[]
 }
 
-export type TaskColumnUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutUserInput, Prisma.TaskColumnUncheckedCreateWithoutUserInput> | Prisma.TaskColumnCreateWithoutUserInput[] | Prisma.TaskColumnUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutUserInput | Prisma.TaskColumnCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.TaskColumnUpsertWithWhereUniqueWithoutUserInput | Prisma.TaskColumnUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.TaskColumnCreateManyUserInputEnvelope
+export type TaskColumnUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.TaskColumnCreateWithoutProjectInput, Prisma.TaskColumnUncheckedCreateWithoutProjectInput> | Prisma.TaskColumnCreateWithoutProjectInput[] | Prisma.TaskColumnUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.TaskColumnCreateOrConnectWithoutProjectInput | Prisma.TaskColumnCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.TaskColumnUpsertWithWhereUniqueWithoutProjectInput | Prisma.TaskColumnUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.TaskColumnCreateManyProjectInputEnvelope
   set?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
   disconnect?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
   delete?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
   connect?: Prisma.TaskColumnWhereUniqueInput | Prisma.TaskColumnWhereUniqueInput[]
-  update?: Prisma.TaskColumnUpdateWithWhereUniqueWithoutUserInput | Prisma.TaskColumnUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.TaskColumnUpdateManyWithWhereWithoutUserInput | Prisma.TaskColumnUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.TaskColumnUpdateWithWhereUniqueWithoutProjectInput | Prisma.TaskColumnUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.TaskColumnUpdateManyWithWhereWithoutProjectInput | Prisma.TaskColumnUpdateManyWithWhereWithoutProjectInput[]
   deleteMany?: Prisma.TaskColumnScalarWhereInput | Prisma.TaskColumnScalarWhereInput[]
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type TaskColumnCreateNestedOneWithoutTasksInput = {
@@ -461,7 +453,7 @@ export type TaskColumnUpdateOneWithoutTasksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TaskColumnUpdateToOneWithWhereWithoutTasksInput, Prisma.TaskColumnUpdateWithoutTasksInput>, Prisma.TaskColumnUncheckedUpdateWithoutTasksInput>
 }
 
-export type TaskColumnCreateWithoutUserInput = {
+export type TaskColumnCreateWithoutProjectInput = {
   id?: string
   name: string
   order?: number
@@ -470,7 +462,7 @@ export type TaskColumnCreateWithoutUserInput = {
   tasks?: Prisma.TaskCreateNestedManyWithoutColumnInput
 }
 
-export type TaskColumnUncheckedCreateWithoutUserInput = {
+export type TaskColumnUncheckedCreateWithoutProjectInput = {
   id?: string
   name: string
   order?: number
@@ -479,30 +471,30 @@ export type TaskColumnUncheckedCreateWithoutUserInput = {
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutColumnInput
 }
 
-export type TaskColumnCreateOrConnectWithoutUserInput = {
+export type TaskColumnCreateOrConnectWithoutProjectInput = {
   where: Prisma.TaskColumnWhereUniqueInput
-  create: Prisma.XOR<Prisma.TaskColumnCreateWithoutUserInput, Prisma.TaskColumnUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.TaskColumnCreateWithoutProjectInput, Prisma.TaskColumnUncheckedCreateWithoutProjectInput>
 }
 
-export type TaskColumnCreateManyUserInputEnvelope = {
-  data: Prisma.TaskColumnCreateManyUserInput | Prisma.TaskColumnCreateManyUserInput[]
+export type TaskColumnCreateManyProjectInputEnvelope = {
+  data: Prisma.TaskColumnCreateManyProjectInput | Prisma.TaskColumnCreateManyProjectInput[]
   skipDuplicates?: boolean
 }
 
-export type TaskColumnUpsertWithWhereUniqueWithoutUserInput = {
+export type TaskColumnUpsertWithWhereUniqueWithoutProjectInput = {
   where: Prisma.TaskColumnWhereUniqueInput
-  update: Prisma.XOR<Prisma.TaskColumnUpdateWithoutUserInput, Prisma.TaskColumnUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.TaskColumnCreateWithoutUserInput, Prisma.TaskColumnUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.TaskColumnUpdateWithoutProjectInput, Prisma.TaskColumnUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.TaskColumnCreateWithoutProjectInput, Prisma.TaskColumnUncheckedCreateWithoutProjectInput>
 }
 
-export type TaskColumnUpdateWithWhereUniqueWithoutUserInput = {
+export type TaskColumnUpdateWithWhereUniqueWithoutProjectInput = {
   where: Prisma.TaskColumnWhereUniqueInput
-  data: Prisma.XOR<Prisma.TaskColumnUpdateWithoutUserInput, Prisma.TaskColumnUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.TaskColumnUpdateWithoutProjectInput, Prisma.TaskColumnUncheckedUpdateWithoutProjectInput>
 }
 
-export type TaskColumnUpdateManyWithWhereWithoutUserInput = {
+export type TaskColumnUpdateManyWithWhereWithoutProjectInput = {
   where: Prisma.TaskColumnScalarWhereInput
-  data: Prisma.XOR<Prisma.TaskColumnUpdateManyMutationInput, Prisma.TaskColumnUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.TaskColumnUpdateManyMutationInput, Prisma.TaskColumnUncheckedUpdateManyWithoutProjectInput>
 }
 
 export type TaskColumnScalarWhereInput = {
@@ -512,7 +504,7 @@ export type TaskColumnScalarWhereInput = {
   id?: Prisma.StringFilter<"TaskColumn"> | string
   name?: Prisma.StringFilter<"TaskColumn"> | string
   order?: Prisma.IntFilter<"TaskColumn"> | number
-  userId?: Prisma.StringFilter<"TaskColumn"> | string
+  projectId?: Prisma.StringFilter<"TaskColumn"> | string
   createdAt?: Prisma.DateTimeFilter<"TaskColumn"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"TaskColumn"> | Date | string
 }
@@ -523,14 +515,14 @@ export type TaskColumnCreateWithoutTasksInput = {
   order?: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutColumnsInput
+  project: Prisma.ProjectCreateNestedOneWithoutColumnsInput
 }
 
 export type TaskColumnUncheckedCreateWithoutTasksInput = {
   id?: string
   name: string
   order?: number
-  userId: string
+  projectId: string
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -557,19 +549,19 @@ export type TaskColumnUpdateWithoutTasksInput = {
   order?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutColumnsNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutColumnsNestedInput
 }
 
 export type TaskColumnUncheckedUpdateWithoutTasksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type TaskColumnCreateManyUserInput = {
+export type TaskColumnCreateManyProjectInput = {
   id?: string
   name: string
   order?: number
@@ -577,7 +569,7 @@ export type TaskColumnCreateManyUserInput = {
   updatedAt?: Date | string
 }
 
-export type TaskColumnUpdateWithoutUserInput = {
+export type TaskColumnUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -586,7 +578,7 @@ export type TaskColumnUpdateWithoutUserInput = {
   tasks?: Prisma.TaskUpdateManyWithoutColumnNestedInput
 }
 
-export type TaskColumnUncheckedUpdateWithoutUserInput = {
+export type TaskColumnUncheckedUpdateWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -595,7 +587,7 @@ export type TaskColumnUncheckedUpdateWithoutUserInput = {
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutColumnNestedInput
 }
 
-export type TaskColumnUncheckedUpdateManyWithoutUserInput = {
+export type TaskColumnUncheckedUpdateManyWithoutProjectInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   order?: Prisma.IntFieldUpdateOperationsInput | number
@@ -638,10 +630,10 @@ export type TaskColumnSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   id?: boolean
   name?: boolean
   order?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   tasks?: boolean | Prisma.TaskColumn$tasksArgs<ExtArgs>
   _count?: boolean | Prisma.TaskColumnCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taskColumn"]>
@@ -650,55 +642,55 @@ export type TaskColumnSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   id?: boolean
   name?: boolean
   order?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taskColumn"]>
 
 export type TaskColumnSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
   order?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taskColumn"]>
 
 export type TaskColumnSelectScalar = {
   id?: boolean
   name?: boolean
   order?: boolean
-  userId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TaskColumnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "order" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["taskColumn"]>
+export type TaskColumnOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "order" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["taskColumn"]>
 export type TaskColumnInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   tasks?: boolean | Prisma.TaskColumn$tasksArgs<ExtArgs>
   _count?: boolean | Prisma.TaskColumnCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TaskColumnIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 export type TaskColumnIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 
 export type $TaskColumnPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TaskColumn"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs>
     tasks: Prisma.$TaskPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
     order: number
-    userId: string
+    projectId: string
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["taskColumn"]>
@@ -1095,7 +1087,7 @@ readonly fields: TaskColumnFieldRefs;
  */
 export interface Prisma__TaskColumnClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tasks<T extends Prisma.TaskColumn$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaskColumn$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1129,7 +1121,7 @@ export interface TaskColumnFieldRefs {
   readonly id: Prisma.FieldRef<"TaskColumn", 'String'>
   readonly name: Prisma.FieldRef<"TaskColumn", 'String'>
   readonly order: Prisma.FieldRef<"TaskColumn", 'Int'>
-  readonly userId: Prisma.FieldRef<"TaskColumn", 'String'>
+  readonly projectId: Prisma.FieldRef<"TaskColumn", 'String'>
   readonly createdAt: Prisma.FieldRef<"TaskColumn", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"TaskColumn", 'DateTime'>
 }

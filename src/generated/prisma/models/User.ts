@@ -28,10 +28,12 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   storageUsed: number | null
+  aiCallsToday: number | null
 }
 
 export type UserSumAggregateOutputType = {
   storageUsed: bigint | null
+  aiCallsToday: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -51,6 +53,8 @@ export type UserMinAggregateOutputType = {
   isFrozen: boolean | null
   frozenAt: Date | null
   storageUsed: bigint | null
+  aiCallsToday: number | null
+  aiCallsResetAt: Date | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -70,6 +74,8 @@ export type UserMaxAggregateOutputType = {
   isFrozen: boolean | null
   frozenAt: Date | null
   storageUsed: bigint | null
+  aiCallsToday: number | null
+  aiCallsResetAt: Date | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -89,16 +95,20 @@ export type UserCountAggregateOutputType = {
   isFrozen: number
   frozenAt: number
   storageUsed: number
+  aiCallsToday: number
+  aiCallsResetAt: number
   _all: number
 }
 
 
 export type UserAvgAggregateInputType = {
   storageUsed?: true
+  aiCallsToday?: true
 }
 
 export type UserSumAggregateInputType = {
   storageUsed?: true
+  aiCallsToday?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -118,6 +128,8 @@ export type UserMinAggregateInputType = {
   isFrozen?: true
   frozenAt?: true
   storageUsed?: true
+  aiCallsToday?: true
+  aiCallsResetAt?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -137,6 +149,8 @@ export type UserMaxAggregateInputType = {
   isFrozen?: true
   frozenAt?: true
   storageUsed?: true
+  aiCallsToday?: true
+  aiCallsResetAt?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -156,6 +170,8 @@ export type UserCountAggregateInputType = {
   isFrozen?: true
   frozenAt?: true
   storageUsed?: true
+  aiCallsToday?: true
+  aiCallsResetAt?: true
   _all?: true
 }
 
@@ -262,6 +278,8 @@ export type UserGroupByOutputType = {
   isFrozen: boolean
   frozenAt: Date | null
   storageUsed: bigint
+  aiCallsToday: number
+  aiCallsResetAt: Date | null
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -304,11 +322,13 @@ export type UserWhereInput = {
   isFrozen?: Prisma.BoolFilter<"User"> | boolean
   frozenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   storageUsed?: Prisma.BigIntFilter<"User"> | bigint | number
+  aiCallsToday?: Prisma.IntFilter<"User"> | number
+  aiCallsResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
-  columns?: Prisma.TaskColumnListRelationFilter
+  projects?: Prisma.ProjectListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -328,11 +348,13 @@ export type UserOrderByWithRelationInput = {
   isFrozen?: Prisma.SortOrder
   frozenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
+  aiCallsResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
   promoCode?: Prisma.PromoCodeOrderByWithRelationInput
   files?: Prisma.FileOrderByRelationAggregateInput
   folders?: Prisma.FolderOrderByRelationAggregateInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
-  columns?: Prisma.TaskColumnOrderByRelationAggregateInput
+  projects?: Prisma.ProjectOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -355,11 +377,13 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isFrozen?: Prisma.BoolFilter<"User"> | boolean
   frozenAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   storageUsed?: Prisma.BigIntFilter<"User"> | bigint | number
+  aiCallsToday?: Prisma.IntFilter<"User"> | number
+  aiCallsResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
-  columns?: Prisma.TaskColumnListRelationFilter
+  projects?: Prisma.ProjectListRelationFilter
 }, "id" | "email" | "username" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
@@ -379,6 +403,8 @@ export type UserOrderByWithAggregationInput = {
   isFrozen?: Prisma.SortOrder
   frozenAt?: Prisma.SortOrderInput | Prisma.SortOrder
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
+  aiCallsResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -406,6 +432,8 @@ export type UserScalarWhereWithAggregatesInput = {
   isFrozen?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   frozenAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   storageUsed?: Prisma.BigIntWithAggregatesFilter<"User"> | bigint | number
+  aiCallsToday?: Prisma.IntWithAggregatesFilter<"User"> | number
+  aiCallsResetAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
 }
 
 export type UserCreateInput = {
@@ -425,11 +453,13 @@ export type UserCreateInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -449,11 +479,13 @@ export type UserUncheckedCreateInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -473,11 +505,13 @@ export type UserUpdateInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -497,11 +531,13 @@ export type UserUncheckedUpdateInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -521,6 +557,8 @@ export type UserCreateManyInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -540,6 +578,8 @@ export type UserUpdateManyMutationInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -559,6 +599,8 @@ export type UserUncheckedUpdateManyInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -578,10 +620,13 @@ export type UserCountOrderByAggregateInput = {
   isFrozen?: Prisma.SortOrder
   frozenAt?: Prisma.SortOrder
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
+  aiCallsResetAt?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -601,6 +646,8 @@ export type UserMaxOrderByAggregateInput = {
   isFrozen?: Prisma.SortOrder
   frozenAt?: Prisma.SortOrder
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
+  aiCallsResetAt?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -620,10 +667,13 @@ export type UserMinOrderByAggregateInput = {
   isFrozen?: Prisma.SortOrder
   frozenAt?: Prisma.SortOrder
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
+  aiCallsResetAt?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
+  aiCallsToday?: Prisma.SortOrder
 }
 
 export type UserNullableScalarRelationFilter = {
@@ -664,6 +714,14 @@ export type BigIntFieldUpdateOperationsInput = {
   divide?: bigint | number
 }
 
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserCreateNestedOneWithoutPromoCodeInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPromoCodeInput, Prisma.UserUncheckedCreateWithoutPromoCodeInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPromoCodeInput
@@ -680,18 +738,18 @@ export type UserUpdateOneWithoutPromoCodeNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPromoCodeInput, Prisma.UserUpdateWithoutPromoCodeInput>, Prisma.UserUncheckedUpdateWithoutPromoCodeInput>
 }
 
-export type UserCreateNestedOneWithoutColumnsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutColumnsInput, Prisma.UserUncheckedCreateWithoutColumnsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutColumnsInput
+export type UserCreateNestedOneWithoutProjectsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProjectsInput, Prisma.UserUncheckedCreateWithoutProjectsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutColumnsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutColumnsInput, Prisma.UserUncheckedCreateWithoutColumnsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutColumnsInput
-  upsert?: Prisma.UserUpsertWithoutColumnsInput
+export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProjectsInput, Prisma.UserUncheckedCreateWithoutProjectsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProjectsInput
+  upsert?: Prisma.UserUpsertWithoutProjectsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutColumnsInput, Prisma.UserUpdateWithoutColumnsInput>, Prisma.UserUncheckedUpdateWithoutColumnsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProjectsInput, Prisma.UserUpdateWithoutProjectsInput>, Prisma.UserUncheckedUpdateWithoutProjectsInput>
 }
 
 export type UserCreateNestedOneWithoutTasksInput = {
@@ -757,10 +815,12 @@ export type UserCreateWithoutPromoCodeInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPromoCodeInput = {
@@ -780,10 +840,12 @@ export type UserUncheckedCreateWithoutPromoCodeInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPromoCodeInput = {
@@ -819,10 +881,12 @@ export type UserUpdateWithoutPromoCodeInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPromoCodeInput = {
@@ -842,13 +906,15 @@ export type UserUncheckedUpdateWithoutPromoCodeInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutColumnsInput = {
+export type UserCreateWithoutProjectsInput = {
   id?: string
   email: string
   username?: string | null
@@ -865,13 +931,15 @@ export type UserCreateWithoutColumnsInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutColumnsInput = {
+export type UserUncheckedCreateWithoutProjectsInput = {
   id?: string
   email: string
   username?: string | null
@@ -888,29 +956,31 @@ export type UserUncheckedCreateWithoutColumnsInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutColumnsInput = {
+export type UserCreateOrConnectWithoutProjectsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutColumnsInput, Prisma.UserUncheckedCreateWithoutColumnsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProjectsInput, Prisma.UserUncheckedCreateWithoutProjectsInput>
 }
 
-export type UserUpsertWithoutColumnsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutColumnsInput, Prisma.UserUncheckedUpdateWithoutColumnsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutColumnsInput, Prisma.UserUncheckedCreateWithoutColumnsInput>
+export type UserUpsertWithoutProjectsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProjectsInput, Prisma.UserUncheckedUpdateWithoutProjectsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProjectsInput, Prisma.UserUncheckedCreateWithoutProjectsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutColumnsInput = {
+export type UserUpdateToOneWithWhereWithoutProjectsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutColumnsInput, Prisma.UserUncheckedUpdateWithoutColumnsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProjectsInput, Prisma.UserUncheckedUpdateWithoutProjectsInput>
 }
 
-export type UserUpdateWithoutColumnsInput = {
+export type UserUpdateWithoutProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -927,13 +997,15 @@ export type UserUpdateWithoutColumnsInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutColumnsInput = {
+export type UserUncheckedUpdateWithoutProjectsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -950,6 +1022,8 @@ export type UserUncheckedUpdateWithoutColumnsInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
@@ -973,10 +1047,12 @@ export type UserCreateWithoutTasksInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
-  columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTasksInput = {
@@ -996,10 +1072,12 @@ export type UserUncheckedCreateWithoutTasksInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
-  columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTasksInput = {
@@ -1035,10 +1113,12 @@ export type UserUpdateWithoutTasksInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
-  columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTasksInput = {
@@ -1058,10 +1138,12 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
-  columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFilesInput = {
@@ -1081,10 +1163,12 @@ export type UserCreateWithoutFilesInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFilesInput = {
@@ -1104,10 +1188,12 @@ export type UserUncheckedCreateWithoutFilesInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFilesInput = {
@@ -1143,10 +1229,12 @@ export type UserUpdateWithoutFilesInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFilesInput = {
@@ -1166,10 +1254,12 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFoldersInput = {
@@ -1189,10 +1279,12 @@ export type UserCreateWithoutFoldersInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFoldersInput = {
@@ -1212,10 +1304,12 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   isFrozen?: boolean
   frozenAt?: Date | string | null
   storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
-  columns?: Prisma.TaskColumnUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFoldersInput = {
@@ -1251,10 +1345,12 @@ export type UserUpdateWithoutFoldersInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFoldersInput = {
@@ -1274,10 +1370,12 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
   frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
-  columns?: Prisma.TaskColumnUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1289,14 +1387,14 @@ export type UserCountOutputType = {
   files: number
   folders: number
   tasks: number
-  columns: number
+  projects: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   files?: boolean | UserCountOutputTypeCountFilesArgs
   folders?: boolean | UserCountOutputTypeCountFoldersArgs
   tasks?: boolean | UserCountOutputTypeCountTasksArgs
-  columns?: boolean | UserCountOutputTypeCountColumnsArgs
+  projects?: boolean | UserCountOutputTypeCountProjectsArgs
 }
 
 /**
@@ -1333,8 +1431,8 @@ export type UserCountOutputTypeCountTasksArgs<ExtArgs extends runtime.Types.Exte
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountColumnsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TaskColumnWhereInput
+export type UserCountOutputTypeCountProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
 }
 
 
@@ -1355,11 +1453,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isFrozen?: boolean
   frozenAt?: boolean
   storageUsed?: boolean
+  aiCallsToday?: boolean
+  aiCallsResetAt?: boolean
   promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
-  columns?: boolean | Prisma.User$columnsArgs<ExtArgs>
+  projects?: boolean | Prisma.User$projectsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1380,6 +1480,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isFrozen?: boolean
   frozenAt?: boolean
   storageUsed?: boolean
+  aiCallsToday?: boolean
+  aiCallsResetAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1399,6 +1501,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isFrozen?: boolean
   frozenAt?: boolean
   storageUsed?: boolean
+  aiCallsToday?: boolean
+  aiCallsResetAt?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1418,15 +1522,17 @@ export type UserSelectScalar = {
   isFrozen?: boolean
   frozenAt?: boolean
   storageUsed?: boolean
+  aiCallsToday?: boolean
+  aiCallsResetAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed" | "aiCallsToday" | "aiCallsResetAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
-  columns?: boolean | Prisma.User$columnsArgs<ExtArgs>
+  projects?: boolean | Prisma.User$projectsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1439,7 +1545,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     files: Prisma.$FilePayload<ExtArgs>[]
     folders: Prisma.$FolderPayload<ExtArgs>[]
     tasks: Prisma.$TaskPayload<ExtArgs>[]
-    columns: Prisma.$TaskColumnPayload<ExtArgs>[]
+    projects: Prisma.$ProjectPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1458,6 +1564,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isFrozen: boolean
     frozenAt: Date | null
     storageUsed: bigint
+    aiCallsToday: number
+    aiCallsResetAt: Date | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1856,7 +1964,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   files<T extends Prisma.User$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   folders<T extends Prisma.User$foldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tasks<T extends Prisma.User$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  columns<T extends Prisma.User$columnsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$columnsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskColumnPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  projects<T extends Prisma.User$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1902,6 +2010,8 @@ export interface UserFieldRefs {
   readonly isFrozen: Prisma.FieldRef<"User", 'Boolean'>
   readonly frozenAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly storageUsed: Prisma.FieldRef<"User", 'BigInt'>
+  readonly aiCallsToday: Prisma.FieldRef<"User", 'Int'>
+  readonly aiCallsResetAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     
 
@@ -2386,27 +2496,27 @@ export type User$tasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
 }
 
 /**
- * User.columns
+ * User.projects
  */
-export type User$columnsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$projectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the TaskColumn
+   * Select specific fields to fetch from the Project
    */
-  select?: Prisma.TaskColumnSelect<ExtArgs> | null
+  select?: Prisma.ProjectSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the TaskColumn
+   * Omit specific fields from the Project
    */
-  omit?: Prisma.TaskColumnOmit<ExtArgs> | null
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.TaskColumnInclude<ExtArgs> | null
-  where?: Prisma.TaskColumnWhereInput
-  orderBy?: Prisma.TaskColumnOrderByWithRelationInput | Prisma.TaskColumnOrderByWithRelationInput[]
-  cursor?: Prisma.TaskColumnWhereUniqueInput
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.TaskColumnScalarFieldEnum | Prisma.TaskColumnScalarFieldEnum[]
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
 }
 
 /**

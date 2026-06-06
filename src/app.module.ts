@@ -9,6 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './user/user.module';
 import { FileSystemModule } from './file-system/file-system.module';
 import { InfinityLifeModule } from './infinity-life/infinity-life.module';
+import { ProjectModule } from './project/project.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PlanModule } from './plan/plan.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
@@ -27,6 +28,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     UserModule,
     FileSystemModule,
     InfinityLifeModule,
+    ProjectModule,
     PlanModule,
   ],
   controllers: [AppController],

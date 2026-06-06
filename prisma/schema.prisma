@@ -29,12 +29,15 @@ model User {
   frozenAt      DateTime?
   storageUsed   BigInt    @default(0)
 
+  aiCallsToday   Int       @default(0)
+  aiCallsResetAt DateTime?
+
   promoCode     PromoCode? @relation("UsedPromo")
 
   files    File[]
   folders  Folder[]
   tasks    Task[]
-  columns  TaskColumn[]
+  projects Project[]
 
   @@index([email])
   @@index([planType])
@@ -58,18 +61,34 @@ model PromoCode {
   @@index([usedById])
 }
 
+model Project {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  color       String?
+  icon        String?
+  userId      String
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  columns     TaskColumn[]
+  tasks       Task[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([userId])
+}
+
 model TaskColumn {
   id        String   @id @default(uuid())
   name      String
   order     Int      @default(0)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   tasks     Task[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId])
-  @@index([userId, order])
+  @@index([projectId])
+  @@index([projectId, order])
 }
 
 model Task {
@@ -82,16 +101,19 @@ model Task {
   color       String?
   order       Int       @default(0)
   columnId    String?
+  projectId   String
   userId      String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   column   TaskColumn? @relation(fields: [columnId], references: [id], onDelete: SetNull)
+  project  Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   subtasks Subtask[]
   user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([columnId])
+  @@index([projectId])
 }
 
 model Subtask {

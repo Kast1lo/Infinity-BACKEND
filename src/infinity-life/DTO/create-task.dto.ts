@@ -1,7 +1,11 @@
-import { IsString, IsOptional, IsDateString, MaxLength, MinLength, Matches } from 'class-validator';
+import { IsString, IsOptional, IsDateString, IsUUID, MaxLength, MinLength, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateTaskDto {
+  @ApiProperty({ example: 'uuid-проекта', description: 'ID проекта, к которому относится задача' })
+  @IsUUID()
+  projectId: string;
+
   @ApiProperty({ example: 'Разработать новый модуль', minLength: 1, maxLength: 255 })
   @IsString()
   @MinLength(1)

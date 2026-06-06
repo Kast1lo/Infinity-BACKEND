@@ -50,6 +50,11 @@ export type User = Prisma.UserModel
  */
 export type PromoCode = Prisma.PromoCodeModel
 /**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
+/**
  * Model TaskColumn
  * 
  */

@@ -10,6 +10,7 @@
  */
 export type * from './models/User.js'
 export type * from './models/PromoCode.js'
+export type * from './models/Project.js'
 export type * from './models/TaskColumn.js'
 export type * from './models/Task.js'
 export type * from './models/Subtask.js'

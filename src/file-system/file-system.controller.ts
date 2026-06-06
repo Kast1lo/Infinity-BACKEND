@@ -227,6 +227,21 @@ export class FileSystemController {
     await this.fileSystemService.streamFileForShare(username, filename, res);
   }
 
+  @ApiOperation({ summary: 'Опубликовать или скрыть файл для пересылки по ссылке' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID файла' })
+  @ApiBody({ schema: { type: 'object', properties: { isShared: { type: 'boolean', example: true } } } })
+  @ApiResponse({ status: 200, description: 'Статус публикации обновлён' })
+  @Patch('share/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async setFileShared(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() dto: { isShared?: boolean },
+  ) {
+    return this.fileSystemService.setFileShared(req.user.userId, id, dto?.isShared ?? true);
+  }
+
   @ApiOperation({ summary: 'Удалить файл или папку' })
   @ApiCookieAuth('access_token')
   @ApiParam({ name: 'id', description: 'UUID объекта' })

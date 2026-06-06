@@ -129,6 +129,93 @@ export class PlanService {
     }
   }
 
+  async checkProjectLimit(userId: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({
+      where:  { id: userId },
+      select: { planType: true, isFrozen: true, planExpiresAt: true },
+    });
+
+    if (!user) throw new NotFoundException('Пользователь не найден');
+
+    if (user.isFrozen) {
+      throw new ForbiddenException(
+        'Ваши данные заморожены. Оформите подписку для восстановления доступа.',
+      );
+    }
+
+    if (user.planType !== 'eternal' && user.planExpiresAt && user.planExpiresAt < new Date()) {
+      throw new ForbiddenException(
+        'Ваша подписка истекла. Оформите подписку для создания новых проектов.',
+      );
+    }
+
+    const limits = PLAN_LIMITS[(user.planType as PlanType)] ?? PLAN_LIMITS.spark;
+
+    if (limits.maxProjects === Infinity) return;
+
+    const projectCount = await this.prisma.project.count({ where: { userId } });
+
+    if (projectCount >= limits.maxProjects) {
+      throw new ForbiddenException(
+        `Достигнут лимит проектов (${limits.maxProjects}) для тарифа Spark. Перейдите на платный тариф.`,
+      );
+    }
+  }
+
+  async checkAndIncrementAiCalls(userId: string): Promise<{ used: number; limit: number }> {
+    const user = await this.prisma.user.findUnique({
+      where:  { id: userId },
+      select: {
+        planType:        true,
+        isFrozen:        true,
+        planExpiresAt:   true,
+        aiCallsToday:    true,
+        aiCallsResetAt:  true,
+      },
+    });
+
+    if (!user) throw new NotFoundException('Пользователь не найден');
+
+    if (user.isFrozen) {
+      throw new ForbiddenException(
+        'Ваши данные заморожены. Оформите подписку для восстановления доступа.',
+      );
+    }
+
+    if (user.planType !== 'eternal' && user.planExpiresAt && user.planExpiresAt < new Date()) {
+      throw new ForbiddenException(
+        'Ваша подписка истекла. Оформите подписку для использования AI-генерации.',
+      );
+    }
+
+    const limits = PLAN_LIMITS[(user.planType as PlanType)] ?? PLAN_LIMITS.spark;
+    const limit  = limits.aiCallsPerDay;
+
+    const now             = new Date();
+    const startOfToday    = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const needsReset      = !user.aiCallsResetAt || user.aiCallsResetAt < startOfToday;
+    const currentUsed     = needsReset ? 0 : user.aiCallsToday;
+
+    if (limit !== Infinity && currentUsed >= limit) {
+      throw new ForbiddenException(
+        `Достигнут дневной лимит AI-генераций (${limit}). Попробуйте завтра или перейдите на тариф с большим лимитом.`,
+      );
+    }
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        aiCallsToday:   needsReset ? 1 : { increment: 1 },
+        aiCallsResetAt: needsReset ? now : user.aiCallsResetAt ?? now,
+      },
+    });
+
+    return {
+      used:  currentUsed + 1,
+      limit: limit === Infinity ? -1 : limit,
+    };
+  }
+
   async updateStorageUsed(userId: string, delta: bigint): Promise<void> {
     await this.prisma.user.update({
       where: { id: userId },
@@ -261,8 +348,7 @@ export class PlanService {
       await this.prisma.$transaction([
         this.prisma.file.deleteMany({ where: { ownerId: id } }),
         this.prisma.folder.deleteMany({ where: { ownerId: id } }),
-        this.prisma.task.deleteMany({ where: { userId: id } }),
-        this.prisma.taskColumn.deleteMany({ where: { userId: id } }),
+        this.prisma.project.deleteMany({ where: { userId: id } }),
         this.prisma.user.update({
           where: { id },
           data:  { storageUsed: 0n },
