@@ -169,39 +169,56 @@ export class OllamaService {
     const codeBlockMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/i);
     if (codeBlockMatch) jsonStr = codeBlockMatch[1].trim();
 
-    const firstBrace = jsonStr.indexOf('{');
-    const lastBrace  = jsonStr.lastIndexOf('}');
-    if (firstBrace === -1 || lastBrace === -1) {
-      throw new BadGatewayException('ИИ-сервис не вернул JSON');
+    // Разные модели возвращают то объект {tasks:[...]}, то просто массив [...].
+    // Сначала пробуем распарсить как есть, иначе вырезаем внешний объект/массив.
+    let parsed: any = this.tryParseJson(jsonStr);
+    if (parsed === undefined) {
+      const start = jsonStr.search(/[\[{]/);
+      const end   = Math.max(jsonStr.lastIndexOf('}'), jsonStr.lastIndexOf(']'));
+      if (start !== -1 && end > start) parsed = this.tryParseJson(jsonStr.slice(start, end + 1));
     }
-    jsonStr = jsonStr.slice(firstBrace, lastBrace + 1);
-
-    let parsed: any;
-    try {
-      parsed = JSON.parse(jsonStr);
-    } catch {
+    if (parsed === undefined) {
+      this.logger.error(`Невалидный JSON от ИИ: ${content.slice(0, 1500)}`);
       throw new BadGatewayException('ИИ-сервис вернул некорректный JSON');
     }
 
-    if (!parsed || !Array.isArray(parsed.tasks)) {
-      throw new BadGatewayException('ИИ-сервис вернул JSON без поля tasks');
+    // Приводим к виду { columns, tasks }: модель может вернуть массив задач
+    // или объект с полем tasks / задачи.
+    let rawTasks: any[] = [];
+    let rawColumns: any = [];
+    if (Array.isArray(parsed)) {
+      rawTasks = parsed;
+    } else if (parsed && typeof parsed === 'object') {
+      rawTasks   = Array.isArray(parsed.tasks) ? parsed.tasks
+                 : Array.isArray(parsed.задачи) ? parsed.задачи
+                 : [];
+      rawColumns = parsed.columns ?? parsed.колонки ?? [];
+    }
+
+    if (rawTasks.length === 0) {
+      this.logger.error(`ИИ вернул JSON без задач: ${content.slice(0, 1500)}`);
+      throw new BadGatewayException('ИИ-сервис вернул JSON без задач');
     }
 
     const allowedPriorities = new Set(['HIGH', 'MEDIUM', 'LOW']);
     const allowedColors     = new Set<string>(TASK_COLORS);
 
-    const columns: string[] = Array.isArray(parsed.columns)
-      ? parsed.columns
+    const columns: string[] = Array.isArray(rawColumns)
+      ? rawColumns
           .filter((c: any) => typeof c === 'string' && c.trim().length > 0)
           .map((c: any) => c.trim().slice(0, 60))
           .slice(0, 6)
       : [];
 
-    const tasks: GeneratedTask[] = parsed.tasks
-      .filter((t: any) => t && typeof t.title === 'string' && t.title.trim().length > 0)
+    const tasks: GeneratedTask[] = rawTasks
       .map((t: any) => {
-        const priority = typeof t.priority === 'string' && allowedPriorities.has(t.priority.toUpperCase())
-          ? (t.priority.toUpperCase() as 'HIGH' | 'MEDIUM' | 'LOW')
+        // Заголовок может называться title / task / name / задача.
+        const rawTitle = t?.title ?? t?.task ?? t?.name ?? t?.задача ?? t?.задание;
+        if (typeof rawTitle !== 'string' || rawTitle.trim().length === 0) return null;
+
+        const priorityStr = typeof t.priority === 'string' ? t.priority.toUpperCase() : '';
+        const priority = allowedPriorities.has(priorityStr)
+          ? (priorityStr as 'HIGH' | 'MEDIUM' | 'LOW')
           : 'MEDIUM';
 
         const color = typeof t.color === 'string' && allowedColors.has(t.color.trim().toLowerCase())
@@ -218,11 +235,16 @@ export class OllamaService {
           ? t.column.trim().slice(0, 60)
           : null;
 
-        const subtasks: GeneratedSubtask[] = Array.isArray(t.subtasks)
-          ? t.subtasks
+        const rawNotes = t?.notes ?? t?.description ?? t?.описание;
+        const rawSubs  = t?.subtasks ?? t?.подзадачи;
+
+        const subtasks: GeneratedSubtask[] = Array.isArray(rawSubs)
+          ? rawSubs
               .map((s: any) => {
                 if (typeof s === 'string') return { title: s.trim() };
                 if (s && typeof s.title === 'string') return { title: s.title.trim() };
+                if (s && typeof s.task  === 'string') return { title: s.task.trim() };
+                if (s && typeof s.name  === 'string') return { title: s.name.trim() };
                 return null;
               })
               .filter((s: GeneratedSubtask | null): s is GeneratedSubtask => !!s && s.title.length > 0)
@@ -230,8 +252,8 @@ export class OllamaService {
           : [];
 
         return {
-          title:    String(t.title).trim().slice(0, 255),
-          notes:    typeof t.notes === 'string' ? t.notes.trim().slice(0, 5000) : null,
+          title:    String(rawTitle).trim().slice(0, 255),
+          notes:    typeof rawNotes === 'string' ? rawNotes.trim().slice(0, 5000) : null,
           priority,
           color,
           dueInDays,
@@ -239,13 +261,23 @@ export class OllamaService {
           subtasks,
         };
       })
+      .filter((t: GeneratedTask | null): t is GeneratedTask => t !== null)
       .slice(0, 12);
 
     if (tasks.length === 0) {
+      this.logger.error(`ИИ не дал валидных задач: ${content.slice(0, 1500)}`);
       throw new BadGatewayException('ИИ-сервис не сгенерировал ни одной задачи');
     }
 
     return { columns, tasks };
+  }
+
+  private tryParseJson(s: string): any {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return undefined;
+    }
   }
 
   // Используем нативный http вместо fetch: у глобального fetch (undici) есть
