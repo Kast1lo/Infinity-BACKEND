@@ -70,7 +70,7 @@ export class ProjectController {
     return this.projectService.deleteProject(projectId, req.user.userId);
   }
 
-  @ApiOperation({ summary: 'Сгенерировать задачи и подзадачи через GigaChat' })
+  @ApiOperation({ summary: 'Сгенерировать задачи и подзадачи через ИИ (Ollama)' })
   @ApiParam({ name: 'projectId', description: 'UUID проекта' })
   @ApiBody({ type: AiGenerateTasksDto })
   @ApiResponse({
@@ -89,7 +89,7 @@ export class ProjectController {
     },
   })
   @ApiResponse({ status: 403, description: 'Превышен дневной лимит AI-генераций' })
-  @ApiResponse({ status: 502, description: 'GigaChat недоступен или вернул некорректный ответ' })
+  @ApiResponse({ status: 502, description: 'ИИ-сервис недоступен или вернул некорректный ответ' })
   @Post(':projectId/ai-generate')
   @UseGuards(AuthGuard('jwt'))
   async generateTasksWithAi(

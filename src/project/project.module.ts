@@ -5,10 +5,10 @@ import { ProjectService } from './project.service';
 import { ProjectController } from './project.controller';
 import { PrismaDatabaseModule } from 'src/prisma-database/prisma-database.module';
 import { PlanModule } from 'src/plan/plan.module';
-import { GigachatModule } from 'src/gigachat/gigachat.module';
+import { OllamaModule } from 'src/ollama/ollama.module';
 
 @Module({
-  imports:     [PlanModule, GigachatModule, ConfigModule, PrismaDatabaseModule, JwtModule],
+  imports:     [PlanModule, OllamaModule, ConfigModule, PrismaDatabaseModule, JwtModule],
   controllers: [ProjectController],
   providers:   [ProjectService],
   exports:     [ProjectService],

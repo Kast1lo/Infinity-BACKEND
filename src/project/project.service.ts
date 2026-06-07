@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
 import { PlanService } from 'src/plan/plan.service';
-import { GigachatService } from 'src/gigachat/gigachat.service';
+import { OllamaService } from 'src/ollama/ollama.service';
 import { Priority } from 'src/generated/prisma/browser';
 import { CreateProjectDto } from './DTO/create-project.dto';
 import { UpdateProjectDto } from './DTO/update-project.dto';
@@ -12,7 +12,7 @@ export class ProjectService {
   constructor(
     private readonly prisma:          PrismaDatabaseService,
     private readonly planService:     PlanService,
-    private readonly gigachatService: GigachatService,
+    private readonly ollamaService: OllamaService,
   ) {}
 
   async createProject(dto: CreateProjectDto, userId: string) {
@@ -108,7 +108,7 @@ export class ProjectService {
   async generateTasksWithAi(projectId: string, dto: AiGenerateTasksDto, userId: string) {
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },
-      include: { columns: { orderBy: { order: 'asc' }, select: { id: true, name: true } } },
+      include: { columns: { orderBy: { order: 'asc' }, select: { id: true, name: true, order: true } } },
     });
     if (!project) throw new NotFoundException('Проект не найден');
     if (project.userId !== userId) throw new ForbiddenException('Нет доступа к этому проекту');
@@ -116,33 +116,75 @@ export class ProjectService {
     await this.planService.checkTaskLimit(userId);
     const usage = await this.planService.checkAndIncrementAiCalls(userId);
 
-    const generated = await this.gigachatService.generateTasksFromDescription(
+    // Передаём пустой список колонок — каждая генерация предлагает свои новые
+    // колонки-этапы, а не раскладывает задачи по уже существующим.
+    const generated = await this.ollamaService.generateTasksFromDescription(
       dto.name ?? project.name,
       dto.description,
-      project.columns.map(c => c.name),
+      [],
     );
 
-    const includeSubtasks = dto.includeSubtasks !== false;
-    const defaultColumnId = project.columns[0]?.id ?? null;
-
-    const startOrder = await this.prisma.task.aggregate({
-      where: { projectId },
-      _max:  { order: true },
+    // Генерация занимает заметное время (десятки секунд), за которые пользователь
+    // мог удалить проект. Перепроверяем существование перед записью, иначе
+    // получим грубую ошибку внешнего ключа при создании колонок/задач.
+    const stillExists = await this.prisma.project.findUnique({
+      where:  { id: projectId },
+      select: { id: true },
     });
-    let nextOrder = (startOrder._max.order ?? 0) + 1;
+    if (!stillExists) {
+      throw new NotFoundException('Проект был удалён во время генерации задач');
+    }
+
+    const includeSubtasks = dto.includeSubtasks !== false;
+
+    // Всегда создаём НОВЫЕ колонки из предложенных ИИ (добавляются после
+    // существующих). Сопоставление "имя колонки (lowercase) -> id".
+    const columnMap = new Map<string, string>();
+
+    const names = generated.columns.length > 0
+      ? generated.columns
+      : ['К выполнению', 'В работе', 'Готово'];
+
+    let order = project.columns.length > 0
+      ? Math.max(...project.columns.map(c => c.order)) + 1
+      : 0;
+
+    for (const name of names) {
+      const created = await this.prisma.taskColumn.create({
+        data:   { name, order: order++, projectId },
+        select: { id: true, name: true },
+      });
+      columnMap.set(created.name.trim().toLowerCase(), created.id);
+    }
+
+    const fallbackColumnId = [...columnMap.values()][0];
+
+    // Новые колонки пусты — порядок задач в каждой начинается с нуля.
+    const orderByColumn = new Map<string, number>();
 
     const createdTasks: any[] = [];
 
     for (const t of generated.tasks) {
+      const columnId = (t.column && columnMap.get(t.column.trim().toLowerCase())) || fallbackColumnId;
+      const color    = t.color ?? this.colorByPriority(t.priority);
+      const dueDate  = t.dueInDays
+        ? new Date(Date.now() + t.dueInDays * 86_400_000)
+        : null;
+
+      const order = orderByColumn.get(columnId) ?? 0;
+      orderByColumn.set(columnId, order + 1);
+
       const created = await this.prisma.task.create({
         data: {
-          title:     t.title,
-          notes:     t.notes,
-          priority:  t.priority as Priority,
+          title:    t.title,
+          notes:    t.notes,
+          priority: t.priority as Priority,
+          color,
+          dueDate,
           projectId,
-          columnId:  defaultColumnId,
+          columnId,
           userId,
-          order:     nextOrder++,
+          order,
           subtasks: includeSubtasks
             ? {
                 create: t.subtasks.map((s, idx) => ({
@@ -164,5 +206,13 @@ export class ProjectService {
         limit: usage.limit,
       },
     };
+  }
+
+  private colorByPriority(priority: 'HIGH' | 'MEDIUM' | 'LOW'): string {
+    switch (priority) {
+      case 'HIGH':   return '#e05555'; // красный
+      case 'MEDIUM': return '#e08c2a'; // оранжевый
+      default:       return '#4caf76'; // зелёный
+    }
   }
 }
