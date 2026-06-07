@@ -4,6 +4,8 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as http from 'http';
+import * as https from 'https';
 
 export interface GeneratedSubtask {
   title: string;
@@ -55,21 +57,17 @@ export class OllamaService {
     const systemPrompt = this.buildSystemPrompt(existingColumnNames);
     const userPrompt   = this.buildUserPrompt(projectName, projectDescription);
 
-    let res: Response;
+    let res: { status: number; body: string };
     try {
-      res = await this.fetchWithTimeout(`${this.baseUrl}/api/chat`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model:  this.model,
-          stream: false,
-          format: 'json',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user',   content: userPrompt   },
-          ],
-          options: { temperature: 0.7, num_predict: 4096 },
-        }),
+      res = await this.httpPostJson(`${this.baseUrl}/api/chat`, {
+        model:  this.model,
+        stream: false,
+        format: 'json',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt   },
+        ],
+        options: { temperature: 0.7, num_predict: 4096 },
       }, 600_000);
     } catch (err) {
       this.logger.error(`Ollama request failed: ${(err as Error).message}`);
@@ -78,9 +76,8 @@ export class OllamaService {
       );
     }
 
-    if (!res.ok) {
-      const text = await res.text().catch(() => '');
-      this.logger.error(`Ollama error ${res.status}: ${text.slice(0, 500)}`);
+    if (res.status < 200 || res.status >= 300) {
+      this.logger.error(`Ollama error ${res.status}: ${res.body.slice(0, 500)}`);
       if (res.status === 404) {
         throw new BadGatewayException(
           `Модель «${this.model}» не найдена в Ollama. Выполните: ollama pull ${this.model}`,
@@ -91,7 +88,7 @@ export class OllamaService {
 
     let parsed: any;
     try {
-      parsed = await res.json();
+      parsed = JSON.parse(res.body);
     } catch {
       throw new BadGatewayException('ИИ-сервис вернул некорректный ответ');
     }
@@ -251,17 +248,47 @@ export class OllamaService {
     return { columns, tasks };
   }
 
-  private async fetchWithTimeout(
+  // Используем нативный http вместо fetch: у глобального fetch (undici) есть
+  // встроенный таймаут ожидания заголовков ~5 минут, а Ollama при stream:false
+  // отдаёт ответ только после полной генерации — на слабом CPU это дольше,
+  // и fetch падает с «fetch failed». http даёт только наш таймаут (timeoutMs).
+  private httpPostJson(
     url: string,
-    init: RequestInit,
+    bodyObj: unknown,
     timeoutMs: number,
-  ): Promise<Response> {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
-    try {
-      return await fetch(url, { ...init, signal: controller.signal });
-    } finally {
-      clearTimeout(timer);
-    }
+  ): Promise<{ status: number; body: string }> {
+    return new Promise((resolve, reject) => {
+      const parsedUrl = new URL(url);
+      const isHttps   = parsedUrl.protocol === 'https:';
+      const transport = isHttps ? https : http;
+      const payload   = Buffer.from(JSON.stringify(bodyObj), 'utf-8');
+
+      const req = transport.request(
+        {
+          method:   'POST',
+          hostname: parsedUrl.hostname,
+          port:     parsedUrl.port || (isHttps ? 443 : 80),
+          path:     parsedUrl.pathname + parsedUrl.search,
+          headers: {
+            'Content-Type':   'application/json',
+            'Content-Length': payload.length,
+          },
+          timeout: timeoutMs,
+        },
+        (resp) => {
+          const chunks: Buffer[] = [];
+          resp.on('data', (c: Buffer) => chunks.push(c));
+          resp.on('end', () => resolve({
+            status: resp.statusCode ?? 0,
+            body:   Buffer.concat(chunks).toString('utf-8'),
+          }));
+        },
+      );
+
+      req.on('error',   reject);
+      req.on('timeout', () => req.destroy(new Error('Ollama request timed out')));
+      req.write(payload);
+      req.end();
+    });
   }
 }
