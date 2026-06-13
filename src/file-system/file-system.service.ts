@@ -1,6 +1,7 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, ForbiddenException, GoneException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import * as crypto from 'crypto';
+import * as argon2 from 'argon2';
 import { extname } from 'path';
 import {
   S3Client,
@@ -524,33 +525,119 @@ export class FileSystemService {
     (Body as any).pipe(res);
   }
 
-  async setFileShared(userId: string, id: string, isShared: boolean) {
-    const file = await this.prisma.file.findUnique({ where: { id } });
-    if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+  // Настройка публичной ссылки: вкл/выкл, срок действия, пароль
+  async updateShare(
+    userId: string,
+    id: string,
+    opts: { isShared: boolean; expiresInDays?: number | null; password?: string | null },
+  ) {
+    const file = await this.prisma.file.findFirst({ where: { id, ownerId: userId, deletedAt: null } });
+    if (!file) throw new NotFoundException('Файл не найден');
+
+    // Выключение — полный сброс настроек ссылки (отзыв)
+    if (!opts.isShared) {
+      const updated = await this.prisma.file.update({
+        where: { id },
+        data:  { isShared: false, sharedAt: null, shareExpiresAt: null, sharePasswordHash: null },
+        select: { id: true, name: true, isShared: true },
+      });
+      return { success: true, data: { ...updated, hasPassword: false, shareExpiresAt: null } };
+    }
+
+    const shareExpiresAt = opts.expiresInDays && opts.expiresInDays > 0
+      ? new Date(Date.now() + opts.expiresInDays * 86_400_000)
+      : null;
+
+    // password: строка — установить, null — снять, undefined — оставить как было
+    let passwordPatch: { sharePasswordHash?: string | null } = {};
+    if (opts.password === null) passwordPatch = { sharePasswordHash: null };
+    else if (typeof opts.password === 'string' && opts.password.length > 0) {
+      passwordPatch = { sharePasswordHash: await argon2.hash(opts.password) };
+    }
 
     const updated = await this.prisma.file.update({
       where: { id },
-      data:  { isShared },
-      select: { id: true, name: true, isShared: true },
+      data:  { isShared: true, sharedAt: file.sharedAt ?? new Date(), shareExpiresAt, ...passwordPatch },
+      select: { id: true, name: true, isShared: true, shareExpiresAt: true, sharePasswordHash: true },
     });
-    return { success: true, data: updated };
+
+    return {
+      success: true,
+      data: {
+        id: updated.id,
+        name: updated.name,
+        isShared: updated.isShared,
+        shareExpiresAt: updated.shareExpiresAt,
+        hasPassword: !!updated.sharePasswordHash,
+      },
+    };
   }
 
-  async getFileForShare(username: string, filename: string) {
+  // Список расшаренных файлов пользователя
+  async getSharedFiles(userId: string) {
+    const files = await this.prisma.file.findMany({
+      where:   { ownerId: userId, isShared: true, deletedAt: null },
+      orderBy: { sharedAt: 'desc' },
+    });
+    const now = Date.now();
+    return files.map((f) => ({
+      id: f.id,
+      name: f.name,
+      size: f.size.toString(),
+      mimeType: f.mimeType,
+      sharedAt: f.sharedAt,
+      shareExpiresAt: f.shareExpiresAt,
+      hasPassword: !!f.sharePasswordHash,
+      isExpired: !!f.shareExpiresAt && f.shareExpiresAt.getTime() < now,
+    }));
+  }
+
+  // Внутренний помощник: находит расшаренный файл и проверяет срок + пароль
+  private async resolveSharedFile(username: string, filename: string, password?: string) {
     const user = await this.prisma.user.findUnique({ where: { username }, select: { id: true } });
-    if (!user) throw new NotFoundException('Пользователь не найден');
+    if (!user) throw new NotFoundException('Файл не найден');
 
     const file = await this.prisma.file.findFirst({
       where:  { ownerId: user.id, name: filename, isShared: true, deletedAt: null },
-      select: { id: true, name: true, size: true, mimeType: true, createdAt: true, path: true },
+      select: { id: true, name: true, size: true, mimeType: true, createdAt: true, path: true, shareExpiresAt: true, sharePasswordHash: true },
     });
     if (!file) throw new NotFoundException('Файл не найден');
 
-    return { ...file, size: file.size.toString() };
+    const expired = !!file.shareExpiresAt && file.shareExpiresAt.getTime() < Date.now();
+    const requiresPassword = !!file.sharePasswordHash;
+    let passwordOk = !requiresPassword;
+    if (requiresPassword && typeof password === 'string' && password.length > 0) {
+      passwordOk = await argon2.verify(file.sharePasswordHash!, password).catch(() => false);
+    }
+
+    return { file, expired, requiresPassword, passwordOk };
   }
 
-  async streamFileForShare(username: string, filename: string, res: Response) {
-    const file = await this.getFileForShare(username, filename);
+  // Метаданные для публичной страницы (без файла, если истёк срок или нужен пароль)
+  async getFileForShare(username: string, filename: string, password?: string) {
+    const { file, expired, requiresPassword, passwordOk } = await this.resolveSharedFile(username, filename, password);
+
+    if (expired) return { expired: true as const };
+    if (requiresPassword && !passwordOk) return { requiresPassword: true as const };
+
+    return {
+      ok: true as const,
+      id: file.id,
+      name: file.name,
+      size: file.size.toString(),
+      mimeType: file.mimeType,
+      createdAt: file.createdAt,
+      shareExpiresAt: file.shareExpiresAt,
+      requiresPassword,
+      downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+    };
+  }
+
+  async streamFileForShare(username: string, filename: string, res: Response, password?: string) {
+    const { file, expired, requiresPassword, passwordOk } = await this.resolveSharedFile(username, filename, password);
+
+    if (expired) throw new GoneException('Срок действия ссылки истёк');
+    if (requiresPassword && !passwordOk) throw new ForbiddenException('Требуется пароль');
 
     let s3Response: GetObjectCommandOutput;
     try {

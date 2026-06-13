@@ -1152,7 +1152,10 @@ export const FileScalarFieldEnum = {
   updatedAt: 'updatedAt',
   isShared: 'isShared',
   downloadUrl: 'downloadUrl',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  sharedAt: 'sharedAt',
+  shareExpiresAt: 'shareExpiresAt',
+  sharePasswordHash: 'sharePasswordHash'
 } as const
 
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]

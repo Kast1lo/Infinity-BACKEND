@@ -9,6 +9,7 @@ import { UploadFileDto } from './DTO/upload-file.dto';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { RenameDto } from './DTO/rename.dto';
+import { UpdateShareDto } from './DTO/update-share.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -145,19 +146,29 @@ export class FileSystemController {
   async getShareFilePublic(
     @Param('username') username: string,
     @Param('filename') filename: string,
+    @Query('password') password?: string,
   ) {
     try {
-      const file = await this.fileSystemService.getFileForShare(username, filename);
-      const presignedUrl = await this.fileSystemService.getPresignedUrl(file.path);
+      const result = await this.fileSystemService.getFileForShare(username, filename, password);
+
+      if ('expired' in result) {
+        return { success: false, expired: true, message: 'Срок действия ссылки истёк' };
+      }
+      if ('requiresPassword' in result && !('ok' in result)) {
+        return { success: false, requiresPassword: true, message: 'Требуется пароль' };
+      }
+
       return {
         success: true,
         data: {
-          id: file.id,
-          name: file.name,
-          size: file.size,
-          mimeType: file.mimeType,
-          createdAt: file.createdAt,
-          downloadUrl: presignedUrl,
+          id: result.id,
+          name: result.name,
+          size: result.size,
+          mimeType: result.mimeType,
+          createdAt: result.createdAt,
+          shareExpiresAt: result.shareExpiresAt,
+          requiresPassword: result.requiresPassword,
+          downloadUrl: result.downloadUrl,
         },
       };
     } catch (error: any) {
@@ -223,23 +234,37 @@ export class FileSystemController {
     @Param('username') username: string,
     @Param('filename') filename: string,
     @Res() res: Response,
+    @Query('password') password?: string,
   ) {
-    await this.fileSystemService.streamFileForShare(username, filename, res);
+    await this.fileSystemService.streamFileForShare(username, filename, res, password);
   }
 
-  @ApiOperation({ summary: 'Опубликовать или скрыть файл для пересылки по ссылке' })
+  @ApiOperation({ summary: 'Список расшаренных файлов пользователя' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, description: 'Список публичных ссылок' })
+  @Get('shared')
+  @UseGuards(AuthGuard('jwt'))
+  async getSharedFiles(@Req() req) {
+    return this.fileSystemService.getSharedFiles(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Настроить публичную ссылку (вкл/выкл, срок, пароль)' })
   @ApiCookieAuth('access_token')
   @ApiParam({ name: 'id', description: 'UUID файла' })
-  @ApiBody({ schema: { type: 'object', properties: { isShared: { type: 'boolean', example: true } } } })
-  @ApiResponse({ status: 200, description: 'Статус публикации обновлён' })
+  @ApiBody({ type: UpdateShareDto })
+  @ApiResponse({ status: 200, description: 'Настройки ссылки обновлены' })
   @Patch('share/:id')
   @UseGuards(AuthGuard('jwt'))
   async setFileShared(
     @Req() req,
     @Param('id') id: string,
-    @Body() dto: { isShared?: boolean },
+    @Body() dto: UpdateShareDto,
   ) {
-    return this.fileSystemService.setFileShared(req.user.userId, id, dto?.isShared ?? true);
+    return this.fileSystemService.updateShare(req.user.userId, id, {
+      isShared: dto.isShared,
+      expiresInDays: dto.expiresInDays ?? null,
+      password: dto.password,
+    });
   }
 
   @ApiOperation({ summary: 'Удалить файл или папку' })

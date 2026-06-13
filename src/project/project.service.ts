@@ -97,6 +97,7 @@ export class ProjectService {
   }
 
   async assertOwnership(projectId: string, userId: string): Promise<void> {
+    if (!projectId) throw new NotFoundException('Проект не найден');
     const project = await this.prisma.project.findUnique({
       where:  { id: projectId },
       select: { userId: true },

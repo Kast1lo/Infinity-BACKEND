@@ -199,6 +199,7 @@ export class InfinityLifeService {
   }
 
   async getProjectColumns(projectId: string, userId: string) {
+    if (!projectId) throw new BadRequestException('Не указан проект (projectId)');
     await this.projectService.assertOwnership(projectId, userId);
 
     return this.prisma.taskColumn.findMany({

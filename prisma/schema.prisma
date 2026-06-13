@@ -151,6 +151,9 @@ model File {
   isShared    Boolean  @default(false)
   downloadUrl String?
   deletedAt   DateTime?
+  sharedAt          DateTime?
+  shareExpiresAt    DateTime?
+  sharePasswordHash String?
   owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
