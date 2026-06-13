@@ -89,6 +89,13 @@ export class InfinityLifeController {
     return this.infinityLifeService.getReminders(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Поиск задач по названию' })
+  @UseGuards(AuthGuard('jwt'))
+  @Get('search')
+  async searchTasks(@Req() req, @Query('q') q: string) {
+    return this.infinityLifeService.searchTasks(req.user.userId, q ?? '');
+  }
+
   @ApiOperation({ summary: 'Отложить напоминание на N дней' })
   @ApiParam({ name: 'taskId', description: 'UUID задачи' })
   @ApiBody({ type: SnoozeReminderDto })

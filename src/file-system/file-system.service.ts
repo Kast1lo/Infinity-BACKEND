@@ -266,6 +266,36 @@ export class FileSystemService {
     return { files: mappedFiles, folders };
   }
 
+  // ─── Поиск по файлам и папкам (по имени) ───
+
+  async search(userId: string, query: string) {
+    const q = (query ?? '').trim();
+    if (q.length < 2) return { files: [], folders: [] };
+
+    const [files, folders] = await Promise.all([
+      this.prisma.file.findMany({
+        where:   { ownerId: userId, deletedAt: null, name: { contains: q, mode: 'insensitive' } },
+        orderBy: { updatedAt: 'desc' },
+        take:    20,
+      }),
+      this.prisma.folder.findMany({
+        where:   { ownerId: userId, deletedAt: null, name: { contains: q, mode: 'insensitive' } },
+        orderBy: { updatedAt: 'desc' },
+        take:    20,
+      }),
+    ]);
+
+    const mappedFiles = await Promise.all(
+      files.map(async (file) => ({
+        ...file,
+        size:        file.size.toString(),
+        downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+      })),
+    );
+
+    return { files: mappedFiles, folders };
+  }
+
   async deleteFile(key: string): Promise<void> {
     await this.S3Client.send(new DeleteObjectCommand({
       Bucket: this.bucketName,

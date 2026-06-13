@@ -257,6 +257,16 @@ export class FileSystemController {
     return this.fileSystemService.getStarred(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Поиск файлов и папок по имени' })
+  @ApiCookieAuth('access_token')
+  @ApiQuery({ name: 'q', description: 'Поисковый запрос (минимум 2 символа)' })
+  @ApiResponse({ status: 200, description: 'Найденные файлы и папки' })
+  @Get('search')
+  @UseGuards(AuthGuard('jwt'))
+  async search(@Req() req, @Query('q') q: string) {
+    return this.fileSystemService.search(req.user.userId, q ?? '');
+  }
+
   @ApiOperation({ summary: 'Добавить/убрать из избранного' })
   @ApiCookieAuth('access_token')
   @ApiParam({ name: 'id', description: 'UUID объекта' })

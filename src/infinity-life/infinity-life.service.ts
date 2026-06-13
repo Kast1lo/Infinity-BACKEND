@@ -177,6 +177,38 @@ export class InfinityLifeService {
     return { snoozedUntil: until };
   }
 
+  // Поиск задач по названию (для глобального поиска).
+  async searchTasks(userId: string, query: string) {
+    const q = (query ?? '').trim();
+    if (q.length < 2) return [];
+
+    const tasks = await this.prisma.task.findMany({
+      where: { userId, title: { contains: q, mode: 'insensitive' } },
+      select: {
+        id:          true,
+        title:       true,
+        isCompleted: true,
+        priority:    true,
+        dueDate:     true,
+        projectId:   true,
+        project:     { select: { name: true, color: true } },
+      },
+      orderBy: { updatedAt: 'desc' },
+      take:    20,
+    });
+
+    return tasks.map((t) => ({
+      id:           t.id,
+      title:        t.title,
+      isCompleted:  t.isCompleted,
+      priority:     t.priority,
+      dueDate:      t.dueDate,
+      projectId:    t.projectId,
+      projectName:  t.project?.name ?? '',
+      projectColor: t.project?.color ?? null,
+    }));
+  }
+
   async createSubtask(dto: CreateSubtaskDto, userId: string) {
     const parentTask = await this.prisma.task.findUnique({
       where:  { id: dto.taskId },
