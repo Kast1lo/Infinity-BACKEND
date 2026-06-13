@@ -248,6 +248,30 @@ export class FileSystemController {
     return this.fileSystemService.getSharedFiles(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Список избранных файлов и папок' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, description: 'Избранное пользователя' })
+  @Get('starred')
+  @UseGuards(AuthGuard('jwt'))
+  async getStarred(@Req() req) {
+    return this.fileSystemService.getStarred(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Добавить/убрать из избранного' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID объекта' })
+  @ApiQuery({ name: 'type', enum: ['file', 'folder'], description: 'Тип объекта' })
+  @ApiResponse({ status: 200, description: 'Состояние избранного переключено' })
+  @Patch('star/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async toggleStar(
+    @Req() req,
+    @Param('id') id: string,
+    @Query('type') type: 'file' | 'folder',
+  ) {
+    return this.fileSystemService.toggleStar(req.user.userId, id, type);
+  }
+
   @ApiOperation({ summary: 'Настроить публичную ссылку (вкл/выкл, срок, пароль)' })
   @ApiCookieAuth('access_token')
   @ApiParam({ name: 'id', description: 'UUID файла' })

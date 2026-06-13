@@ -187,6 +187,7 @@ export const FileScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   isShared: 'isShared',
+  isStarred: 'isStarred',
   downloadUrl: 'downloadUrl',
   deletedAt: 'deletedAt',
   sharedAt: 'sharedAt',
@@ -206,6 +207,7 @@ export const FolderScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   isShared: 'isShared',
+  isStarred: 'isStarred',
   deletedAt: 'deletedAt'
 } as const
 

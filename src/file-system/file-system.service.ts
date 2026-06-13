@@ -227,6 +227,45 @@ export class FileSystemService {
     );
   }
 
+  // ─── Избранное (Starred) ───
+
+  async toggleStar(userId: string, id: string, type: 'file' | 'folder') {
+    if (type === 'file') {
+      const file = await this.prisma.file.findFirst({ where: { id, ownerId: userId, deletedAt: null } });
+      if (!file) throw new NotFoundException('Файл не найден');
+      const updated = await this.prisma.file.update({ where: { id }, data: { isStarred: !file.isStarred } });
+      return { isStarred: updated.isStarred };
+    }
+
+    const folder = await this.prisma.folder.findFirst({ where: { id, ownerId: userId, deletedAt: null } });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+    const updated = await this.prisma.folder.update({ where: { id }, data: { isStarred: !folder.isStarred } });
+    return { isStarred: updated.isStarred };
+  }
+
+  async getStarred(userId: string) {
+    const [files, folders] = await Promise.all([
+      this.prisma.file.findMany({
+        where:   { ownerId: userId, isStarred: true, deletedAt: null },
+        orderBy: { updatedAt: 'desc' },
+      }),
+      this.prisma.folder.findMany({
+        where:   { ownerId: userId, isStarred: true, deletedAt: null },
+        orderBy: { updatedAt: 'desc' },
+      }),
+    ]);
+
+    const mappedFiles = await Promise.all(
+      files.map(async (file) => ({
+        ...file,
+        size:        file.size.toString(),
+        downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+      })),
+    );
+
+    return { files: mappedFiles, folders };
+  }
+
   async deleteFile(key: string): Promise<void> {
     await this.S3Client.send(new DeleteObjectCommand({
       Bucket: this.bucketName,

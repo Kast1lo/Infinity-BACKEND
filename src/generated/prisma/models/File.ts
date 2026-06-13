@@ -45,6 +45,7 @@ export type FileMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isShared: boolean | null
+  isStarred: boolean | null
   downloadUrl: string | null
   deletedAt: Date | null
   sharedAt: Date | null
@@ -63,6 +64,7 @@ export type FileMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isShared: boolean | null
+  isStarred: boolean | null
   downloadUrl: string | null
   deletedAt: Date | null
   sharedAt: Date | null
@@ -81,6 +83,7 @@ export type FileCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   isShared: number
+  isStarred: number
   downloadUrl: number
   deletedAt: number
   sharedAt: number
@@ -109,6 +112,7 @@ export type FileMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isShared?: true
+  isStarred?: true
   downloadUrl?: true
   deletedAt?: true
   sharedAt?: true
@@ -127,6 +131,7 @@ export type FileMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isShared?: true
+  isStarred?: true
   downloadUrl?: true
   deletedAt?: true
   sharedAt?: true
@@ -145,6 +150,7 @@ export type FileCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isShared?: true
+  isStarred?: true
   downloadUrl?: true
   deletedAt?: true
   sharedAt?: true
@@ -250,6 +256,7 @@ export type FileGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   isShared: boolean
+  isStarred: boolean
   downloadUrl: string | null
   deletedAt: Date | null
   sharedAt: Date | null
@@ -291,6 +298,7 @@ export type FileWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
   isShared?: Prisma.BoolFilter<"File"> | boolean
+  isStarred?: Prisma.BoolFilter<"File"> | boolean
   downloadUrl?: Prisma.StringNullableFilter<"File"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"File"> | Date | string | null
   sharedAt?: Prisma.DateTimeNullableFilter<"File"> | Date | string | null
@@ -311,6 +319,7 @@ export type FileOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
   downloadUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   sharedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -334,6 +343,7 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
   isShared?: Prisma.BoolFilter<"File"> | boolean
+  isStarred?: Prisma.BoolFilter<"File"> | boolean
   downloadUrl?: Prisma.StringNullableFilter<"File"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"File"> | Date | string | null
   sharedAt?: Prisma.DateTimeNullableFilter<"File"> | Date | string | null
@@ -354,6 +364,7 @@ export type FileOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
   downloadUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   sharedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -380,6 +391,7 @@ export type FileScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"File"> | Date | string
   isShared?: Prisma.BoolWithAggregatesFilter<"File"> | boolean
+  isStarred?: Prisma.BoolWithAggregatesFilter<"File"> | boolean
   downloadUrl?: Prisma.StringNullableWithAggregatesFilter<"File"> | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"File"> | Date | string | null
   sharedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"File"> | Date | string | null
@@ -396,6 +408,7 @@ export type FileCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -416,6 +429,7 @@ export type FileUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -432,6 +446,7 @@ export type FileUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -452,6 +467,7 @@ export type FileUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -470,6 +486,7 @@ export type FileCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -486,6 +503,7 @@ export type FileUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -504,6 +522,7 @@ export type FileUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -532,6 +551,7 @@ export type FileCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
   downloadUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   sharedAt?: Prisma.SortOrder
@@ -554,6 +574,7 @@ export type FileMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
   downloadUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   sharedAt?: Prisma.SortOrder
@@ -572,6 +593,7 @@ export type FileMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  isStarred?: Prisma.SortOrder
   downloadUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   sharedAt?: Prisma.SortOrder
@@ -676,6 +698,7 @@ export type FileCreateWithoutOwnerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -694,6 +717,7 @@ export type FileUncheckedCreateWithoutOwnerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -741,6 +765,7 @@ export type FileScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
   isShared?: Prisma.BoolFilter<"File"> | boolean
+  isStarred?: Prisma.BoolFilter<"File"> | boolean
   downloadUrl?: Prisma.StringNullableFilter<"File"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"File"> | Date | string | null
   sharedAt?: Prisma.DateTimeNullableFilter<"File"> | Date | string | null
@@ -757,6 +782,7 @@ export type FileCreateWithoutFolderInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -775,6 +801,7 @@ export type FileUncheckedCreateWithoutFolderInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -818,6 +845,7 @@ export type FileCreateManyOwnerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -834,6 +862,7 @@ export type FileUpdateWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -852,6 +881,7 @@ export type FileUncheckedUpdateWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -869,6 +899,7 @@ export type FileUncheckedUpdateManyWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -886,6 +917,7 @@ export type FileCreateManyFolderInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: string | null
   deletedAt?: Date | string | null
   sharedAt?: Date | string | null
@@ -902,6 +934,7 @@ export type FileUpdateWithoutFolderInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -920,6 +953,7 @@ export type FileUncheckedUpdateWithoutFolderInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -937,6 +971,7 @@ export type FileUncheckedUpdateManyWithoutFolderInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
   downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -957,6 +992,7 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: boolean
   deletedAt?: boolean
   sharedAt?: boolean
@@ -977,6 +1013,7 @@ export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: boolean
   deletedAt?: boolean
   sharedAt?: boolean
@@ -997,6 +1034,7 @@ export type FileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: boolean
   deletedAt?: boolean
   sharedAt?: boolean
@@ -1017,6 +1055,7 @@ export type FileSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  isStarred?: boolean
   downloadUrl?: boolean
   deletedAt?: boolean
   sharedAt?: boolean
@@ -1024,7 +1063,7 @@ export type FileSelectScalar = {
   sharePasswordHash?: boolean
 }
 
-export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "size" | "mimeType" | "ownerId" | "folderId" | "createdAt" | "updatedAt" | "isShared" | "downloadUrl" | "deletedAt" | "sharedAt" | "shareExpiresAt" | "sharePasswordHash", ExtArgs["result"]["file"]>
+export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "size" | "mimeType" | "ownerId" | "folderId" | "createdAt" | "updatedAt" | "isShared" | "isStarred" | "downloadUrl" | "deletedAt" | "sharedAt" | "shareExpiresAt" | "sharePasswordHash", ExtArgs["result"]["file"]>
 export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
@@ -1055,6 +1094,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdAt: Date
     updatedAt: Date
     isShared: boolean
+    isStarred: boolean
     downloadUrl: string | null
     deletedAt: Date | null
     sharedAt: Date | null
@@ -1495,6 +1535,7 @@ export interface FileFieldRefs {
   readonly createdAt: Prisma.FieldRef<"File", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"File", 'DateTime'>
   readonly isShared: Prisma.FieldRef<"File", 'Boolean'>
+  readonly isStarred: Prisma.FieldRef<"File", 'Boolean'>
   readonly downloadUrl: Prisma.FieldRef<"File", 'String'>
   readonly deletedAt: Prisma.FieldRef<"File", 'DateTime'>
   readonly sharedAt: Prisma.FieldRef<"File", 'DateTime'>

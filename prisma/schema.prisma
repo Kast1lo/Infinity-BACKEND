@@ -150,6 +150,7 @@ model File {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   isShared    Boolean  @default(false)
+  isStarred   Boolean  @default(false)
   downloadUrl String?
   deletedAt   DateTime?
   sharedAt          DateTime?
@@ -171,6 +172,7 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isShared  Boolean  @default(false)
+  isStarred Boolean  @default(false)
   deletedAt DateTime?
   owner     User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
