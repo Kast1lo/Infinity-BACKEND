@@ -257,4 +257,54 @@ export class FileSystemController {
   ) {
     return this.fileSystemService.deleteItem(req.user.userId, id, type);
   }
+
+  @ApiOperation({ summary: 'Содержимое корзины' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, description: 'Файлы и папки в корзине' })
+  @Get('trash')
+  @UseGuards(AuthGuard('jwt'))
+  async getTrash(@Req() req) {
+    return this.fileSystemService.getTrash(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Очистить корзину (удалить всё навсегда)' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, description: 'Корзина очищена' })
+  @Delete('trash')
+  @UseGuards(AuthGuard('jwt'))
+  async emptyTrash(@Req() req) {
+    return this.fileSystemService.emptyTrash(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Восстановить элемент из корзины' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID объекта' })
+  @ApiQuery({ name: 'type', enum: ['file', 'folder'], description: 'Тип объекта' })
+  @ApiResponse({ status: 200, description: 'Элемент восстановлен' })
+  @ApiResponse({ status: 404, description: 'Элемент не найден в корзине' })
+  @Patch('restore/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async restoreItem(
+    @Req() req,
+    @Param('id') id: string,
+    @Query('type') type: 'file' | 'folder',
+  ) {
+    return this.fileSystemService.restoreItem(req.user.userId, id, type);
+  }
+
+  @ApiOperation({ summary: 'Удалить элемент из корзины навсегда' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID объекта' })
+  @ApiQuery({ name: 'type', enum: ['file', 'folder'], description: 'Тип объекта' })
+  @ApiResponse({ status: 200, description: 'Элемент удалён навсегда' })
+  @ApiResponse({ status: 404, description: 'Элемент не найден в корзине' })
+  @Delete('trash/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async permanentDelete(
+    @Req() req,
+    @Param('id') id: string,
+    @Query('type') type: 'file' | 'folder',
+  ) {
+    return this.fileSystemService.permanentDelete(req.user.userId, id, type);
+  }
 }

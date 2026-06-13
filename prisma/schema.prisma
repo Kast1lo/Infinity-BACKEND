@@ -23,6 +23,9 @@ model User {
   verificationCode          String?
   verificationCodeExpiresAt DateTime?
 
+  resetCode                 String?
+  resetCodeExpiresAt        DateTime?
+
   planType      String    @default("spark")
   planExpiresAt DateTime?
   isFrozen      Boolean   @default(false)
@@ -147,10 +150,12 @@ model File {
   updatedAt   DateTime @updatedAt
   isShared    Boolean  @default(false)
   downloadUrl String?
+  deletedAt   DateTime?
   owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
 
   @@index([ownerId, path])
+  @@index([ownerId, deletedAt])
 }
 
 model Folder {
@@ -162,11 +167,13 @@ model Folder {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isShared  Boolean  @default(false)
+  deletedAt DateTime?
   owner     User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
   children  Folder[] @relation("FolderToParent")
   files     File[]
 
   @@index([ownerId, path])
+  @@index([ownerId, deletedAt])
 }
 

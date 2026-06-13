@@ -1,4 +1,5 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import * as crypto from 'crypto';
 import { extname } from 'path';
 import {
@@ -165,7 +166,7 @@ export class FileSystemService {
       if (path.split('/').length > 10) throw new BadRequestException('Максимальная глубина папок 10');
     }
 
-    const existing = await this.prisma.folder.findFirst({ where: { ownerId: userId, path } });
+    const existing = await this.prisma.folder.findFirst({ where: { ownerId: userId, path, deletedAt: null } });
     if (existing) throw new BadRequestException('Папка с таким именем уже существует');
 
     return this.prisma.folder.create({
@@ -181,10 +182,16 @@ export class FileSystemService {
 
   async getFolderTree(userId: string) {
     const trees = await this.prisma.folder.findMany({
-      where:   { ownerId: userId, parentId: null },
+      where:   { ownerId: userId, parentId: null, deletedAt: null },
       include: {
-        children: { include: { children: true, files: true } },
-        files:    true,
+        children: {
+          where:   { deletedAt: null },
+          include: {
+            children: { where: { deletedAt: null }, include: { children: true, files: { where: { deletedAt: null } } } },
+            files:    { where: { deletedAt: null } },
+          },
+        },
+        files: { where: { deletedAt: null } },
       },
     });
 
@@ -207,7 +214,7 @@ export class FileSystemService {
 
   async getFilesInFolder(userId: string, folderId: string | null) {
     const files = await this.prisma.file.findMany({
-      where: { ownerId: userId, folderId },
+      where: { ownerId: userId, folderId, deletedAt: null },
     });
 
     return Promise.all(
@@ -226,67 +233,199 @@ export class FileSystemService {
     }));
   }
 
+  // Мягкое удаление: помечаем deletedAt, файлы остаются в S3 (в Корзине).
+  // Хранилище НЕ освобождается, пока элемент в Корзине (как в Google Drive).
   async deleteItem(userId: string, id: string, type: 'file' | 'folder') {
+    const now = new Date();
+
     if (type === 'file') {
-      const file = await this.prisma.file.findUnique({ where: { id } });
-      if (!file || file.ownerId !== userId) throw new NotFoundException('Файл не найден');
+      const file = await this.prisma.file.findFirst({ where: { id, ownerId: userId, deletedAt: null } });
+      if (!file) throw new NotFoundException('Файл не найден');
 
-      await this.deleteFile(file.path);
-      await this.prisma.file.delete({ where: { id } });
-
-      await this.planService.updateStorageUsed(userId, -BigInt(file.size));
-
-      return { message: 'Файл удалён' };
+      await this.prisma.file.update({ where: { id }, data: { deletedAt: now } });
+      return { message: 'Файл перемещён в корзину' };
     }
 
     if (type === 'folder') {
-      const folder = await this.prisma.folder.findUnique({
-        where:   { id },
-        include: { files: true, children: { include: { files: true, children: true } } },
-      });
-      if (!folder || folder.ownerId !== userId) throw new NotFoundException('Папка не найдена');
+      const folder = await this.prisma.folder.findFirst({ where: { id, ownerId: userId, deletedAt: null } });
+      if (!folder) throw new NotFoundException('Папка не найдена');
 
-      const totalSize = await this.getFolderTotalSize(folder);
-      await this.deleteFolderRecursive(folder);
-
-      if (totalSize > 0n) {
-        await this.planService.updateStorageUsed(userId, -totalSize);
-      }
-
-      return { message: 'Папка удалена' };
+      const { folderIds, fileIds } = await this.collectSubtree(id);
+      await this.prisma.$transaction([
+        this.prisma.file.updateMany({ where: { id: { in: fileIds } }, data: { deletedAt: now } }),
+        this.prisma.folder.updateMany({ where: { id: { in: folderIds } }, data: { deletedAt: now } }),
+      ]);
+      return { message: 'Папка перемещена в корзину' };
     }
 
     throw new BadRequestException('Неверный тип элемента');
   }
 
-  private async getFolderTotalSize(folder: any): Promise<bigint> {
-    let total = 0n;
-    for (const file of folder.files) {
-      total += BigInt(file.size);
+  // Собирает все id вложенных папок и файлов (включая саму папку)
+  private async collectSubtree(folderId: string): Promise<{ folderIds: string[]; fileIds: string[] }> {
+    const folderIds: string[] = [folderId];
+    const fileIds:   string[] = [];
+    const queue = [folderId];
+    while (queue.length) {
+      const current = queue.shift()!;
+      const files = await this.prisma.file.findMany({ where: { folderId: current }, select: { id: true } });
+      fileIds.push(...files.map(f => f.id));
+      const children = await this.prisma.folder.findMany({ where: { parentId: current }, select: { id: true } });
+      for (const c of children) { folderIds.push(c.id); queue.push(c.id); }
     }
-    for (const child of folder.children) {
-      const childFull = await this.prisma.folder.findUnique({
-        where:   { id: child.id },
-        include: { files: true, children: { include: { files: true, children: true } } },
-      });
-      if (childFull) total += await this.getFolderTotalSize(childFull);
-    }
-    return total;
+    return { folderIds, fileIds };
   }
 
-  private async deleteFolderRecursive(folder: any) {
-    for (const file of folder.files) {
-      await this.deleteFile(file.path);
-      await this.prisma.file.delete({ where: { id: file.id } });
+  // ─── Корзина ───
+
+  async getTrash(userId: string) {
+    const [files, folders] = await Promise.all([
+      this.prisma.file.findMany({
+        where: {
+          ownerId: userId,
+          deletedAt: { not: null },
+          OR: [{ folderId: null }, { folder: { deletedAt: null } }],
+        },
+        orderBy: { deletedAt: 'desc' },
+      }),
+      this.prisma.folder.findMany({
+        where: {
+          ownerId: userId,
+          deletedAt: { not: null },
+          OR: [{ parentId: null }, { parent: { deletedAt: null } }],
+        },
+        orderBy: { deletedAt: 'desc' },
+      }),
+    ]);
+
+    const mappedFiles = await Promise.all(
+      files.map(async (file) => ({
+        ...file,
+        size:        file.size.toString(),
+        downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+      })),
+    );
+
+    return { files: mappedFiles, folders };
+  }
+
+  async restoreItem(userId: string, id: string, type: 'file' | 'folder') {
+    if (type === 'file') {
+      const file = await this.prisma.file.findFirst({ where: { id, ownerId: userId, deletedAt: { not: null } } });
+      if (!file) throw new NotFoundException('Файл не найден в корзине');
+
+      let folderReset: { folderId?: null } = {};
+      if (file.folderId) {
+        const folder = await this.prisma.folder.findUnique({ where: { id: file.folderId } });
+        if (!folder || folder.deletedAt) folderReset = { folderId: null };
+      }
+      await this.prisma.file.update({ where: { id }, data: { deletedAt: null, ...folderReset } });
+      return { message: 'Файл восстановлен' };
     }
-    for (const child of folder.children) {
-      const childFull = await this.prisma.folder.findUnique({
-        where:   { id: child.id },
-        include: { files: true, children: { include: { files: true, children: true } } },
-      });
-      if (childFull) await this.deleteFolderRecursive(childFull);
+
+    if (type === 'folder') {
+      const folder = await this.prisma.folder.findFirst({ where: { id, ownerId: userId, deletedAt: { not: null } } });
+      if (!folder) throw new NotFoundException('Папка не найдена в корзине');
+
+      const { folderIds, fileIds } = await this.collectSubtree(id);
+
+      // Если родитель удалён/отсутствует — восстанавливаем в корень
+      let parentReset: { parentId?: null; path?: string } = {};
+      if (folder.parentId) {
+        const parent = await this.prisma.folder.findUnique({ where: { id: folder.parentId } });
+        if (!parent || parent.deletedAt) parentReset = { parentId: null, path: `/${folder.name}` };
+      }
+
+      await this.prisma.$transaction([
+        this.prisma.file.updateMany({ where: { id: { in: fileIds } }, data: { deletedAt: null } }),
+        this.prisma.folder.updateMany({ where: { id: { in: folderIds } }, data: { deletedAt: null } }),
+        this.prisma.folder.update({ where: { id }, data: { deletedAt: null, ...parentReset } }),
+      ]);
+      return { message: 'Папка восстановлена' };
     }
-    await this.prisma.folder.delete({ where: { id: folder.id } });
+
+    throw new BadRequestException('Неверный тип элемента');
+  }
+
+  // Безвозвратное удаление одного элемента из корзины (S3 + БД + освобождение квоты)
+  async permanentDelete(userId: string, id: string, type: 'file' | 'folder') {
+    if (type === 'file') {
+      const file = await this.prisma.file.findFirst({ where: { id, ownerId: userId, deletedAt: { not: null } } });
+      if (!file) throw new NotFoundException('Файл не найден в корзине');
+
+      await this.deleteFile(file.path).catch(() => undefined);
+      await this.prisma.file.delete({ where: { id } });
+      await this.planService.updateStorageUsed(userId, -BigInt(file.size));
+      return { message: 'Файл удалён навсегда' };
+    }
+
+    if (type === 'folder') {
+      const folder = await this.prisma.folder.findFirst({ where: { id, ownerId: userId, deletedAt: { not: null } } });
+      if (!folder) throw new NotFoundException('Папка не найдена в корзине');
+
+      const { folderIds, fileIds } = await this.collectSubtree(id);
+      const files = await this.prisma.file.findMany({ where: { id: { in: fileIds } }, select: { path: true, size: true } });
+
+      let total = 0n;
+      for (const f of files) { await this.deleteFile(f.path).catch(() => undefined); total += BigInt(f.size); }
+
+      await this.prisma.$transaction([
+        this.prisma.file.deleteMany({ where: { id: { in: fileIds } } }),
+        this.prisma.folder.deleteMany({ where: { id: { in: folderIds } } }),
+      ]);
+      if (total > 0n) await this.planService.updateStorageUsed(userId, -total);
+      return { message: 'Папка удалена навсегда' };
+    }
+
+    throw new BadRequestException('Неверный тип элемента');
+  }
+
+  // Очистить всю корзину пользователя
+  async emptyTrash(userId: string) {
+    const files = await this.prisma.file.findMany({
+      where:  { ownerId: userId, deletedAt: { not: null } },
+      select: { id: true, path: true, size: true },
+    });
+
+    let total = 0n;
+    for (const f of files) { await this.deleteFile(f.path).catch(() => undefined); total += BigInt(f.size); }
+
+    await this.prisma.$transaction([
+      this.prisma.file.deleteMany({ where: { ownerId: userId, deletedAt: { not: null } } }),
+      this.prisma.folder.deleteMany({ where: { ownerId: userId, deletedAt: { not: null } } }),
+    ]);
+    if (total > 0n) await this.planService.updateStorageUsed(userId, -total);
+    return { message: 'Корзина очищена' };
+  }
+
+  // Авто-очистка корзины: безвозвратно удаляет всё, что лежит в ней дольше 30 дней
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async purgeOldTrash(): Promise<void> {
+    const threshold = new Date(Date.now() - 30 * 86_400_000);
+
+    const files = await this.prisma.file.findMany({
+      where:  { deletedAt: { lte: threshold } },
+      select: { id: true, path: true, size: true, ownerId: true },
+    });
+
+    const perOwner = new Map<string, bigint>();
+    for (const f of files) {
+      await this.deleteFile(f.path).catch(() => undefined);
+      perOwner.set(f.ownerId, (perOwner.get(f.ownerId) ?? 0n) + BigInt(f.size));
+    }
+
+    if (files.length > 0) {
+      await this.prisma.file.deleteMany({ where: { id: { in: files.map(f => f.id) } } });
+    }
+    await this.prisma.folder.deleteMany({ where: { deletedAt: { lte: threshold } } });
+
+    for (const [ownerId, size] of perOwner) {
+      if (size > 0n) await this.planService.updateStorageUsed(ownerId, -size);
+    }
+
+    if (files.length > 0) {
+      process.stdout.write(`[FileSystem] Корзина: безвозвратно удалено ${files.length} файлов\n`);
+    }
   }
 
   async downloadFolder(userId: string, folderId: string, res: Response) {
@@ -402,7 +541,7 @@ export class FileSystemService {
     if (!user) throw new NotFoundException('Пользователь не найден');
 
     const file = await this.prisma.file.findFirst({
-      where:  { ownerId: user.id, name: filename, isShared: true },
+      where:  { ownerId: user.id, name: filename, isShared: true, deletedAt: null },
       select: { id: true, name: true, size: true, mimeType: true, createdAt: true, path: true },
     });
     if (!file) throw new NotFoundException('Файл не найден');

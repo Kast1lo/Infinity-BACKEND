@@ -48,6 +48,8 @@ export type UserMinAggregateOutputType = {
   isVerified: boolean | null
   verificationCode: string | null
   verificationCodeExpiresAt: Date | null
+  resetCode: string | null
+  resetCodeExpiresAt: Date | null
   planType: string | null
   planExpiresAt: Date | null
   isFrozen: boolean | null
@@ -69,6 +71,8 @@ export type UserMaxAggregateOutputType = {
   isVerified: boolean | null
   verificationCode: string | null
   verificationCodeExpiresAt: Date | null
+  resetCode: string | null
+  resetCodeExpiresAt: Date | null
   planType: string | null
   planExpiresAt: Date | null
   isFrozen: boolean | null
@@ -90,6 +94,8 @@ export type UserCountAggregateOutputType = {
   isVerified: number
   verificationCode: number
   verificationCodeExpiresAt: number
+  resetCode: number
+  resetCodeExpiresAt: number
   planType: number
   planExpiresAt: number
   isFrozen: number
@@ -123,6 +129,8 @@ export type UserMinAggregateInputType = {
   isVerified?: true
   verificationCode?: true
   verificationCodeExpiresAt?: true
+  resetCode?: true
+  resetCodeExpiresAt?: true
   planType?: true
   planExpiresAt?: true
   isFrozen?: true
@@ -144,6 +152,8 @@ export type UserMaxAggregateInputType = {
   isVerified?: true
   verificationCode?: true
   verificationCodeExpiresAt?: true
+  resetCode?: true
+  resetCodeExpiresAt?: true
   planType?: true
   planExpiresAt?: true
   isFrozen?: true
@@ -165,6 +175,8 @@ export type UserCountAggregateInputType = {
   isVerified?: true
   verificationCode?: true
   verificationCodeExpiresAt?: true
+  resetCode?: true
+  resetCodeExpiresAt?: true
   planType?: true
   planExpiresAt?: true
   isFrozen?: true
@@ -273,6 +285,8 @@ export type UserGroupByOutputType = {
   isVerified: boolean
   verificationCode: string | null
   verificationCodeExpiresAt: Date | null
+  resetCode: string | null
+  resetCodeExpiresAt: Date | null
   planType: string
   planExpiresAt: Date | null
   isFrozen: boolean
@@ -317,6 +331,8 @@ export type UserWhereInput = {
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
   verificationCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetCode?: Prisma.StringNullableFilter<"User"> | string | null
+  resetCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   planType?: Prisma.StringFilter<"User"> | string
   planExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   isFrozen?: Prisma.BoolFilter<"User"> | boolean
@@ -343,6 +359,8 @@ export type UserOrderByWithRelationInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   planType?: Prisma.SortOrder
   planExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isFrozen?: Prisma.SortOrder
@@ -372,6 +390,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   verificationCode?: Prisma.StringNullableFilter<"User"> | string | null
   verificationCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  resetCode?: Prisma.StringNullableFilter<"User"> | string | null
+  resetCodeExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   planType?: Prisma.StringFilter<"User"> | string
   planExpiresAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   isFrozen?: Prisma.BoolFilter<"User"> | boolean
@@ -398,6 +418,8 @@ export type UserOrderByWithAggregationInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrderInput | Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  resetCodeExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   planType?: Prisma.SortOrder
   planExpiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isFrozen?: Prisma.SortOrder
@@ -427,6 +449,8 @@ export type UserScalarWhereWithAggregatesInput = {
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   verificationCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   verificationCodeExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  resetCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  resetCodeExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   planType?: Prisma.StringWithAggregatesFilter<"User"> | string
   planExpiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   isFrozen?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -448,6 +472,8 @@ export type UserCreateInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -474,6 +500,8 @@ export type UserUncheckedCreateInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -500,6 +528,8 @@ export type UserUpdateInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -526,6 +556,8 @@ export type UserUncheckedUpdateInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -552,6 +584,8 @@ export type UserCreateManyInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -573,6 +607,8 @@ export type UserUpdateManyMutationInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -594,6 +630,8 @@ export type UserUncheckedUpdateManyInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -615,6 +653,8 @@ export type UserCountOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrder
+  resetCode?: Prisma.SortOrder
+  resetCodeExpiresAt?: Prisma.SortOrder
   planType?: Prisma.SortOrder
   planExpiresAt?: Prisma.SortOrder
   isFrozen?: Prisma.SortOrder
@@ -641,6 +681,8 @@ export type UserMaxOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrder
+  resetCode?: Prisma.SortOrder
+  resetCodeExpiresAt?: Prisma.SortOrder
   planType?: Prisma.SortOrder
   planExpiresAt?: Prisma.SortOrder
   isFrozen?: Prisma.SortOrder
@@ -662,6 +704,8 @@ export type UserMinOrderByAggregateInput = {
   isVerified?: Prisma.SortOrder
   verificationCode?: Prisma.SortOrder
   verificationCodeExpiresAt?: Prisma.SortOrder
+  resetCode?: Prisma.SortOrder
+  resetCodeExpiresAt?: Prisma.SortOrder
   planType?: Prisma.SortOrder
   planExpiresAt?: Prisma.SortOrder
   isFrozen?: Prisma.SortOrder
@@ -810,6 +854,8 @@ export type UserCreateWithoutPromoCodeInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -835,6 +881,8 @@ export type UserUncheckedCreateWithoutPromoCodeInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -876,6 +924,8 @@ export type UserUpdateWithoutPromoCodeInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -901,6 +951,8 @@ export type UserUncheckedUpdateWithoutPromoCodeInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -926,6 +978,8 @@ export type UserCreateWithoutProjectsInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -951,6 +1005,8 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -992,6 +1048,8 @@ export type UserUpdateWithoutProjectsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1017,6 +1075,8 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1042,6 +1102,8 @@ export type UserCreateWithoutTasksInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -1067,6 +1129,8 @@ export type UserUncheckedCreateWithoutTasksInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -1108,6 +1172,8 @@ export type UserUpdateWithoutTasksInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1133,6 +1199,8 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1158,6 +1226,8 @@ export type UserCreateWithoutFilesInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -1183,6 +1253,8 @@ export type UserUncheckedCreateWithoutFilesInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -1224,6 +1296,8 @@ export type UserUpdateWithoutFilesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1249,6 +1323,8 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1274,6 +1350,8 @@ export type UserCreateWithoutFoldersInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -1299,6 +1377,8 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   isVerified?: boolean
   verificationCode?: string | null
   verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
   planType?: string
   planExpiresAt?: Date | string | null
   isFrozen?: boolean
@@ -1340,6 +1420,8 @@ export type UserUpdateWithoutFoldersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1365,6 +1447,8 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   planType?: Prisma.StringFieldUpdateOperationsInput | string
   planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1448,6 +1532,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  resetCode?: boolean
+  resetCodeExpiresAt?: boolean
   planType?: boolean
   planExpiresAt?: boolean
   isFrozen?: boolean
@@ -1475,6 +1561,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  resetCode?: boolean
+  resetCodeExpiresAt?: boolean
   planType?: boolean
   planExpiresAt?: boolean
   isFrozen?: boolean
@@ -1496,6 +1584,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  resetCode?: boolean
+  resetCodeExpiresAt?: boolean
   planType?: boolean
   planExpiresAt?: boolean
   isFrozen?: boolean
@@ -1517,6 +1607,8 @@ export type UserSelectScalar = {
   isVerified?: boolean
   verificationCode?: boolean
   verificationCodeExpiresAt?: boolean
+  resetCode?: boolean
+  resetCodeExpiresAt?: boolean
   planType?: boolean
   planExpiresAt?: boolean
   isFrozen?: boolean
@@ -1526,7 +1618,7 @@ export type UserSelectScalar = {
   aiCallsResetAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed" | "aiCallsToday" | "aiCallsResetAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "resetCode" | "resetCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed" | "aiCallsToday" | "aiCallsResetAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
@@ -1559,6 +1651,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isVerified: boolean
     verificationCode: string | null
     verificationCodeExpiresAt: Date | null
+    resetCode: string | null
+    resetCodeExpiresAt: Date | null
     planType: string
     planExpiresAt: Date | null
     isFrozen: boolean
@@ -2005,6 +2099,8 @@ export interface UserFieldRefs {
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly verificationCode: Prisma.FieldRef<"User", 'String'>
   readonly verificationCodeExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly resetCode: Prisma.FieldRef<"User", 'String'>
+  readonly resetCodeExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly planType: Prisma.FieldRef<"User", 'String'>
   readonly planExpiresAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly isFrozen: Prisma.FieldRef<"User", 'Boolean'>

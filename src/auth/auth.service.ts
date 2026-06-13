@@ -14,6 +14,8 @@ import { Response } from 'express';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
 import * as jwt from 'jsonwebtoken';
 import { VerifyEmailDto } from './DTO/Verify-email.dto';
+import { ForgotPasswordDto } from './DTO/forgot-password.dto';
+import { ResetPasswordDto } from './DTO/reset-password.dto';
 import { MailService } from '../mail/mail.service';
 
 @Injectable()
@@ -191,6 +193,71 @@ export class AuthService {
     return { message: 'Новый код отправлен' };
   }
 
+  async forgotPassword(dto: ForgotPasswordDto) {
+    const genericMessage = {
+      message: 'Если аккаунт с такой почтой существует, мы отправили код для сброса пароля',
+    };
+
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    // Не раскрываем существование аккаунта — отвечаем одинаково в любом случае.
+    if (!user) {
+      return genericMessage;
+    }
+
+    const code      = this.generateCode();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    await this.prisma.user.update({
+      where: { email: dto.email },
+      data: {
+        resetCode:          code,
+        resetCodeExpiresAt: expiresAt,
+      },
+    });
+
+    await this.mailService.sendResetCode(dto.email, code);
+
+    return genericMessage;
+  }
+
+  async resetPassword(dto: ResetPasswordDto, res: Response) {
+    const user = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (!user || !user.resetCode || user.resetCode !== dto.code) {
+      throw new BadRequestException('Неверный код сброса');
+    }
+
+    if (!user.resetCodeExpiresAt || user.resetCodeExpiresAt < new Date()) {
+      throw new BadRequestException('Код истёк. Запросите новый');
+    }
+
+    const passwordHash = await argon2.hash(dto.passwordHash, {
+      type:        argon2.argon2id,
+      memoryCost:  19458,
+      timeCost:    2,
+      parallelism: 1,
+    });
+
+    const updated = await this.prisma.user.update({
+      where: { email: dto.email },
+      data: {
+        passwordHash,
+        // Владение почтой подтверждено кодом — заодно верифицируем email.
+        isVerified:         true,
+        resetCode:          null,
+        resetCodeExpiresAt: null,
+      },
+      select: { id: true, email: true, username: true },
+    });
+
+    return this.generateToken(updated, res);
+  }
+
   async login(dto: loginRequest, res: Response) {
     const user = await this.prisma.user.findUnique({
       where: { username: dto.username },
@@ -218,7 +285,7 @@ export class AuthService {
     }
 
     const { passwordHash, isVerified, ...safeUser } = user;
-    return this.generateToken(safeUser, res);
+    return this.generateToken(safeUser, res, dto.rememberMe ?? false);
   }
 
   async refresh(res: Response) {
@@ -268,6 +335,7 @@ export class AuthService {
   async generateToken(
     user: { id: string; email: string; username: string | null },
     res: Response,
+    rememberMe = true,
   ) {
     const payload = { sub: user.id, email: user.email, username: user.username };
 
@@ -276,28 +344,36 @@ export class AuthService {
       expiresIn: this.configService.get('JWT_ACCESS_EXPIRATION'),
     });
 
+    // С «Запомнить меня» refresh живёт 30 дней, иначе — стандартные 7.
+    const refreshExpiresIn = rememberMe
+      ? '30d'
+      : this.configService.get('JWT_REFRESH_EXPIRATION') || '7d';
+
     const refreshToken = await this.jwtsService.signAsync(
       { sub: user.id },
       {
         secret:    this.configService.get('JWT_REFRESH_SECRET'),
-        expiresIn: this.configService.get('JWT_REFRESH_EXPIRATION'),
+        expiresIn: refreshExpiresIn,
       },
     );
 
-    res.cookie('refresh_token', refreshToken, {
+    const isProd = this.configService.get('NODE_ENV') === 'production';
+    const baseCookie = {
       httpOnly: true,
-      secure:   this.configService.get('NODE_ENV') === 'production',
-      sameSite: 'strict',
+      secure:   isProd,
+      sameSite: 'strict' as const,
       path:     '/',
-      maxAge:   7 * 24 * 60 * 60 * 1000,
+    };
+
+    res.cookie('refresh_token', refreshToken, {
+      ...baseCookie,
+      // rememberMe → persistent cookie (30 дней); иначе — session-cookie (живёт до закрытия браузера).
+      ...(rememberMe ? { maxAge: 30 * 24 * 60 * 60 * 1000 } : {}),
     });
 
     res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure:   this.configService.get('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      path:     '/',
-      maxAge:   15 * 60 * 1000,
+      ...baseCookie,
+      ...(rememberMe ? { maxAge: 15 * 60 * 1000 } : {}),
     });
 
     return { message: 'Успешная авторизация' };

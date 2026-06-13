@@ -6,6 +6,8 @@ import type { Response } from 'express';
 import { RegisterDto } from './DTO/register.dto';
 import { loginRequest } from './DTO/login.dto';
 import { VerifyEmailDto } from './DTO/Verify-email.dto';
+import { ForgotPasswordDto } from './DTO/forgot-password.dto';
+import { ResetPasswordDto } from './DTO/reset-password.dto';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import {
   ApiTags,
@@ -57,6 +59,30 @@ export class AuthController {
   @Post('resend-code')
   async resendCode(@Body('email') email: string) {
     return this.authService.resendCode(email);
+  }
+
+  @ApiOperation({ summary: 'Запрос кода для сброса пароля' })
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({ status: 200, description: 'Код отправлен (ответ одинаков независимо от существования аккаунта)' })
+  @ApiResponse({ status: 429, description: 'Превышен лимит запросов (3/мин)' })
+  @Throttle({ default: { limit: 3, ttl: 60_000 } })
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    return this.authService.forgotPassword(dto);
+  }
+
+  @ApiOperation({ summary: 'Сброс пароля по коду из письма' })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: 200, description: 'Пароль изменён, токены установлены в cookie' })
+  @ApiResponse({ status: 400, description: 'Неверный или просроченный код' })
+  @ApiResponse({ status: 429, description: 'Превышен лимит запросов (5/мин)' })
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @Post('reset-password')
+  async resetPassword(
+    @Body() dto: ResetPasswordDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.resetPassword(dto, res);
   }
 
   @ApiOperation({ summary: 'Вход в систему' })

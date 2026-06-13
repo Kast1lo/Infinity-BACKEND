@@ -1054,6 +1054,8 @@ export const UserScalarFieldEnum = {
   isVerified: 'isVerified',
   verificationCode: 'verificationCode',
   verificationCodeExpiresAt: 'verificationCodeExpiresAt',
+  resetCode: 'resetCode',
+  resetCodeExpiresAt: 'resetCodeExpiresAt',
   planType: 'planType',
   planExpiresAt: 'planExpiresAt',
   isFrozen: 'isFrozen',
@@ -1149,7 +1151,8 @@ export const FileScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   isShared: 'isShared',
-  downloadUrl: 'downloadUrl'
+  downloadUrl: 'downloadUrl',
+  deletedAt: 'deletedAt'
 } as const
 
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
@@ -1163,7 +1166,8 @@ export const FolderScalarFieldEnum = {
   parentId: 'parentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  isShared: 'isShared'
+  isShared: 'isShared',
+  deletedAt: 'deletedAt'
 } as const
 
 export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]

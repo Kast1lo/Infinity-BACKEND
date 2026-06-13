@@ -33,6 +33,7 @@ export type FolderMinAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isShared: boolean | null
+  deletedAt: Date | null
 }
 
 export type FolderMaxAggregateOutputType = {
@@ -44,6 +45,7 @@ export type FolderMaxAggregateOutputType = {
   createdAt: Date | null
   updatedAt: Date | null
   isShared: boolean | null
+  deletedAt: Date | null
 }
 
 export type FolderCountAggregateOutputType = {
@@ -55,6 +57,7 @@ export type FolderCountAggregateOutputType = {
   createdAt: number
   updatedAt: number
   isShared: number
+  deletedAt: number
   _all: number
 }
 
@@ -68,6 +71,7 @@ export type FolderMinAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isShared?: true
+  deletedAt?: true
 }
 
 export type FolderMaxAggregateInputType = {
@@ -79,6 +83,7 @@ export type FolderMaxAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isShared?: true
+  deletedAt?: true
 }
 
 export type FolderCountAggregateInputType = {
@@ -90,6 +95,7 @@ export type FolderCountAggregateInputType = {
   createdAt?: true
   updatedAt?: true
   isShared?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -174,6 +180,7 @@ export type FolderGroupByOutputType = {
   createdAt: Date
   updatedAt: Date
   isShared: boolean
+  deletedAt: Date | null
   _count: FolderCountAggregateOutputType | null
   _min: FolderMinAggregateOutputType | null
   _max: FolderMaxAggregateOutputType | null
@@ -206,6 +213,7 @@ export type FolderWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   isShared?: Prisma.BoolFilter<"Folder"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Folder"> | Date | string | null
   owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   parent?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
   children?: Prisma.FolderListRelationFilter
@@ -221,6 +229,7 @@ export type FolderOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   owner?: Prisma.UserOrderByWithRelationInput
   parent?: Prisma.FolderOrderByWithRelationInput
   children?: Prisma.FolderOrderByRelationAggregateInput
@@ -239,6 +248,7 @@ export type FolderWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   isShared?: Prisma.BoolFilter<"Folder"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Folder"> | Date | string | null
   owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   parent?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
   children?: Prisma.FolderListRelationFilter
@@ -254,6 +264,7 @@ export type FolderOrderByWithAggregationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.FolderCountOrderByAggregateInput
   _max?: Prisma.FolderMaxOrderByAggregateInput
   _min?: Prisma.FolderMinOrderByAggregateInput
@@ -271,6 +282,7 @@ export type FolderScalarWhereWithAggregatesInput = {
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Folder"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Folder"> | Date | string
   isShared?: Prisma.BoolWithAggregatesFilter<"Folder"> | boolean
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Folder"> | Date | string | null
 }
 
 export type FolderCreateInput = {
@@ -280,6 +292,7 @@ export type FolderCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
@@ -295,6 +308,7 @@ export type FolderUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
 }
@@ -306,6 +320,7 @@ export type FolderUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
@@ -321,6 +336,7 @@ export type FolderUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
 }
@@ -334,6 +350,7 @@ export type FolderCreateManyInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
 }
 
 export type FolderUpdateManyMutationInput = {
@@ -343,6 +360,7 @@ export type FolderUpdateManyMutationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type FolderUncheckedUpdateManyInput = {
@@ -354,6 +372,7 @@ export type FolderUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type FolderListRelationFilter = {
@@ -380,6 +399,7 @@ export type FolderCountOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type FolderMaxOrderByAggregateInput = {
@@ -391,6 +411,7 @@ export type FolderMaxOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type FolderMinOrderByAggregateInput = {
@@ -402,6 +423,7 @@ export type FolderMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type FolderCreateNestedManyWithoutOwnerInput = {
@@ -527,6 +549,7 @@ export type FolderCreateWithoutOwnerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
@@ -540,6 +563,7 @@ export type FolderUncheckedCreateWithoutOwnerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
 }
@@ -582,6 +606,7 @@ export type FolderScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Folder"> | Date | string
   isShared?: Prisma.BoolFilter<"Folder"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Folder"> | Date | string | null
 }
 
 export type FolderCreateWithoutFilesInput = {
@@ -591,6 +616,7 @@ export type FolderCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
@@ -605,6 +631,7 @@ export type FolderUncheckedCreateWithoutFilesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
 }
 
@@ -631,6 +658,7 @@ export type FolderUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
@@ -645,6 +673,7 @@ export type FolderUncheckedUpdateWithoutFilesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
 }
 
@@ -655,6 +684,7 @@ export type FolderCreateWithoutChildrenInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
@@ -669,6 +699,7 @@ export type FolderUncheckedCreateWithoutChildrenInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
 }
 
@@ -684,6 +715,7 @@ export type FolderCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
@@ -697,6 +729,7 @@ export type FolderUncheckedCreateWithoutParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
 }
@@ -729,6 +762,7 @@ export type FolderUpdateWithoutChildrenInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
@@ -743,6 +777,7 @@ export type FolderUncheckedUpdateWithoutChildrenInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
 }
 
@@ -770,6 +805,7 @@ export type FolderCreateManyOwnerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
 }
 
 export type FolderUpdateWithoutOwnerInput = {
@@ -779,6 +815,7 @@ export type FolderUpdateWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
@@ -792,6 +829,7 @@ export type FolderUncheckedUpdateWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
 }
@@ -804,6 +842,7 @@ export type FolderUncheckedUpdateManyWithoutOwnerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type FolderCreateManyParentInput = {
@@ -814,6 +853,7 @@ export type FolderCreateManyParentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   isShared?: boolean
+  deletedAt?: Date | string | null
 }
 
 export type FolderUpdateWithoutParentInput = {
@@ -823,6 +863,7 @@ export type FolderUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
@@ -836,6 +877,7 @@ export type FolderUncheckedUpdateWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
 }
@@ -848,6 +890,7 @@ export type FolderUncheckedUpdateManyWithoutParentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -899,6 +942,7 @@ export type FolderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  deletedAt?: boolean
   owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
   children?: boolean | Prisma.Folder$childrenArgs<ExtArgs>
@@ -915,6 +959,7 @@ export type FolderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  deletedAt?: boolean
   owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
 }, ExtArgs["result"]["folder"]>
@@ -928,6 +973,7 @@ export type FolderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  deletedAt?: boolean
   owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
 }, ExtArgs["result"]["folder"]>
@@ -941,9 +987,10 @@ export type FolderSelectScalar = {
   createdAt?: boolean
   updatedAt?: boolean
   isShared?: boolean
+  deletedAt?: boolean
 }
 
-export type FolderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "ownerId" | "parentId" | "createdAt" | "updatedAt" | "isShared", ExtArgs["result"]["folder"]>
+export type FolderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "path" | "ownerId" | "parentId" | "createdAt" | "updatedAt" | "isShared" | "deletedAt", ExtArgs["result"]["folder"]>
 export type FolderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.Folder$ownerArgs<ExtArgs>
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
@@ -977,6 +1024,7 @@ export type $FolderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     createdAt: Date
     updatedAt: Date
     isShared: boolean
+    deletedAt: Date | null
   }, ExtArgs["result"]["folder"]>
   composites: {}
 }
@@ -1412,6 +1460,7 @@ export interface FolderFieldRefs {
   readonly createdAt: Prisma.FieldRef<"Folder", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Folder", 'DateTime'>
   readonly isShared: Prisma.FieldRef<"Folder", 'Boolean'>
+  readonly deletedAt: Prisma.FieldRef<"Folder", 'DateTime'>
 }
     
 

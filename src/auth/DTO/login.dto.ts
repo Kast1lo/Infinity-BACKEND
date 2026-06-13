@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, MaxLength, IsOptional, IsBoolean } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class loginRequest {
@@ -15,4 +15,9 @@ export class loginRequest {
   @MinLength(6, { message: 'пароль должен содеражть не менее 6 символов' })
   @MaxLength(128, { message: 'пароль не должен превышать 128 символов' })
   passwordHash: string;
+
+  @ApiProperty({ example: true, required: false, description: 'Запомнить пользователя (продлевает сессию до 30 дней)' })
+  @IsOptional()
+  @IsBoolean({ message: 'rememberMe должно быть булевым значением' })
+  rememberMe?: boolean;
 }
