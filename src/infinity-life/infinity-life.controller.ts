@@ -7,6 +7,7 @@ import { CreateSubtaskDto } from './DTO/create-subtask.dto';
 import { CreateColumnDto } from './DTO/create-column.dto';
 import { UpdateColumnDto } from './DTO/update-column.dto';
 import { MoveTaskDto } from './DTO/move-task.dto';
+import { SnoozeReminderDto } from './DTO/snooze-reminder.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -78,6 +79,24 @@ export class InfinityLifeController {
   @UseGuards(AuthGuard('jwt'))
   async getUserTasks(@Req() req) {
     return this.infinityLifeService.getUserTasks(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Напоминания: задачи с дедлайном (просрочка/ближайшие 7 дней)' })
+  @ApiResponse({ status: 200, description: 'Список напоминаний' })
+  @Get('reminders')
+  @UseGuards(AuthGuard('jwt'))
+  async getReminders(@Req() req) {
+    return this.infinityLifeService.getReminders(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Отложить напоминание на N дней' })
+  @ApiParam({ name: 'taskId', description: 'UUID задачи' })
+  @ApiBody({ type: SnoozeReminderDto })
+  @ApiResponse({ status: 200, description: 'Напоминание отложено' })
+  @Patch('reminders/:taskId/snooze')
+  @UseGuards(AuthGuard('jwt'))
+  async snoozeReminder(@Req() req, @Param('taskId') taskId: string, @Body() dto: SnoozeReminderDto) {
+    return this.infinityLifeService.snoozeReminder(req.user.userId, taskId, dto.days);
   }
 
   @ApiOperation({ summary: 'Переместить задачу в колонку' })

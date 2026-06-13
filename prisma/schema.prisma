@@ -103,6 +103,7 @@ model Task {
   dueDate     DateTime?
   color       String?
   order       Int       @default(0)
+  reminderSnoozedUntil DateTime?
   columnId    String?
   projectId   String
   userId      String

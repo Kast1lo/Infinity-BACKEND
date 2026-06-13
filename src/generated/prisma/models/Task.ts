@@ -43,6 +43,7 @@ export type TaskMinAggregateOutputType = {
   dueDate: Date | null
   color: string | null
   order: number | null
+  reminderSnoozedUntil: Date | null
   columnId: string | null
   projectId: string | null
   userId: string | null
@@ -59,6 +60,7 @@ export type TaskMaxAggregateOutputType = {
   dueDate: Date | null
   color: string | null
   order: number | null
+  reminderSnoozedUntil: Date | null
   columnId: string | null
   projectId: string | null
   userId: string | null
@@ -75,6 +77,7 @@ export type TaskCountAggregateOutputType = {
   dueDate: number
   color: number
   order: number
+  reminderSnoozedUntil: number
   columnId: number
   projectId: number
   userId: number
@@ -101,6 +104,7 @@ export type TaskMinAggregateInputType = {
   dueDate?: true
   color?: true
   order?: true
+  reminderSnoozedUntil?: true
   columnId?: true
   projectId?: true
   userId?: true
@@ -117,6 +121,7 @@ export type TaskMaxAggregateInputType = {
   dueDate?: true
   color?: true
   order?: true
+  reminderSnoozedUntil?: true
   columnId?: true
   projectId?: true
   userId?: true
@@ -133,6 +138,7 @@ export type TaskCountAggregateInputType = {
   dueDate?: true
   color?: true
   order?: true
+  reminderSnoozedUntil?: true
   columnId?: true
   projectId?: true
   userId?: true
@@ -236,6 +242,7 @@ export type TaskGroupByOutputType = {
   dueDate: Date | null
   color: string | null
   order: number
+  reminderSnoozedUntil: Date | null
   columnId: string | null
   projectId: string
   userId: string
@@ -275,6 +282,7 @@ export type TaskWhereInput = {
   dueDate?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   color?: Prisma.StringNullableFilter<"Task"> | string | null
   order?: Prisma.IntFilter<"Task"> | number
+  reminderSnoozedUntil?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   columnId?: Prisma.StringNullableFilter<"Task"> | string | null
   projectId?: Prisma.StringFilter<"Task"> | string
   userId?: Prisma.StringFilter<"Task"> | string
@@ -295,6 +303,7 @@ export type TaskOrderByWithRelationInput = {
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   order?: Prisma.SortOrder
+  reminderSnoozedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   columnId?: Prisma.SortOrderInput | Prisma.SortOrder
   projectId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -318,6 +327,7 @@ export type TaskWhereUniqueInput = Prisma.AtLeast<{
   dueDate?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   color?: Prisma.StringNullableFilter<"Task"> | string | null
   order?: Prisma.IntFilter<"Task"> | number
+  reminderSnoozedUntil?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   columnId?: Prisma.StringNullableFilter<"Task"> | string | null
   projectId?: Prisma.StringFilter<"Task"> | string
   userId?: Prisma.StringFilter<"Task"> | string
@@ -338,6 +348,7 @@ export type TaskOrderByWithAggregationInput = {
   dueDate?: Prisma.SortOrderInput | Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   order?: Prisma.SortOrder
+  reminderSnoozedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   columnId?: Prisma.SortOrderInput | Prisma.SortOrder
   projectId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -362,6 +373,7 @@ export type TaskScalarWhereWithAggregatesInput = {
   dueDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
   color?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   order?: Prisma.IntWithAggregatesFilter<"Task"> | number
+  reminderSnoozedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
   columnId?: Prisma.StringNullableWithAggregatesFilter<"Task"> | string | null
   projectId?: Prisma.StringWithAggregatesFilter<"Task"> | string
   userId?: Prisma.StringWithAggregatesFilter<"Task"> | string
@@ -378,6 +390,7 @@ export type TaskCreateInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   column?: Prisma.TaskColumnCreateNestedOneWithoutTasksInput
@@ -395,6 +408,7 @@ export type TaskUncheckedCreateInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   projectId: string
   userId: string
@@ -412,6 +426,7 @@ export type TaskUpdateInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   column?: Prisma.TaskColumnUpdateOneWithoutTasksNestedInput
@@ -429,6 +444,7 @@ export type TaskUncheckedUpdateInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -446,6 +462,7 @@ export type TaskCreateManyInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   projectId: string
   userId: string
@@ -462,6 +479,7 @@ export type TaskUpdateManyMutationInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -475,6 +493,7 @@ export type TaskUncheckedUpdateManyInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -501,6 +520,7 @@ export type TaskCountOrderByAggregateInput = {
   dueDate?: Prisma.SortOrder
   color?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  reminderSnoozedUntil?: Prisma.SortOrder
   columnId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -521,6 +541,7 @@ export type TaskMaxOrderByAggregateInput = {
   dueDate?: Prisma.SortOrder
   color?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  reminderSnoozedUntil?: Prisma.SortOrder
   columnId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -537,6 +558,7 @@ export type TaskMinOrderByAggregateInput = {
   dueDate?: Prisma.SortOrder
   color?: Prisma.SortOrder
   order?: Prisma.SortOrder
+  reminderSnoozedUntil?: Prisma.SortOrder
   columnId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
@@ -706,6 +728,7 @@ export type TaskCreateWithoutUserInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   column?: Prisma.TaskColumnCreateNestedOneWithoutTasksInput
@@ -722,6 +745,7 @@ export type TaskUncheckedCreateWithoutUserInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   projectId: string
   createdAt?: Date | string
@@ -767,6 +791,7 @@ export type TaskScalarWhereInput = {
   dueDate?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   color?: Prisma.StringNullableFilter<"Task"> | string | null
   order?: Prisma.IntFilter<"Task"> | number
+  reminderSnoozedUntil?: Prisma.DateTimeNullableFilter<"Task"> | Date | string | null
   columnId?: Prisma.StringNullableFilter<"Task"> | string | null
   projectId?: Prisma.StringFilter<"Task"> | string
   userId?: Prisma.StringFilter<"Task"> | string
@@ -783,6 +808,7 @@ export type TaskCreateWithoutProjectInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   column?: Prisma.TaskColumnCreateNestedOneWithoutTasksInput
@@ -799,6 +825,7 @@ export type TaskUncheckedCreateWithoutProjectInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   userId: string
   createdAt?: Date | string
@@ -841,6 +868,7 @@ export type TaskCreateWithoutColumnInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   project: Prisma.ProjectCreateNestedOneWithoutTasksInput
@@ -857,6 +885,7 @@ export type TaskUncheckedCreateWithoutColumnInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   projectId: string
   userId: string
   createdAt?: Date | string
@@ -899,6 +928,7 @@ export type TaskCreateWithoutSubtasksInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   column?: Prisma.TaskColumnCreateNestedOneWithoutTasksInput
@@ -915,6 +945,7 @@ export type TaskUncheckedCreateWithoutSubtasksInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   projectId: string
   userId: string
@@ -947,6 +978,7 @@ export type TaskUpdateWithoutSubtasksInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   column?: Prisma.TaskColumnUpdateOneWithoutTasksNestedInput
@@ -963,6 +995,7 @@ export type TaskUncheckedUpdateWithoutSubtasksInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -979,6 +1012,7 @@ export type TaskCreateManyUserInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   projectId: string
   createdAt?: Date | string
@@ -994,6 +1028,7 @@ export type TaskUpdateWithoutUserInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   column?: Prisma.TaskColumnUpdateOneWithoutTasksNestedInput
@@ -1010,6 +1045,7 @@ export type TaskUncheckedUpdateWithoutUserInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1026,6 +1062,7 @@ export type TaskUncheckedUpdateManyWithoutUserInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1041,6 +1078,7 @@ export type TaskCreateManyProjectInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   columnId?: string | null
   userId: string
   createdAt?: Date | string
@@ -1056,6 +1094,7 @@ export type TaskUpdateWithoutProjectInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   column?: Prisma.TaskColumnUpdateOneWithoutTasksNestedInput
@@ -1072,6 +1111,7 @@ export type TaskUncheckedUpdateWithoutProjectInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1088,6 +1128,7 @@ export type TaskUncheckedUpdateManyWithoutProjectInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   columnId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1103,6 +1144,7 @@ export type TaskCreateManyColumnInput = {
   dueDate?: Date | string | null
   color?: string | null
   order?: number
+  reminderSnoozedUntil?: Date | string | null
   projectId: string
   userId: string
   createdAt?: Date | string
@@ -1118,6 +1160,7 @@ export type TaskUpdateWithoutColumnInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneRequiredWithoutTasksNestedInput
@@ -1134,6 +1177,7 @@ export type TaskUncheckedUpdateWithoutColumnInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1150,6 +1194,7 @@ export type TaskUncheckedUpdateManyWithoutColumnInput = {
   dueDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
+  reminderSnoozedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1196,6 +1241,7 @@ export type TaskSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   dueDate?: boolean
   color?: boolean
   order?: boolean
+  reminderSnoozedUntil?: boolean
   columnId?: boolean
   projectId?: boolean
   userId?: boolean
@@ -1217,6 +1263,7 @@ export type TaskSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   dueDate?: boolean
   color?: boolean
   order?: boolean
+  reminderSnoozedUntil?: boolean
   columnId?: boolean
   projectId?: boolean
   userId?: boolean
@@ -1236,6 +1283,7 @@ export type TaskSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   dueDate?: boolean
   color?: boolean
   order?: boolean
+  reminderSnoozedUntil?: boolean
   columnId?: boolean
   projectId?: boolean
   userId?: boolean
@@ -1255,6 +1303,7 @@ export type TaskSelectScalar = {
   dueDate?: boolean
   color?: boolean
   order?: boolean
+  reminderSnoozedUntil?: boolean
   columnId?: boolean
   projectId?: boolean
   userId?: boolean
@@ -1262,7 +1311,7 @@ export type TaskSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "notes" | "priority" | "isCompleted" | "dueDate" | "color" | "order" | "columnId" | "projectId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+export type TaskOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "notes" | "priority" | "isCompleted" | "dueDate" | "color" | "order" | "reminderSnoozedUntil" | "columnId" | "projectId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
 export type TaskInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   column?: boolean | Prisma.Task$columnArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
@@ -1298,6 +1347,7 @@ export type $TaskPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     dueDate: Date | null
     color: string | null
     order: number
+    reminderSnoozedUntil: Date | null
     columnId: string | null
     projectId: string
     userId: string
@@ -1738,6 +1788,7 @@ export interface TaskFieldRefs {
   readonly dueDate: Prisma.FieldRef<"Task", 'DateTime'>
   readonly color: Prisma.FieldRef<"Task", 'String'>
   readonly order: Prisma.FieldRef<"Task", 'Int'>
+  readonly reminderSnoozedUntil: Prisma.FieldRef<"Task", 'DateTime'>
   readonly columnId: Prisma.FieldRef<"Task", 'String'>
   readonly projectId: Prisma.FieldRef<"Task", 'String'>
   readonly userId: Prisma.FieldRef<"Task", 'String'>

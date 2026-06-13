@@ -1117,6 +1117,7 @@ export const TaskScalarFieldEnum = {
   dueDate: 'dueDate',
   color: 'color',
   order: 'order',
+  reminderSnoozedUntil: 'reminderSnoozedUntil',
   columnId: 'columnId',
   projectId: 'projectId',
   userId: 'userId',

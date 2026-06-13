@@ -118,6 +118,65 @@ export class InfinityLifeService {
     });
   }
 
+  // Напоминания: незавершённые задачи с дедлайном
+  // (просроченные за последние 14 дней или с дедлайном в ближайшие 7 дней).
+  // Древняя просрочка не показывается, чтобы колокольчик не висел бесконечно.
+  async getReminders(userId: string) {
+    const now   = new Date();
+    const soon  = new Date(now.getTime() + 7 * 86_400_000);
+    const since = new Date(now.getTime() - 14 * 86_400_000);
+
+    const tasks = await this.prisma.task.findMany({
+      where: {
+        userId,
+        isCompleted: false,
+        dueDate: { gte: since, lte: soon },
+        OR: [
+          { reminderSnoozedUntil: null },
+          { reminderSnoozedUntil: { lte: now } },
+        ],
+      },
+      select: {
+        id:       true,
+        title:    true,
+        dueDate:  true,
+        priority: true,
+        projectId: true,
+        project:  { select: { name: true, color: true } },
+      },
+      orderBy: { dueDate: 'asc' },
+      take: 50,
+    });
+
+    return tasks.map((t) => ({
+      id:          t.id,
+      title:       t.title,
+      dueDate:     t.dueDate,
+      priority:    t.priority,
+      projectId:   t.projectId,
+      projectName: t.project?.name ?? '',
+      projectColor: t.project?.color ?? null,
+      isOverdue:   !!t.dueDate && t.dueDate.getTime() < now.getTime(),
+    }));
+  }
+
+  // Отложить напоминание: скрыть его из колокольчика на указанное число дней.
+  async snoozeReminder(userId: string, taskId: string, days: number) {
+    const task = await this.prisma.task.findUnique({
+      where:  { id: taskId },
+      select: { userId: true },
+    });
+    if (!task) throw new NotFoundException('Задача не найдена');
+    if (task.userId !== userId) throw new ForbiddenException('Нет доступа к этой задаче');
+
+    const until = new Date(Date.now() + days * 86_400_000);
+    await this.prisma.task.update({
+      where: { id: taskId },
+      data:  { reminderSnoozedUntil: until },
+    });
+    return { snoozedUntil: until };
+  }
+
   async createSubtask(dto: CreateSubtaskDto, userId: string) {
     const parentTask = await this.prisma.task.findUnique({
       where:  { id: dto.taskId },
