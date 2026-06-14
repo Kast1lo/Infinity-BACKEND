@@ -404,6 +404,108 @@ export class FileSystemController {
     });
   }
 
+  // ─── Совместный доступ к папкам (между пользователями) ───
+
+  @ApiOperation({ summary: 'Папки, к которым мне открыли доступ' })
+  @ApiCookieAuth('access_token')
+  @Get('shared-with-me')
+  @UseGuards(AuthGuard('jwt'))
+  async getSharedWithMe(@Req() req) {
+    return this.fileSystemService.getSharedWithMe(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Участники общей папки' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @Get('folders/:id/members')
+  @UseGuards(AuthGuard('jwt'))
+  async listFolderMembers(@Req() req, @Param('id') id: string) {
+    return this.fileSystemService.listFolderMembers(id, req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Дать пользователю доступ к папке по email' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @ApiBody({ schema: { type: 'object', properties: { email: { type: 'string' }, role: { type: 'string', enum: ['VIEWER', 'EDITOR'] } } } })
+  @Post('folders/:id/members')
+  @UseGuards(AuthGuard('jwt'))
+  async inviteFolderMember(@Req() req, @Param('id') id: string, @Body() dto: { email: string; role?: string }) {
+    return this.fileSystemService.inviteFolderMember(req.user.userId, id, dto.email ?? '', dto.role);
+  }
+
+  @ApiOperation({ summary: 'Изменить роль участника папки' })
+  @ApiCookieAuth('access_token')
+  @Patch('folders/:id/members/:memberUserId')
+  @UseGuards(AuthGuard('jwt'))
+  async updateFolderMemberRole(@Req() req, @Param('id') id: string, @Param('memberUserId') memberUserId: string, @Body() dto: { role: string }) {
+    return this.fileSystemService.updateFolderMemberRole(req.user.userId, id, memberUserId, dto.role);
+  }
+
+  @ApiOperation({ summary: 'Убрать участника из папки' })
+  @ApiCookieAuth('access_token')
+  @Delete('folders/:id/members/:memberUserId')
+  @UseGuards(AuthGuard('jwt'))
+  async removeFolderMember(@Req() req, @Param('id') id: string, @Param('memberUserId') memberUserId: string) {
+    return this.fileSystemService.removeFolderMember(req.user.userId, id, memberUserId);
+  }
+
+  @ApiOperation({ summary: 'Покинуть общую папку' })
+  @ApiCookieAuth('access_token')
+  @Delete('folders/:id/leave')
+  @UseGuards(AuthGuard('jwt'))
+  async leaveFolder(@Req() req, @Param('id') id: string) {
+    return this.fileSystemService.leaveFolder(req.user.userId, id);
+  }
+
+  @ApiOperation({ summary: 'Содержимое доступной папки' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @Get('folder-access/:id/contents')
+  @UseGuards(AuthGuard('jwt'))
+  async getFolderContents(@Req() req, @Param('id') id: string) {
+    return this.fileSystemService.getFolderContentsForMember(req.user.userId, id);
+  }
+
+  @ApiOperation({ summary: 'Скачать доступную папку ZIP-архивом' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @Get('folder-access/:id/download-zip')
+  @UseGuards(AuthGuard('jwt'))
+  async downloadSharedFolderZip(@Req() req, @Param('id') id: string, @Res() res: Response) {
+    return this.fileSystemService.streamSharedFolderZipForMember(req.user.userId, id, res);
+  }
+
+  @ApiOperation({ summary: 'Загрузить файлы в доступную папку (нужна роль Редактор)' })
+  @ApiCookieAuth('access_token')
+  @ApiConsumes('multipart/form-data')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @Post('folder-access/:id/upload')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('file', 20))
+  async uploadToSharedFolder(@Req() req, @Param('id') id: string, @UploadedFiles() files: Express.Multer.File[]) {
+    return this.fileSystemService.uploadToSharedFolder(req.user.userId, id, files);
+  }
+
+  @ApiOperation({ summary: 'Создать подпапку в доступной папке (нужна роль Редактор)' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID родительской папки' })
+  @ApiBody({ schema: { type: 'object', properties: { name: { type: 'string' } } } })
+  @Post('folder-access/:id/create-folder')
+  @UseGuards(AuthGuard('jwt'))
+  async createSubfolderInShared(@Req() req, @Param('id') id: string, @Body() dto: { name: string }) {
+    return this.fileSystemService.createSubfolderInShared(req.user.userId, id, dto.name ?? '');
+  }
+
+  @ApiOperation({ summary: 'Удалить элемент в доступной папке (нужна роль Редактор)' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'itemId', description: 'UUID файла или папки' })
+  @ApiQuery({ name: 'type', enum: ['file', 'folder'] })
+  @Delete('folder-access/item/:itemId')
+  @UseGuards(AuthGuard('jwt'))
+  async deleteSharedItem(@Req() req, @Param('itemId') itemId: string, @Query('type') type: 'file' | 'folder') {
+    return this.fileSystemService.deleteSharedItem(req.user.userId, itemId, type);
+  }
+
   @ApiOperation({ summary: 'Удалить файл или папку' })
   @ApiCookieAuth('access_token')
   @ApiParam({ name: 'id', description: 'UUID объекта' })

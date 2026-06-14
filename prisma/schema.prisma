@@ -46,6 +46,7 @@ model User {
   tasks         Task[]
   projects      Project[]
   projectShares ProjectShare[]
+  folderShares  FolderShare[]
   notifications Notification[]
 
   @@index([email])
@@ -220,8 +221,24 @@ model Folder {
   parent    Folder?  @relation("FolderToParent", fields: [parentId], references: [id], onDelete: SetNull)
   children  Folder[] @relation("FolderToParent")
   files     File[]
+  shares    FolderShare[]
 
   @@index([ownerId, path])
   @@index([ownerId, deletedAt])
+}
+
+model FolderShare {
+  id          String   @id @default(uuid())
+  folderId    String
+  userId      String
+  role        String   @default("EDITOR")    // VIEWER | EDITOR
+  status      String   @default("ACCEPTED")  // PENDING | ACCEPTED
+  invitedById String?
+  createdAt   DateTime @default(now())
+  folder      Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([folderId, userId])
+  @@index([userId])
 }
 

@@ -60,7 +60,8 @@ export const ModelName = {
   Task: 'Task',
   Subtask: 'Subtask',
   File: 'File',
-  Folder: 'Folder'
+  Folder: 'Folder',
+  FolderShare: 'FolderShare'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -249,6 +250,19 @@ export const FolderScalarFieldEnum = {
 } as const
 
 export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]
+
+
+export const FolderShareScalarFieldEnum = {
+  id: 'id',
+  folderId: 'folderId',
+  userId: 'userId',
+  role: 'role',
+  status: 'status',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt'
+} as const
+
+export type FolderShareScalarFieldEnum = (typeof FolderShareScalarFieldEnum)[keyof typeof FolderShareScalarFieldEnum]
 
 
 export const SortOrder = {

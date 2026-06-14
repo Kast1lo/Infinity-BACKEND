@@ -1060,4 +1060,297 @@ export class FileSystemService {
 
     archive.finalize();
   }
+
+  // ═══════════ Совместный доступ к папкам (между зарегистрированными пользователями) ═══════════
+
+  private readonly folderRoleRank: Record<string, number> = { VIEWER: 1, EDITOR: 2, OWNER: 3 };
+
+  // Эффективная роль с наследованием вниз по дереву: шара на родителе действует на потомков.
+  async getFolderRole(folderId: string, userId: string): Promise<'OWNER' | 'EDITOR' | 'VIEWER' | null> {
+    let current = await this.prisma.folder.findFirst({
+      where:  { id: folderId, deletedAt: null },
+      select: { id: true, ownerId: true, parentId: true },
+    });
+    if (!current) return null;
+    if (current.ownerId === userId) return 'OWNER';
+
+    let best: 'EDITOR' | 'VIEWER' | null = null;
+    let guard = 0;
+    while (current && guard++ < 50) {
+      const share = await this.prisma.folderShare.findUnique({
+        where:  { folderId_userId: { folderId: current.id, userId } },
+        select: { role: true, status: true },
+      });
+      if (share && share.status === 'ACCEPTED') {
+        const r = share.role === 'VIEWER' ? 'VIEWER' : 'EDITOR';
+        if (!best || this.folderRoleRank[r] > this.folderRoleRank[best]) best = r;
+      }
+      if (!current.parentId) break;
+      current = await this.prisma.folder.findFirst({
+        where:  { id: current.parentId, deletedAt: null },
+        select: { id: true, ownerId: true, parentId: true },
+      });
+    }
+    return best;
+  }
+
+  async assertFolderAccess(folderId: string, userId: string, min: 'VIEWER' | 'EDITOR' = 'VIEWER') {
+    const role = await this.getFolderRole(folderId, userId);
+    if (!role) {
+      const exists = await this.prisma.folder.findFirst({ where: { id: folderId, deletedAt: null }, select: { id: true } });
+      if (!exists) throw new NotFoundException('Папка не найдена');
+      throw new ForbiddenException('Нет доступа к этой папке');
+    }
+    if (this.folderRoleRank[role] < this.folderRoleRank[min]) throw new ForbiddenException('Недостаточно прав для этого действия');
+    return role;
+  }
+
+  private async assertFolderOwner(folderId: string, userId: string) {
+    const folder = await this.prisma.folder.findFirst({
+      where:  { id: folderId, ownerId: userId, deletedAt: null },
+      select: { id: true, name: true },
+    });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+    return folder;
+  }
+
+  private normalizeFolderRole(role?: string): 'VIEWER' | 'EDITOR' {
+    return role === 'VIEWER' ? 'VIEWER' : 'EDITOR';
+  }
+
+  async listFolderMembers(folderId: string, userId: string) {
+    await this.assertFolderAccess(folderId, userId, 'VIEWER');
+    const folder = await this.prisma.folder.findUnique({
+      where:  { id: folderId },
+      select: { owner: { select: { id: true, username: true, email: true } } },
+    });
+    if (!folder?.owner) throw new NotFoundException('Папка не найдена');
+
+    const shares = await this.prisma.folderShare.findMany({
+      where:   { folderId },
+      orderBy: { createdAt: 'asc' },
+      include: { user: { select: { id: true, username: true, email: true } } },
+    });
+
+    return [
+      { userId: folder.owner.id, username: folder.owner.username, email: folder.owner.email, role: 'OWNER' as const, isOwner: true },
+      ...shares.map(s => ({ userId: s.user.id, username: s.user.username, email: s.user.email, role: s.role, isOwner: false })),
+    ];
+  }
+
+  async inviteFolderMember(ownerId: string, folderId: string, email: string, role?: string) {
+    const folder = await this.assertFolderOwner(folderId, ownerId);
+
+    const normalizedEmail = (email ?? '').trim().toLowerCase();
+    const invitee = await this.prisma.user.findUnique({ where: { email: normalizedEmail }, select: { id: true, username: true, email: true } });
+    if (!invitee) throw new NotFoundException('Пользователь с таким email не найден');
+    if (invitee.id === ownerId) throw new BadRequestException('Вы уже владелец этой папки');
+
+    const finalRole = this.normalizeFolderRole(role);
+    const share = await this.prisma.folderShare.upsert({
+      where:  { folderId_userId: { folderId, userId: invitee.id } },
+      update: { role: finalRole, status: 'ACCEPTED' },
+      create: { folderId, userId: invitee.id, role: finalRole, status: 'ACCEPTED', invitedById: ownerId },
+      include: { user: { select: { id: true, username: true, email: true } } },
+    });
+
+    await this.notifications.create(invitee.id, {
+      type:  'share',
+      title: 'Доступ к папке',
+      body:  `Вам открыли доступ к папке «${folder.name}»`,
+      link:  '/shared-with-me',
+    });
+
+    return { userId: share.user.id, username: share.user.username, email: share.user.email, role: share.role, isOwner: false };
+  }
+
+  async updateFolderMemberRole(ownerId: string, folderId: string, memberUserId: string, role: string) {
+    await this.assertFolderOwner(folderId, ownerId);
+    const finalRole = this.normalizeFolderRole(role);
+    const share = await this.prisma.folderShare.findUnique({ where: { folderId_userId: { folderId, userId: memberUserId } } });
+    if (!share) throw new NotFoundException('Участник не найден');
+    await this.prisma.folderShare.update({ where: { folderId_userId: { folderId, userId: memberUserId } }, data: { role: finalRole } });
+    return { userId: memberUserId, role: finalRole };
+  }
+
+  async removeFolderMember(ownerId: string, folderId: string, memberUserId: string) {
+    await this.assertFolderOwner(folderId, ownerId);
+    await this.prisma.folderShare.deleteMany({ where: { folderId, userId: memberUserId } });
+    return { message: 'Участник удалён' };
+  }
+
+  async leaveFolder(userId: string, folderId: string) {
+    const deleted = await this.prisma.folderShare.deleteMany({ where: { folderId, userId } });
+    if (deleted.count === 0) throw new NotFoundException('Вы не участник этой папки');
+    return { message: 'Вы покинули папку' };
+  }
+
+  // Список папок, к которым мне открыли доступ (корни шар)
+  async getSharedWithMe(userId: string) {
+    const shares = await this.prisma.folderShare.findMany({
+      where:   { userId, status: 'ACCEPTED', folder: { deletedAt: null } },
+      orderBy: { createdAt: 'desc' },
+      include: { folder: { select: { id: true, name: true, owner: { select: { username: true, email: true } } } } },
+    });
+    return shares
+      .filter(s => s.folder)
+      .map(s => ({
+        id:        s.folder.id,
+        name:      s.folder.name,
+        role:      s.role,
+        ownerName: s.folder.owner?.username ?? s.folder.owner?.email ?? null,
+      }));
+  }
+
+  // Содержимое доступной папки (для участника или владельца)
+  async getFolderContentsForMember(userId: string, folderId: string) {
+    const role = await this.assertFolderAccess(folderId, userId, 'VIEWER');
+    const folder = await this.prisma.folder.findUnique({ where: { id: folderId }, select: { id: true, name: true } });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+
+    const [folders, files] = await Promise.all([
+      this.prisma.folder.findMany({ where: { parentId: folderId, deletedAt: null }, orderBy: { name: 'asc' }, select: { id: true, name: true } }),
+      this.prisma.file.findMany({ where: { folderId, deletedAt: null }, orderBy: { name: 'asc' } }),
+    ]);
+
+    const mappedFiles = await Promise.all(
+      files.map(async (file) => ({
+        id: file.id,
+        name: file.name,
+        size: file.size.toString(),
+        mimeType: file.mimeType,
+        downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+      })),
+    );
+
+    return { id: folder.id, name: folder.name, role, folders, files: mappedFiles };
+  }
+
+  // Загрузка файла в чужую (расшаренную) папку — владелец файла и квота = владелец папки
+  private async storeFileForOwner(ownerId: string, folder: { id: string; path: string }, file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('Файл не найден');
+    if (file.size > 100 * 1024 * 1024) throw new BadRequestException('Максимальный размер файла 100 МБ');
+    if (!ALLOWED_MIME_TYPES.has(file.mimetype)) throw new BadRequestException(`Тип файла не поддерживается: ${file.mimetype}`);
+
+    await this.planService.checkStorageLimit(ownerId, BigInt(file.size));
+
+    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    const ext          = extname(file.originalname) || '.' + (mimeExtension(file.mimetype) || 'bin');
+    const fileName     = `${crypto.randomUUID()}${ext}`;
+    const storagePath  = `files/${folder.path}/${fileName}`;
+
+    await new Upload({
+      client: this.S3Client,
+      params: { Bucket: this.bucketName, Key: storagePath, Body: file.buffer, ContentType: file.mimetype, ACL: 'private' },
+    }).done();
+
+    const fileSizeBig = BigInt(file.size);
+    const created = await this.prisma.$transaction(async (tx) => {
+      const f = await tx.file.create({
+        data: { name: originalName, path: storagePath, size: fileSizeBig, mimeType: file.mimetype, ownerId, folderId: folder.id, isShared: false },
+      });
+      await tx.user.update({ where: { id: ownerId }, data: { storageUsed: { increment: fileSizeBig } } });
+      return f;
+    });
+
+    const downloadUrl = await this.getPresignedUrl(storagePath, 3600 * 24);
+    return { ...created, downloadUrl, size: created.size.toString() };
+  }
+
+  async uploadToSharedFolder(userId: string, folderId: string, files: Express.Multer.File[]) {
+    await this.assertFolderAccess(folderId, userId, 'EDITOR');
+    const folder = await this.prisma.folder.findUnique({ where: { id: folderId }, select: { id: true, path: true, ownerId: true } });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+
+    const results: any[] = [];
+    for (const file of files) results.push(await this.storeFileForOwner(folder.ownerId, folder, file));
+    return results;
+  }
+
+  async createSubfolderInShared(userId: string, parentId: string, name: string) {
+    await this.assertFolderAccess(parentId, userId, 'EDITOR');
+    const parent = await this.prisma.folder.findUnique({ where: { id: parentId }, select: { id: true, path: true, ownerId: true } });
+    if (!parent) throw new NotFoundException('Папка не найдена');
+
+    const trimmed = (name ?? '').trim();
+    if (!trimmed || trimmed.length > 255 || /[/:*?"<>|]/.test(trimmed)) throw new BadRequestException('Недопустимое имя папки');
+
+    const path = `${parent.path}/${trimmed}`;
+    if (path.split('/').length > 10) throw new BadRequestException('Максимальная глубина папок 10');
+
+    const existing = await this.prisma.folder.findFirst({ where: { ownerId: parent.ownerId, path, deletedAt: null } });
+    if (existing) throw new BadRequestException('Папка с таким именем уже существует');
+
+    return this.prisma.folder.create({ data: { name: trimmed, path, ownerId: parent.ownerId, parentId, isShared: false } });
+  }
+
+  // Удаление элемента внутри расшаренной папки (нельзя удалить сам корень шары — нет доступа к его родителю)
+  async deleteSharedItem(userId: string, id: string, type: 'file' | 'folder') {
+    const now = new Date();
+    if (type === 'file') {
+      const file = await this.prisma.file.findFirst({ where: { id, deletedAt: null }, select: { id: true, folderId: true } });
+      if (!file) throw new NotFoundException('Файл не найден');
+      if (!file.folderId) throw new ForbiddenException('Нет доступа к этому файлу');
+      await this.assertFolderAccess(file.folderId, userId, 'EDITOR');
+      await this.prisma.file.update({ where: { id }, data: { deletedAt: now } });
+      return { message: 'Файл перемещён в корзину' };
+    }
+
+    if (type === 'folder') {
+      const folder = await this.prisma.folder.findFirst({ where: { id, deletedAt: null }, select: { id: true, parentId: true } });
+      if (!folder) throw new NotFoundException('Папка не найдена');
+      if (!folder.parentId) throw new ForbiddenException('Нельзя удалить корневую общую папку');
+      await this.assertFolderAccess(folder.parentId, userId, 'EDITOR');
+
+      const { folderIds, fileIds } = await this.collectSubtree(id);
+      await this.prisma.$transaction([
+        this.prisma.file.updateMany({ where: { id: { in: fileIds } }, data: { deletedAt: now } }),
+        this.prisma.folder.updateMany({ where: { id: { in: folderIds } }, data: { deletedAt: now } }),
+      ]);
+      return { message: 'Папка перемещена в корзину' };
+    }
+
+    throw new BadRequestException('Неверный тип элемента');
+  }
+
+  // Скачать доступную папку ZIP-архивом (участник или владелец)
+  async streamSharedFolderZipForMember(userId: string, folderId: string, res: Response) {
+    await this.assertFolderAccess(folderId, userId, 'VIEWER');
+    const full = await this.prisma.folder.findUnique({
+      where:   { id: folderId },
+      include: { files: { where: { deletedAt: null } }, children: { where: { deletedAt: null } } },
+    });
+    if (!full) throw new NotFoundException('Папка не найдена');
+
+    const filesToZip: { path: string; name: string }[] = [];
+    const collectFiles = async (current: any, prefix = '') => {
+      for (const file of current.files) filesToZip.push({ path: file.path, name: `${prefix}${file.name}` });
+      for (const child of current.children) {
+        const childFolder = await this.prisma.folder.findUnique({
+          where:   { id: child.id },
+          include: { files: { where: { deletedAt: null } }, children: { where: { deletedAt: null } } },
+        });
+        if (childFolder) await collectFiles(childFolder, `${prefix}${child.name}/`);
+      }
+    };
+    await collectFiles(full, `${full.name}/`);
+
+    if (filesToZip.length === 0) { res.status(200).send('Папка пуста'); return; }
+
+    res.set({ 'Content-Type': 'application/zip', 'Content-Disposition': `attachment; filename="${full.name}.zip"` });
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    archive.on('error', () => { if (!res.headersSent) res.status(500).send('Ошибка создания ZIP'); });
+    archive.pipe(res);
+    for (const file of filesToZip) {
+      try {
+        const { Body } = await this.S3Client.send(new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }));
+        const chunks: Buffer[] = [];
+        for await (const chunk of Body as NodeJS.ReadableStream) chunks.push(Buffer.from(chunk));
+        archive.append(Buffer.concat(chunks), { name: file.name });
+      } catch {
+        archive.append(Buffer.from('Ошибка чтения файла'), { name: `${file.name}.error.txt` });
+      }
+    }
+    archive.finalize();
+  }
 }

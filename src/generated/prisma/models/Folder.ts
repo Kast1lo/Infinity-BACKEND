@@ -258,6 +258,7 @@ export type FolderWhereInput = {
   parent?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
   children?: Prisma.FolderListRelationFilter
   files?: Prisma.FileListRelationFilter
+  shares?: Prisma.FolderShareListRelationFilter
 }
 
 export type FolderOrderByWithRelationInput = {
@@ -279,6 +280,7 @@ export type FolderOrderByWithRelationInput = {
   parent?: Prisma.FolderOrderByWithRelationInput
   children?: Prisma.FolderOrderByRelationAggregateInput
   files?: Prisma.FileOrderByRelationAggregateInput
+  shares?: Prisma.FolderShareOrderByRelationAggregateInput
 }
 
 export type FolderWhereUniqueInput = Prisma.AtLeast<{
@@ -303,6 +305,7 @@ export type FolderWhereUniqueInput = Prisma.AtLeast<{
   parent?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
   children?: Prisma.FolderListRelationFilter
   files?: Prisma.FileListRelationFilter
+  shares?: Prisma.FolderShareListRelationFilter
 }, "id" | "shareSlug">
 
 export type FolderOrderByWithAggregationInput = {
@@ -362,6 +365,7 @@ export type FolderCreateInput = {
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareCreateNestedManyWithoutFolderInput
 }
 
 export type FolderUncheckedCreateInput = {
@@ -381,6 +385,7 @@ export type FolderUncheckedCreateInput = {
   shareSlug?: string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type FolderUpdateInput = {
@@ -400,6 +405,7 @@ export type FolderUpdateInput = {
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateInput = {
@@ -419,6 +425,7 @@ export type FolderUncheckedUpdateInput = {
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderCreateManyInput = {
@@ -534,6 +541,11 @@ export type FolderMinOrderByAggregateInput = {
   shareExpiresAt?: Prisma.SortOrder
   sharePasswordHash?: Prisma.SortOrder
   shareSlug?: Prisma.SortOrder
+}
+
+export type FolderScalarRelationFilter = {
+  is?: Prisma.FolderWhereInput
+  isNot?: Prisma.FolderWhereInput
 }
 
 export type FolderCreateNestedManyWithoutOwnerInput = {
@@ -652,6 +664,20 @@ export type FolderUncheckedUpdateManyWithoutParentNestedInput = {
   deleteMany?: Prisma.FolderScalarWhereInput | Prisma.FolderScalarWhereInput[]
 }
 
+export type FolderCreateNestedOneWithoutSharesInput = {
+  create?: Prisma.XOR<Prisma.FolderCreateWithoutSharesInput, Prisma.FolderUncheckedCreateWithoutSharesInput>
+  connectOrCreate?: Prisma.FolderCreateOrConnectWithoutSharesInput
+  connect?: Prisma.FolderWhereUniqueInput
+}
+
+export type FolderUpdateOneRequiredWithoutSharesNestedInput = {
+  create?: Prisma.XOR<Prisma.FolderCreateWithoutSharesInput, Prisma.FolderUncheckedCreateWithoutSharesInput>
+  connectOrCreate?: Prisma.FolderCreateOrConnectWithoutSharesInput
+  upsert?: Prisma.FolderUpsertWithoutSharesInput
+  connect?: Prisma.FolderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FolderUpdateToOneWithWhereWithoutSharesInput, Prisma.FolderUpdateWithoutSharesInput>, Prisma.FolderUncheckedUpdateWithoutSharesInput>
+}
+
 export type FolderCreateWithoutOwnerInput = {
   id?: string
   name: string
@@ -668,6 +694,7 @@ export type FolderCreateWithoutOwnerInput = {
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareCreateNestedManyWithoutFolderInput
 }
 
 export type FolderUncheckedCreateWithoutOwnerInput = {
@@ -686,6 +713,7 @@ export type FolderUncheckedCreateWithoutOwnerInput = {
   shareSlug?: string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type FolderCreateOrConnectWithoutOwnerInput = {
@@ -750,6 +778,7 @@ export type FolderCreateWithoutFilesInput = {
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
+  shares?: Prisma.FolderShareCreateNestedManyWithoutFolderInput
 }
 
 export type FolderUncheckedCreateWithoutFilesInput = {
@@ -768,6 +797,7 @@ export type FolderUncheckedCreateWithoutFilesInput = {
   sharePasswordHash?: string | null
   shareSlug?: string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
+  shares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type FolderCreateOrConnectWithoutFilesInput = {
@@ -802,6 +832,7 @@ export type FolderUpdateWithoutFilesInput = {
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
+  shares?: Prisma.FolderShareUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateWithoutFilesInput = {
@@ -820,6 +851,7 @@ export type FolderUncheckedUpdateWithoutFilesInput = {
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
+  shares?: Prisma.FolderShareUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderCreateWithoutChildrenInput = {
@@ -838,6 +870,7 @@ export type FolderCreateWithoutChildrenInput = {
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareCreateNestedManyWithoutFolderInput
 }
 
 export type FolderUncheckedCreateWithoutChildrenInput = {
@@ -856,6 +889,7 @@ export type FolderUncheckedCreateWithoutChildrenInput = {
   sharePasswordHash?: string | null
   shareSlug?: string | null
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type FolderCreateOrConnectWithoutChildrenInput = {
@@ -879,6 +913,7 @@ export type FolderCreateWithoutParentInput = {
   owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
   children?: Prisma.FolderCreateNestedManyWithoutParentInput
   files?: Prisma.FileCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareCreateNestedManyWithoutFolderInput
 }
 
 export type FolderUncheckedCreateWithoutParentInput = {
@@ -897,6 +932,7 @@ export type FolderUncheckedCreateWithoutParentInput = {
   shareSlug?: string | null
   children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
+  shares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutFolderInput
 }
 
 export type FolderCreateOrConnectWithoutParentInput = {
@@ -936,6 +972,7 @@ export type FolderUpdateWithoutChildrenInput = {
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateWithoutChildrenInput = {
@@ -954,6 +991,7 @@ export type FolderUncheckedUpdateWithoutChildrenInput = {
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUpsertWithWhereUniqueWithoutParentInput = {
@@ -970,6 +1008,98 @@ export type FolderUpdateWithWhereUniqueWithoutParentInput = {
 export type FolderUpdateManyWithWhereWithoutParentInput = {
   where: Prisma.FolderScalarWhereInput
   data: Prisma.XOR<Prisma.FolderUpdateManyMutationInput, Prisma.FolderUncheckedUpdateManyWithoutParentInput>
+}
+
+export type FolderCreateWithoutSharesInput = {
+  id?: string
+  name: string
+  path: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isShared?: boolean
+  isStarred?: boolean
+  deletedAt?: Date | string | null
+  sharedAt?: Date | string | null
+  shareExpiresAt?: Date | string | null
+  sharePasswordHash?: string | null
+  shareSlug?: string | null
+  owner?: Prisma.UserCreateNestedOneWithoutFoldersInput
+  parent?: Prisma.FolderCreateNestedOneWithoutChildrenInput
+  children?: Prisma.FolderCreateNestedManyWithoutParentInput
+  files?: Prisma.FileCreateNestedManyWithoutFolderInput
+}
+
+export type FolderUncheckedCreateWithoutSharesInput = {
+  id?: string
+  name: string
+  path: string
+  ownerId: string
+  parentId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isShared?: boolean
+  isStarred?: boolean
+  deletedAt?: Date | string | null
+  sharedAt?: Date | string | null
+  shareExpiresAt?: Date | string | null
+  sharePasswordHash?: string | null
+  shareSlug?: string | null
+  children?: Prisma.FolderUncheckedCreateNestedManyWithoutParentInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutFolderInput
+}
+
+export type FolderCreateOrConnectWithoutSharesInput = {
+  where: Prisma.FolderWhereUniqueInput
+  create: Prisma.XOR<Prisma.FolderCreateWithoutSharesInput, Prisma.FolderUncheckedCreateWithoutSharesInput>
+}
+
+export type FolderUpsertWithoutSharesInput = {
+  update: Prisma.XOR<Prisma.FolderUpdateWithoutSharesInput, Prisma.FolderUncheckedUpdateWithoutSharesInput>
+  create: Prisma.XOR<Prisma.FolderCreateWithoutSharesInput, Prisma.FolderUncheckedCreateWithoutSharesInput>
+  where?: Prisma.FolderWhereInput
+}
+
+export type FolderUpdateToOneWithWhereWithoutSharesInput = {
+  where?: Prisma.FolderWhereInput
+  data: Prisma.XOR<Prisma.FolderUpdateWithoutSharesInput, Prisma.FolderUncheckedUpdateWithoutSharesInput>
+}
+
+export type FolderUpdateWithoutSharesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
+  parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.FolderUpdateManyWithoutParentNestedInput
+  files?: Prisma.FileUpdateManyWithoutFolderNestedInput
+}
+
+export type FolderUncheckedUpdateWithoutSharesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderCreateManyOwnerInput = {
@@ -1004,6 +1134,7 @@ export type FolderUpdateWithoutOwnerInput = {
   parent?: Prisma.FolderUpdateOneWithoutChildrenNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateWithoutOwnerInput = {
@@ -1022,6 +1153,7 @@ export type FolderUncheckedUpdateWithoutOwnerInput = {
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateManyWithoutOwnerInput = {
@@ -1072,6 +1204,7 @@ export type FolderUpdateWithoutParentInput = {
   owner?: Prisma.UserUpdateOneWithoutFoldersNestedInput
   children?: Prisma.FolderUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateWithoutParentInput = {
@@ -1090,6 +1223,7 @@ export type FolderUncheckedUpdateWithoutParentInput = {
   shareSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.FolderUncheckedUpdateManyWithoutParentNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutFolderNestedInput
+  shares?: Prisma.FolderShareUncheckedUpdateManyWithoutFolderNestedInput
 }
 
 export type FolderUncheckedUpdateManyWithoutParentInput = {
@@ -1116,11 +1250,13 @@ export type FolderUncheckedUpdateManyWithoutParentInput = {
 export type FolderCountOutputType = {
   children: number
   files: number
+  shares: number
 }
 
 export type FolderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   children?: boolean | FolderCountOutputTypeCountChildrenArgs
   files?: boolean | FolderCountOutputTypeCountFilesArgs
+  shares?: boolean | FolderCountOutputTypeCountSharesArgs
 }
 
 /**
@@ -1147,6 +1283,13 @@ export type FolderCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.FileWhereInput
 }
 
+/**
+ * FolderCountOutputType without action
+ */
+export type FolderCountOutputTypeCountSharesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FolderShareWhereInput
+}
+
 
 export type FolderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1167,6 +1310,7 @@ export type FolderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
   children?: boolean | Prisma.Folder$childrenArgs<ExtArgs>
   files?: boolean | Prisma.Folder$filesArgs<ExtArgs>
+  shares?: boolean | Prisma.Folder$sharesArgs<ExtArgs>
   _count?: boolean | Prisma.FolderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["folder"]>
 
@@ -1231,6 +1375,7 @@ export type FolderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   parent?: boolean | Prisma.Folder$parentArgs<ExtArgs>
   children?: boolean | Prisma.Folder$childrenArgs<ExtArgs>
   files?: boolean | Prisma.Folder$filesArgs<ExtArgs>
+  shares?: boolean | Prisma.Folder$sharesArgs<ExtArgs>
   _count?: boolean | Prisma.FolderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FolderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1249,6 +1394,7 @@ export type $FolderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     parent: Prisma.$FolderPayload<ExtArgs> | null
     children: Prisma.$FolderPayload<ExtArgs>[]
     files: Prisma.$FilePayload<ExtArgs>[]
+    shares: Prisma.$FolderSharePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1663,6 +1809,7 @@ export interface Prisma__FolderClient<T, Null = never, ExtArgs extends runtime.T
   parent<T extends Prisma.Folder$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$parentArgs<ExtArgs>>): Prisma.Prisma__FolderClient<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   children<T extends Prisma.Folder$childrenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$childrenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.Folder$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  shares<T extends Prisma.Folder$sharesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Folder$sharesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2190,6 +2337,30 @@ export type Folder$filesArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.FileScalarFieldEnum | Prisma.FileScalarFieldEnum[]
+}
+
+/**
+ * Folder.shares
+ */
+export type Folder$sharesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FolderShare
+   */
+  select?: Prisma.FolderShareSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FolderShare
+   */
+  omit?: Prisma.FolderShareOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FolderShareInclude<ExtArgs> | null
+  where?: Prisma.FolderShareWhereInput
+  orderBy?: Prisma.FolderShareOrderByWithRelationInput | Prisma.FolderShareOrderByWithRelationInput[]
+  cursor?: Prisma.FolderShareWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FolderShareScalarFieldEnum | Prisma.FolderShareScalarFieldEnum[]
 }
 
 /**

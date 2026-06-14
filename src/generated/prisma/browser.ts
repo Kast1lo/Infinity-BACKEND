@@ -67,3 +67,8 @@ export type File = Prisma.FileModel
  * 
  */
 export type Folder = Prisma.FolderModel
+/**
+ * Model FolderShare
+ * 
+ */
+export type FolderShare = Prisma.FolderShareModel
