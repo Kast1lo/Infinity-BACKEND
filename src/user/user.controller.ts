@@ -14,6 +14,8 @@ import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { updateProfile } from './DTO/update-profile.dto';
 import { ChangePasswordDto } from './DTO/change-password.dto';
+import { RequestEmailChangeDto } from './DTO/request-email-change.dto';
+import { ConfirmEmailChangeDto } from './DTO/confirm-email-change.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer/interceptors/file.interceptor';
 import {
   ApiTags,
@@ -68,6 +70,27 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   async changePassword(@Req() req, @Body() dto: ChangePasswordDto) {
     return this.userService.changePassword(req.user.userId, dto);
+  }
+
+  @ApiOperation({ summary: 'Запросить смену email (отправляет код на новый адрес)' })
+  @ApiBody({ type: RequestEmailChangeDto })
+  @ApiResponse({ status: 200, description: 'Код отправлен на новый email' })
+  @ApiResponse({ status: 400, description: 'Неверный пароль или email' })
+  @ApiResponse({ status: 409, description: 'Email уже занят' })
+  @Post('request-email-change')
+  @UseGuards(AuthGuard('jwt'))
+  async requestEmailChange(@Req() req, @Body() dto: RequestEmailChangeDto) {
+    return this.userService.requestEmailChange(req.user.userId, dto);
+  }
+
+  @ApiOperation({ summary: 'Подтвердить смену email кодом' })
+  @ApiBody({ type: ConfirmEmailChangeDto })
+  @ApiResponse({ status: 200, description: 'Email изменён' })
+  @ApiResponse({ status: 400, description: 'Неверный или просроченный код' })
+  @Post('confirm-email-change')
+  @UseGuards(AuthGuard('jwt'))
+  async confirmEmailChange(@Req() req, @Body() dto: ConfirmEmailChangeDto) {
+    return this.userService.confirmEmailChange(req.user.userId, dto);
   }
 
   @ApiOperation({ summary: 'Загрузить аватар пользователя' })

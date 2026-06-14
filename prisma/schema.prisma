@@ -26,6 +26,10 @@ model User {
   resetCode                 String?
   resetCodeExpiresAt        DateTime?
 
+  pendingEmail              String?
+  emailChangeCode           String?
+  emailChangeCodeExpiresAt  DateTime?
+
   planType      String    @default("spark")
   planExpiresAt DateTime?
   isFrozen      Boolean   @default(false)
