@@ -266,6 +266,24 @@ export class FileSystemService {
     return { files: mappedFiles, folders };
   }
 
+  // ─── Недавние файлы (по дате изменения) ───
+
+  async getRecent(userId: string) {
+    const files = await this.prisma.file.findMany({
+      where:   { ownerId: userId, deletedAt: null },
+      orderBy: { updatedAt: 'desc' },
+      take:    50,
+    });
+
+    return Promise.all(
+      files.map(async (file) => ({
+        ...file,
+        size:        file.size.toString(),
+        downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+      })),
+    );
+  }
+
   // ─── Поиск по файлам и папкам (по имени) ───
 
   async search(userId: string, query: string) {

@@ -336,6 +336,15 @@ export class FileSystemController {
     return this.fileSystemService.getStarred(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Недавно изменённые файлы' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, description: 'Последние изменённые файлы пользователя' })
+  @Get('recent')
+  @UseGuards(AuthGuard('jwt'))
+  async getRecent(@Req() req) {
+    return this.fileSystemService.getRecent(req.user.userId);
+  }
+
   @ApiOperation({ summary: 'Поиск файлов и папок по имени' })
   @ApiCookieAuth('access_token')
   @ApiQuery({ name: 'q', description: 'Поисковый запрос (минимум 2 символа)' })
