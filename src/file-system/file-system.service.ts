@@ -768,20 +768,50 @@ export class FileSystemService {
     if (type === 'folder') {
       const folder = await this.prisma.folder.findUnique({ where: { id } });
       if (!folder || folder.ownerId !== userId) throw new NotFoundException('Папка не найдена');
-
-      const newPath = folder.parentId
-        ? folder.path.replace(/[^/]+$/, name.trim())
-        : `/${name.trim()}`;
-
-      const existing = await this.prisma.folder.findFirst({
-        where: { ownerId: userId, path: newPath, NOT: { id } },
-      });
-      if (existing) throw new BadRequestException('Папка с таким именем уже существует');
-
-      return this.prisma.folder.update({ where: { id }, data: { name: name.trim(), path: newPath } });
+      return this.renameFolderRecompute(folder, name);
     }
 
     throw new BadRequestException('Неверный тип элемента');
+  }
+
+  // Переименование папки с пересчётом пути самой папки И всех вложенных (замена префикса).
+  private async renameFolderRecompute(
+    folder: { id: string; path: string; parentId: string | null; ownerId: string },
+    name: string,
+  ) {
+    const trimmed = name.trim();
+    if (!trimmed || trimmed.length > 255 || /[/:*?"<>|]/.test(trimmed)) {
+      throw new BadRequestException('Недопустимое имя папки');
+    }
+
+    const newPath = folder.parentId
+      ? folder.path.replace(/[^/]+$/, trimmed)
+      : `/${trimmed}`;
+
+    if (newPath === folder.path) {
+      return { id: folder.id, name: trimmed, path: newPath };
+    }
+
+    const existing = await this.prisma.folder.findFirst({
+      where: { ownerId: folder.ownerId, path: newPath, deletedAt: null, NOT: { id: folder.id } },
+    });
+    if (existing) throw new BadRequestException('Папка с таким именем уже существует');
+
+    const oldPath = folder.path;
+    const { folderIds } = await this.collectSubtree(folder.id);
+    const descendants = await this.prisma.folder.findMany({
+      where:  { id: { in: folderIds.filter(fid => fid !== folder.id) } },
+      select: { id: true, path: true },
+    });
+
+    await this.prisma.$transaction([
+      this.prisma.folder.update({ where: { id: folder.id }, data: { name: trimmed, path: newPath } }),
+      ...descendants.map(d =>
+        this.prisma.folder.update({ where: { id: d.id }, data: { path: newPath + d.path.slice(oldPath.length) } }),
+      ),
+    ]);
+
+    return { id: folder.id, name: trimmed, path: newPath };
   }
 
   async moveFile(userId: string, fileId: string, targetFolderId: string | null) {
@@ -1308,6 +1338,29 @@ export class FileSystemService {
         this.prisma.folder.updateMany({ where: { id: { in: folderIds } }, data: { deletedAt: now } }),
       ]);
       return { message: 'Папка перемещена в корзину' };
+    }
+
+    throw new BadRequestException('Неверный тип элемента');
+  }
+
+  // Переименование элемента внутри доступной папки (роль Редактор)
+  async renameSharedItem(userId: string, id: string, type: 'file' | 'folder', name: string) {
+    const trimmed = (name ?? '').trim();
+    if (!trimmed) throw new BadRequestException('Имя не может быть пустым');
+
+    if (type === 'file') {
+      const file = await this.prisma.file.findFirst({ where: { id, deletedAt: null }, select: { id: true, folderId: true } });
+      if (!file) throw new NotFoundException('Файл не найден');
+      if (!file.folderId) throw new ForbiddenException('Нет доступа к этому файлу');
+      await this.assertFolderAccess(file.folderId, userId, 'EDITOR');
+      return this.prisma.file.update({ where: { id }, data: { name: trimmed } });
+    }
+
+    if (type === 'folder') {
+      const folder = await this.prisma.folder.findFirst({ where: { id, deletedAt: null } });
+      if (!folder) throw new NotFoundException('Папка не найдена');
+      await this.assertFolderAccess(folder.id, userId, 'EDITOR');
+      return this.renameFolderRecompute(folder, trimmed);
     }
 
     throw new BadRequestException('Неверный тип элемента');

@@ -506,6 +506,17 @@ export class FileSystemController {
     return this.fileSystemService.deleteSharedItem(req.user.userId, itemId, type);
   }
 
+  @ApiOperation({ summary: 'Переименовать элемент в доступной папке (нужна роль Редактор)' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'itemId', description: 'UUID файла или папки' })
+  @ApiQuery({ name: 'type', enum: ['file', 'folder'] })
+  @ApiBody({ schema: { type: 'object', properties: { name: { type: 'string' } } } })
+  @Patch('folder-access/item/:itemId/rename')
+  @UseGuards(AuthGuard('jwt'))
+  async renameSharedItem(@Req() req, @Param('itemId') itemId: string, @Query('type') type: 'file' | 'folder', @Body() dto: { name: string }) {
+    return this.fileSystemService.renameSharedItem(req.user.userId, itemId, type, dto.name ?? '');
+  }
+
   @ApiOperation({ summary: 'Удалить файл или папку' })
   @ApiCookieAuth('access_token')
   @ApiParam({ name: 'id', description: 'UUID объекта' })
