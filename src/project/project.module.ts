@@ -6,9 +6,10 @@ import { ProjectController } from './project.controller';
 import { PrismaDatabaseModule } from 'src/prisma-database/prisma-database.module';
 import { PlanModule } from 'src/plan/plan.module';
 import { OllamaModule } from 'src/ollama/ollama.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports:     [PlanModule, OllamaModule, ConfigModule, PrismaDatabaseModule, JwtModule],
+  imports:     [PlanModule, OllamaModule, ConfigModule, PrismaDatabaseModule, JwtModule, NotificationsModule],
   controllers: [ProjectController],
   providers:   [ProjectService],
   exports:     [ProjectService],

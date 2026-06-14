@@ -55,6 +55,7 @@ export const ModelName = {
   Notification: 'Notification',
   PromoCode: 'PromoCode',
   Project: 'Project',
+  ProjectShare: 'ProjectShare',
   TaskColumn: 'TaskColumn',
   Task: 'Task',
   Subtask: 'Subtask',
@@ -148,6 +149,19 @@ export const ProjectScalarFieldEnum = {
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectShareScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  role: 'role',
+  status: 'status',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt'
+} as const
+
+export type ProjectShareScalarFieldEnum = (typeof ProjectShareScalarFieldEnum)[keyof typeof ProjectShareScalarFieldEnum]
 
 
 export const TaskColumnScalarFieldEnum = {

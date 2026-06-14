@@ -388,6 +388,7 @@ export const ModelName = {
   Notification: 'Notification',
   PromoCode: 'PromoCode',
   Project: 'Project',
+  ProjectShare: 'ProjectShare',
   TaskColumn: 'TaskColumn',
   Task: 'Task',
   Subtask: 'Subtask',
@@ -408,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "notification" | "promoCode" | "project" | "taskColumn" | "task" | "subtask" | "file" | "folder"
+    modelProps: "user" | "notification" | "promoCode" | "project" | "projectShare" | "taskColumn" | "task" | "subtask" | "file" | "folder"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -705,6 +706,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProjectCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProjectCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProjectShare: {
+      payload: Prisma.$ProjectSharePayload<ExtArgs>
+      fields: Prisma.ProjectShareFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProjectShareFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProjectShareFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>
+        }
+        findFirst: {
+          args: Prisma.ProjectShareFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProjectShareFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>
+        }
+        findMany: {
+          args: Prisma.ProjectShareFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>[]
+        }
+        create: {
+          args: Prisma.ProjectShareCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>
+        }
+        createMany: {
+          args: Prisma.ProjectShareCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProjectShareCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>[]
+        }
+        delete: {
+          args: Prisma.ProjectShareDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>
+        }
+        update: {
+          args: Prisma.ProjectShareUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>
+        }
+        deleteMany: {
+          args: Prisma.ProjectShareDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProjectShareUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProjectShareUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>[]
+        }
+        upsert: {
+          args: Prisma.ProjectShareUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProjectSharePayload>
+        }
+        aggregate: {
+          args: Prisma.ProjectShareAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProjectShare>
+        }
+        groupBy: {
+          args: Prisma.ProjectShareGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectShareGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProjectShareCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProjectShareCountAggregateOutputType> | number
         }
       }
     }
@@ -1189,6 +1264,19 @@ export const ProjectScalarFieldEnum = {
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
+export const ProjectShareScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  userId: 'userId',
+  role: 'role',
+  status: 'status',
+  invitedById: 'invitedById',
+  createdAt: 'createdAt'
+} as const
+
+export type ProjectShareScalarFieldEnum = (typeof ProjectShareScalarFieldEnum)[keyof typeof ProjectShareScalarFieldEnum]
+
+
 export const TaskColumnScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -1495,6 +1583,7 @@ export type GlobalOmitConfig = {
   notification?: Prisma.NotificationOmit
   promoCode?: Prisma.PromoCodeOmit
   project?: Prisma.ProjectOmit
+  projectShare?: Prisma.ProjectShareOmit
   taskColumn?: Prisma.TaskColumnOmit
   task?: Prisma.TaskOmit
   subtask?: Prisma.SubtaskOmit

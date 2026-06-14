@@ -70,6 +70,69 @@ export class ProjectController {
     return this.projectService.deleteProject(projectId, req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Участники доски (владелец + соавторы)' })
+  @ApiParam({ name: 'projectId', description: 'UUID проекта' })
+  @ApiResponse({ status: 200, description: 'Список участников' })
+  @Get(':projectId/members')
+  @UseGuards(AuthGuard('jwt'))
+  async listMembers(@Req() req, @Param('projectId') projectId: string) {
+    return this.projectService.listMembers(projectId, req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Пригласить пользователя в доску по email' })
+  @ApiParam({ name: 'projectId', description: 'UUID проекта' })
+  @ApiBody({ schema: { type: 'object', properties: { email: { type: 'string' }, role: { type: 'string', enum: ['VIEWER', 'EDITOR'] } } } })
+  @ApiResponse({ status: 201, description: 'Пользователь добавлен' })
+  @ApiResponse({ status: 404, description: 'Пользователь с таким email не найден' })
+  @Post(':projectId/members')
+  @UseGuards(AuthGuard('jwt'))
+  async inviteMember(
+    @Req() req,
+    @Param('projectId') projectId: string,
+    @Body() dto: { email: string; role?: string },
+  ) {
+    return this.projectService.inviteMember(req.user.userId, projectId, dto.email ?? '', dto.role);
+  }
+
+  @ApiOperation({ summary: 'Изменить роль участника' })
+  @ApiParam({ name: 'projectId', description: 'UUID проекта' })
+  @ApiParam({ name: 'memberUserId', description: 'UUID участника' })
+  @ApiBody({ schema: { type: 'object', properties: { role: { type: 'string', enum: ['VIEWER', 'EDITOR'] } } } })
+  @ApiResponse({ status: 200, description: 'Роль обновлена' })
+  @Patch(':projectId/members/:memberUserId')
+  @UseGuards(AuthGuard('jwt'))
+  async updateMemberRole(
+    @Req() req,
+    @Param('projectId') projectId: string,
+    @Param('memberUserId') memberUserId: string,
+    @Body() dto: { role: string },
+  ) {
+    return this.projectService.updateMemberRole(req.user.userId, projectId, memberUserId, dto.role);
+  }
+
+  @ApiOperation({ summary: 'Удалить участника из доски' })
+  @ApiParam({ name: 'projectId', description: 'UUID проекта' })
+  @ApiParam({ name: 'memberUserId', description: 'UUID участника' })
+  @ApiResponse({ status: 200, description: 'Участник удалён' })
+  @Delete(':projectId/members/:memberUserId')
+  @UseGuards(AuthGuard('jwt'))
+  async removeMember(
+    @Req() req,
+    @Param('projectId') projectId: string,
+    @Param('memberUserId') memberUserId: string,
+  ) {
+    return this.projectService.removeMember(req.user.userId, projectId, memberUserId);
+  }
+
+  @ApiOperation({ summary: 'Покинуть доску (для соавтора)' })
+  @ApiParam({ name: 'projectId', description: 'UUID проекта' })
+  @ApiResponse({ status: 200, description: 'Вы покинули доску' })
+  @Delete(':projectId/leave')
+  @UseGuards(AuthGuard('jwt'))
+  async leaveProject(@Req() req, @Param('projectId') projectId: string) {
+    return this.projectService.leaveProject(req.user.userId, projectId);
+  }
+
   @ApiOperation({ summary: 'Сгенерировать задачи и подзадачи через ИИ (Ollama)' })
   @ApiParam({ name: 'projectId', description: 'UUID проекта' })
   @ApiBody({ type: AiGenerateTasksDto })

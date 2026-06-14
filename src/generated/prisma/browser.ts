@@ -38,6 +38,11 @@ export type PromoCode = Prisma.PromoCodeModel
  */
 export type Project = Prisma.ProjectModel
 /**
+ * Model ProjectShare
+ * 
+ */
+export type ProjectShare = Prisma.ProjectShareModel
+/**
  * Model TaskColumn
  * 
  */

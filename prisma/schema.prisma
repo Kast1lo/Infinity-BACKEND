@@ -45,6 +45,7 @@ model User {
   folders       Folder[]
   tasks         Task[]
   projects      Project[]
+  projectShares ProjectShare[]
   notifications Notification[]
 
   @@index([email])
@@ -95,9 +96,25 @@ model Project {
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   columns     TaskColumn[]
   tasks       Task[]
+  shares      ProjectShare[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
+  @@index([userId])
+}
+
+model ProjectShare {
+  id          String   @id @default(uuid())
+  projectId   String
+  userId      String
+  role        String   @default("EDITOR")    // VIEWER | EDITOR
+  status      String   @default("ACCEPTED")  // PENDING | ACCEPTED
+  invitedById String?
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
   @@index([userId])
 }
 

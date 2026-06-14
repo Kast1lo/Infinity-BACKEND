@@ -16,7 +16,7 @@ export class InfinityLifeService {
   ) {}
 
   async createTask(dto: CreateTaskDto, userId: string) {
-    await this.projectService.assertOwnership(dto.projectId, userId);
+    await this.projectService.assertAccess(dto.projectId, userId, 'EDITOR');
     await this.planService.checkTaskLimit(userId);
 
     if (dto.columnId) {
@@ -42,10 +42,10 @@ export class InfinityLifeService {
   async updateTask(taskId: string, dto: UpdateTaskDto, userId: string) {
     const task = await this.prisma.task.findUnique({
       where:  { id: taskId },
-      select: { userId: true, projectId: true },
+      select: { projectId: true },
     });
     if (!task) throw new NotFoundException('Задача не найдена');
-    if (task.userId !== userId) throw new ForbiddenException('Нет доступа к этой задаче');
+    await this.projectService.assertAccess(task.projectId, userId, 'EDITOR');
 
     if (dto.columnId) {
       await this.assertColumnInProject(dto.columnId, task.projectId);
@@ -69,10 +69,10 @@ export class InfinityLifeService {
   async moveTaskToColumn(taskId: string, newColumnId: string | null, userId: string) {
     const task = await this.prisma.task.findUnique({
       where:  { id: taskId },
-      select: { userId: true, projectId: true },
+      select: { projectId: true },
     });
     if (!task) throw new NotFoundException('Задача не найдена');
-    if (task.userId !== userId) throw new ForbiddenException('Нет доступа к этой задаче');
+    await this.projectService.assertAccess(task.projectId, userId, 'EDITOR');
 
     if (newColumnId !== null) {
       await this.assertColumnInProject(newColumnId, task.projectId);
@@ -87,10 +87,10 @@ export class InfinityLifeService {
   async toggleTaskCompletion(taskId: string, userId: string) {
     const task = await this.prisma.task.findUnique({
       where:  { id: taskId },
-      select: { userId: true, isCompleted: true },
+      select: { projectId: true, isCompleted: true },
     });
     if (!task) throw new NotFoundException('Задача не найдена');
-    if (task.userId !== userId) throw new ForbiddenException('Нет доступа к этой задаче');
+    await this.projectService.assertAccess(task.projectId, userId, 'EDITOR');
 
     return this.prisma.task.update({
       where:   { id: taskId },
@@ -102,10 +102,10 @@ export class InfinityLifeService {
   async deleteTask(taskId: string, userId: string) {
     const task = await this.prisma.task.findUnique({
       where:  { id: taskId },
-      select: { userId: true },
+      select: { projectId: true },
     });
     if (!task) throw new NotFoundException('Задача не найдена');
-    if (task.userId !== userId) throw new ForbiddenException('Нет доступа к этой задаче');
+    await this.projectService.assertAccess(task.projectId, userId, 'EDITOR');
 
     return this.prisma.task.delete({ where: { id: taskId } });
   }
@@ -212,10 +212,10 @@ export class InfinityLifeService {
   async createSubtask(dto: CreateSubtaskDto, userId: string) {
     const parentTask = await this.prisma.task.findUnique({
       where:  { id: dto.taskId },
-      select: { userId: true },
+      select: { projectId: true },
     });
     if (!parentTask) throw new NotFoundException('Задача не найдена');
-    if (parentTask.userId !== userId) throw new ForbiddenException('Нет доступа к этой задаче');
+    await this.projectService.assertAccess(parentTask.projectId, userId, 'EDITOR');
 
     const subtaskCount = await this.prisma.subtask.count({ where: { taskId: dto.taskId } });
 
@@ -230,7 +230,7 @@ export class InfinityLifeService {
       include: { task: true },
     });
     if (!subtask) throw new NotFoundException('Подзадача не найдена');
-    if (subtask.task.userId !== userId) throw new ForbiddenException('Нет доступа к этой подзадаче');
+    await this.projectService.assertAccess(subtask.task.projectId, userId, 'EDITOR');
 
     const updatedSubtask = await this.prisma.subtask.update({
       where: { id: subtaskId },
@@ -247,7 +247,7 @@ export class InfinityLifeService {
       include: { task: true },
     });
     if (!subtask) throw new NotFoundException('Подзадача не найдена');
-    if (subtask.task.userId !== userId) throw new ForbiddenException('Нет доступа к этой подзадаче');
+    await this.projectService.assertAccess(subtask.task.projectId, userId, 'EDITOR');
 
     return this.prisma.subtask.delete({ where: { id: subtaskId } });
   }
@@ -273,7 +273,7 @@ export class InfinityLifeService {
   }
 
   async createColumn(dto: { projectId: string; name: string }, userId: string) {
-    await this.projectService.assertOwnership(dto.projectId, userId);
+    await this.projectService.assertAccess(dto.projectId, userId, 'EDITOR');
 
     const maxOrder = await this.prisma.taskColumn.aggregate({
       where: { projectId: dto.projectId },
@@ -291,7 +291,7 @@ export class InfinityLifeService {
 
   async getProjectColumns(projectId: string, userId: string) {
     if (!projectId) throw new BadRequestException('Не указан проект (projectId)');
-    await this.projectService.assertOwnership(projectId, userId);
+    await this.projectService.assertAccess(projectId, userId, 'VIEWER');
 
     return this.prisma.taskColumn.findMany({
       where:   { projectId },
@@ -308,10 +308,10 @@ export class InfinityLifeService {
   async updateColumn(columnId: string, dto: { name: string }, userId: string) {
     const column = await this.prisma.taskColumn.findUnique({
       where:   { id: columnId },
-      include: { project: { select: { userId: true } } },
+      select:  { projectId: true },
     });
     if (!column) throw new NotFoundException('Колонка не найдена');
-    if (column.project.userId !== userId) throw new ForbiddenException('Нет доступа к этой колонке');
+    await this.projectService.assertAccess(column.projectId, userId, 'EDITOR');
 
     return this.prisma.taskColumn.update({
       where: { id: columnId },
@@ -322,10 +322,10 @@ export class InfinityLifeService {
   async deleteColumn(columnId: string, userId: string) {
     const column = await this.prisma.taskColumn.findUnique({
       where:   { id: columnId },
-      include: { project: { select: { userId: true } } },
+      select:  { projectId: true },
     });
     if (!column) throw new NotFoundException('Колонка не найдена');
-    if (column.project.userId !== userId) throw new ForbiddenException('Нет доступа к этой колонке');
+    await this.projectService.assertAccess(column.projectId, userId, 'EDITOR');
 
     await this.prisma.subtask.deleteMany({ where: { task: { columnId } } });
     await this.prisma.task.deleteMany({ where: { columnId } });

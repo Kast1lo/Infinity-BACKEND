@@ -1,19 +1,52 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.service';
 import { PlanService } from 'src/plan/plan.service';
 import { OllamaService } from 'src/ollama/ollama.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 import { Priority } from 'src/generated/prisma/browser';
 import { CreateProjectDto } from './DTO/create-project.dto';
 import { UpdateProjectDto } from './DTO/update-project.dto';
 import { AiGenerateTasksDto } from './DTO/ai-generate-tasks.dto';
+
+export type ProjectRole = 'OWNER' | 'EDITOR' | 'VIEWER';
+const ROLE_RANK: Record<ProjectRole, number> = { VIEWER: 1, EDITOR: 2, OWNER: 3 };
 
 @Injectable()
 export class ProjectService {
   constructor(
     private readonly prisma:          PrismaDatabaseService,
     private readonly planService:     PlanService,
-    private readonly ollamaService: OllamaService,
+    private readonly ollamaService:   OllamaService,
+    private readonly notifications:   NotificationsService,
   ) {}
+
+  // ─── Доступ (владелец или участник с ролью) ───
+
+  async getEffectiveRole(projectId: string, userId: string): Promise<ProjectRole | null> {
+    if (!projectId) return null;
+    const project = await this.prisma.project.findUnique({ where: { id: projectId }, select: { userId: true } });
+    if (!project) return null;
+    if (project.userId === userId) return 'OWNER';
+    const share = await this.prisma.projectShare.findUnique({
+      where:  { projectId_userId: { projectId, userId } },
+      select: { role: true, status: true },
+    });
+    if (!share || share.status !== 'ACCEPTED') return null;
+    return (share.role as ProjectRole) ?? 'VIEWER';
+  }
+
+  // Бросает 404/403, если доступа нет или роль ниже требуемой. Возвращает эффективную роль.
+  async assertAccess(projectId: string, userId: string, min: ProjectRole = 'VIEWER'): Promise<ProjectRole> {
+    if (!projectId) throw new NotFoundException('Проект не найден');
+    const role = await this.getEffectiveRole(projectId, userId);
+    if (!role) {
+      const exists = await this.prisma.project.findUnique({ where: { id: projectId }, select: { id: true } });
+      if (!exists) throw new NotFoundException('Проект не найден');
+      throw new ForbiddenException('Нет доступа к этому проекту');
+    }
+    if (ROLE_RANK[role] < ROLE_RANK[min]) throw new ForbiddenException('Недостаточно прав для этого действия');
+    return role;
+  }
 
   async createProject(dto: CreateProjectDto, userId: string) {
     await this.planService.checkProjectLimit(userId);
@@ -30,13 +63,37 @@ export class ProjectService {
   }
 
   async getUserProjects(userId: string) {
-    return this.prisma.project.findMany({
-      where:   { userId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        _count: { select: { tasks: true, columns: true } },
-      },
-    });
+    const [owned, shared] = await Promise.all([
+      this.prisma.project.findMany({
+        where:   { userId },
+        orderBy: { createdAt: 'desc' },
+        include: { _count: { select: { tasks: true, columns: true } } },
+      }),
+      this.prisma.projectShare.findMany({
+        where:   { userId, status: 'ACCEPTED' },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          project: {
+            include: {
+              _count: { select: { tasks: true, columns: true } },
+              user:   { select: { username: true, email: true } },
+            },
+          },
+        },
+      }),
+    ]);
+
+    const ownedMapped = owned.map(p => ({ ...p, shared: false, role: 'OWNER' as const, ownerName: null as string | null }));
+    const sharedMapped = shared
+      .filter(s => s.project)
+      .map(s => ({
+        ...s.project,
+        shared:    true,
+        role:      s.role,
+        ownerName: s.project.user?.username ?? s.project.user?.email ?? null,
+      }));
+
+    return [...ownedMapped, ...sharedMapped];
   }
 
   async getProjectById(projectId: string, userId: string) {
@@ -61,9 +118,11 @@ export class ProjectService {
     });
 
     if (!project) throw new NotFoundException('Проект не найден');
-    if (project.userId !== userId) throw new ForbiddenException('Нет доступа к этому проекту');
 
-    return project;
+    const role = await this.getEffectiveRole(projectId, userId);
+    if (!role) throw new ForbiddenException('Нет доступа к этому проекту');
+
+    return { ...project, myRole: role, isOwner: role === 'OWNER' };
   }
 
   async updateProject(projectId: string, dto: UpdateProjectDto, userId: string) {
@@ -107,12 +166,13 @@ export class ProjectService {
   }
 
   async generateTasksWithAi(projectId: string, dto: AiGenerateTasksDto, userId: string) {
+    await this.assertAccess(projectId, userId, 'EDITOR');
+
     const project = await this.prisma.project.findUnique({
       where: { id: projectId },
       include: { columns: { orderBy: { order: 'asc' }, select: { id: true, name: true, order: true } } },
     });
     if (!project) throw new NotFoundException('Проект не найден');
-    if (project.userId !== userId) throw new ForbiddenException('Нет доступа к этому проекту');
 
     await this.planService.checkTaskLimit(userId);
     const usage = await this.planService.checkAndIncrementAiCalls(userId);
@@ -207,6 +267,108 @@ export class ProjectService {
         limit: usage.limit,
       },
     };
+  }
+
+  // ─── Участники доски ───
+
+  private normalizeRole(role?: string): 'VIEWER' | 'EDITOR' {
+    return role === 'VIEWER' ? 'VIEWER' : 'EDITOR';
+  }
+
+  async listMembers(projectId: string, userId: string) {
+    await this.assertAccess(projectId, userId, 'VIEWER');
+
+    const project = await this.prisma.project.findUnique({
+      where:   { id: projectId },
+      select:  { userId: true, user: { select: { id: true, username: true, email: true } } },
+    });
+    if (!project) throw new NotFoundException('Проект не найден');
+
+    const shares = await this.prisma.projectShare.findMany({
+      where:   { projectId },
+      orderBy: { createdAt: 'asc' },
+      include: { user: { select: { id: true, username: true, email: true } } },
+    });
+
+    const owner = {
+      userId:   project.user!.id,
+      username: project.user!.username,
+      email:    project.user!.email,
+      role:     'OWNER' as const,
+      isOwner:  true,
+    };
+    const members = shares.map(s => ({
+      userId:   s.user.id,
+      username: s.user.username,
+      email:    s.user.email,
+      role:     s.role,
+      isOwner:  false,
+    }));
+
+    return [owner, ...members];
+  }
+
+  async inviteMember(ownerId: string, projectId: string, email: string, role?: string) {
+    await this.assertOwnership(projectId, ownerId);
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const invitee = await this.prisma.user.findUnique({
+      where:  { email: normalizedEmail },
+      select: { id: true, username: true, email: true },
+    });
+    if (!invitee) throw new NotFoundException('Пользователь с таким email не найден');
+    if (invitee.id === ownerId) throw new BadRequestException('Вы уже владелец этой доски');
+
+    const project = await this.prisma.project.findUnique({ where: { id: projectId }, select: { name: true } });
+    const finalRole = this.normalizeRole(role);
+
+    const share = await this.prisma.projectShare.upsert({
+      where:  { projectId_userId: { projectId, userId: invitee.id } },
+      update: { role: finalRole, status: 'ACCEPTED' },
+      create: { projectId, userId: invitee.id, role: finalRole, status: 'ACCEPTED', invitedById: ownerId },
+      include: { user: { select: { id: true, username: true, email: true } } },
+    });
+
+    await this.notifications.create(invitee.id, {
+      type:  'share',
+      title: 'Доступ к доске',
+      body:  `Вам открыли доступ к доске «${project?.name ?? ''}»`,
+      link:  `/projects/${projectId}`,
+    });
+
+    return {
+      userId:   share.user.id,
+      username: share.user.username,
+      email:    share.user.email,
+      role:     share.role,
+      isOwner:  false,
+    };
+  }
+
+  async updateMemberRole(ownerId: string, projectId: string, memberUserId: string, role: string) {
+    await this.assertOwnership(projectId, ownerId);
+    const finalRole = this.normalizeRole(role);
+    const share = await this.prisma.projectShare.findUnique({
+      where: { projectId_userId: { projectId, userId: memberUserId } },
+    });
+    if (!share) throw new NotFoundException('Участник не найден');
+    await this.prisma.projectShare.update({
+      where: { projectId_userId: { projectId, userId: memberUserId } },
+      data:  { role: finalRole },
+    });
+    return { userId: memberUserId, role: finalRole };
+  }
+
+  async removeMember(ownerId: string, projectId: string, memberUserId: string) {
+    await this.assertOwnership(projectId, ownerId);
+    await this.prisma.projectShare.deleteMany({ where: { projectId, userId: memberUserId } });
+    return { message: 'Участник удалён' };
+  }
+
+  async leaveProject(userId: string, projectId: string) {
+    const deleted = await this.prisma.projectShare.deleteMany({ where: { projectId, userId } });
+    if (deleted.count === 0) throw new NotFoundException('Вы не участник этой доски');
+    return { message: 'Вы покинули доску' };
   }
 
   private colorByPriority(priority: 'HIGH' | 'MEDIUM' | 'LOW'): string {
