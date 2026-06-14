@@ -12,6 +12,7 @@ import { InfinityLifeModule } from './infinity-life/infinity-life.module';
 import { ProjectModule } from './project/project.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PlanModule } from './plan/plan.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
@@ -30,6 +31,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     InfinityLifeModule,
     ProjectModule,
     PlanModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers:   [

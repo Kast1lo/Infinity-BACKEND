@@ -41,14 +41,31 @@ model User {
 
   promoCode     PromoCode? @relation("UsedPromo")
 
-  files    File[]
-  folders  Folder[]
-  tasks    Task[]
-  projects Project[]
+  files         File[]
+  folders       Folder[]
+  tasks         Task[]
+  projects      Project[]
+  notifications Notification[]
 
   @@index([email])
   @@index([planType])
   @@index([planExpiresAt])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  type      String    @default("system")
+  title     String
+  body      String?
+  link      String?
+  isRead    Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  readAt    DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
 }
 
 model PromoCode {

@@ -9,10 +9,14 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaDatabaseService } from '../prisma-database/prisma-database.service';
 import { PLAN_LIMITS, PlanType } from './plan.constants';
 import { PlanInfoResponse } from './interfaces/plan-info.response ';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class PlanService {
-  constructor(private readonly prisma: PrismaDatabaseService) {}
+  constructor(
+    private readonly prisma: PrismaDatabaseService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   async getPlanInfo(userId: string): Promise<PlanInfoResponse> {
     const user = await this.prisma.user.findUnique({
@@ -282,6 +286,14 @@ export class PlanService {
     });
 
     const label = PLAN_LIMITS[activatedPlanType! as PlanType]?.label ?? activatedPlanType!;
+
+    await this.notifications.create(userId, {
+      type:  'plan',
+      title: 'Тариф активирован',
+      body:  `Подключён план ${label}`,
+      link:  '/profile',
+    });
+
     return { message: `Тариф ${label} успешно активирован!` };
   }
 
@@ -330,6 +342,14 @@ export class PlanService {
         where: { id: { in: toFreeze.map(u => u.id) } },
         data:  { isFrozen: true, frozenAt: now },
       });
+      for (const { id } of toFreeze) {
+        await this.notifications.create(id, {
+          type:  'plan',
+          title: 'Аккаунт заморожен',
+          body:  'Срок trial-плана Spark истёк. Данные удалятся через 14 дней — активируйте план, чтобы сохранить их.',
+          link:  '/profile',
+        });
+      }
       process.stdout.write(`[PlanService] Заморожено: ${toFreeze.length} пользователей\n`);
     }
 

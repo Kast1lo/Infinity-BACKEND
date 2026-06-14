@@ -11,9 +11,10 @@ import { FileSystemService } from 'src/file-system/file-system.service';
 import { MailModule } from 'src/mail/mail.module';
 import { MailService } from 'src/mail/mail.service';
 import { PlanModule } from 'src/plan/plan.module';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
-  imports: [ConfigModule, PrismaDatabaseModule, JwtModule, MailModule, PlanModule],
+  imports: [ConfigModule, PrismaDatabaseModule, JwtModule, MailModule, PlanModule, NotificationsModule],
   controllers: [UserController],
   providers: [UserService, AuthService, PrismaDatabaseService, ConfigService, JwtService, StorageService, FileSystemService, MailService],
 })

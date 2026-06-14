@@ -20,6 +20,7 @@ import { Response } from 'express';
 import archiver from 'archiver';
 import type { Express } from 'express';
 import { PlanService } from '../plan/plan.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
@@ -57,8 +58,9 @@ export class FileSystemService {
   private readonly bucketName: string;
 
   constructor(
-    private readonly prisma:       PrismaDatabaseService,
-    private readonly planService:  PlanService,
+    private readonly prisma:        PrismaDatabaseService,
+    private readonly planService:   PlanService,
+    private readonly notifications: NotificationsService,
   ) {
     this.bucketName = process.env.SELECTEL_BUCKET!;
     this.S3Client   = new S3Client({
@@ -648,6 +650,16 @@ export class FileSystemService {
       select: { id: true, name: true, isShared: true, shareExpiresAt: true, sharePasswordHash: true },
     });
 
+    // Уведомление только при первом включении доступа
+    if (!file.sharedAt) {
+      await this.notifications.create(userId, {
+        type:  'share',
+        title: 'Открыт доступ к файлу',
+        body:  updated.name,
+        link:  '/shared',
+      });
+    }
+
     return {
       success: true,
       data: {
@@ -876,6 +888,15 @@ export class FileSystemService {
       data:  { isShared: true, sharedAt: folder.sharedAt ?? new Date(), shareExpiresAt, shareSlug: slug, ...passwordPatch },
       select: { id: true, name: true, isShared: true, shareExpiresAt: true, sharePasswordHash: true, shareSlug: true },
     });
+
+    if (!folder.sharedAt) {
+      await this.notifications.create(userId, {
+        type:  'share',
+        title: 'Открыт доступ к папке',
+        body:  updated.name,
+        link:  '/shared',
+      });
+    }
 
     return {
       success: true,

@@ -3,9 +3,10 @@ import { PlanService } from './plan.service';
 import { PlanController } from './plan.controller';
 import { PrismaDatabaseModule } from '../prisma-database/prisma-database.module';
 import { AdminGuard } from './guards/admin.guard';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
-  imports:     [PrismaDatabaseModule],
+  imports:     [PrismaDatabaseModule, NotificationsModule],
   controllers: [PlanController],
   providers:   [PlanService, AdminGuard],
   exports:     [PlanService],
