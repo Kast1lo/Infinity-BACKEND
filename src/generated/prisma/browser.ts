@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
  * Model PromoCode
  * 
  */

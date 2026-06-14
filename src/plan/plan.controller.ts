@@ -49,6 +49,12 @@ export class PlanController {
     return this.planService.getPlanInfo(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Цены платных тарифов (публично)' })
+  @Get('pricing')
+  getPricing() {
+    return this.planService.getPricing();
+  }
+
   @ApiOperation({ summary: 'Активировать промокод' })
   @ApiBody({ type: ActivatePromoDto })
   @ApiResponse({

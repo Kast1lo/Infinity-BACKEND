@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Notification: 'Notification',
+  Payment: 'Payment',
   PromoCode: 'PromoCode',
   Project: 'Project',
   ProjectShare: 'ProjectShare',
@@ -103,7 +104,11 @@ export const UserScalarFieldEnum = {
   frozenAt: 'frozenAt',
   storageUsed: 'storageUsed',
   aiCallsToday: 'aiCallsToday',
-  aiCallsResetAt: 'aiCallsResetAt'
+  aiCallsResetAt: 'aiCallsResetAt',
+  cardBound: 'cardBound',
+  cardLast4: 'cardLast4',
+  autoRenew: 'autoRenew',
+  recurringParentInvId: 'recurringParentInvId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -122,6 +127,22 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const PaymentScalarFieldEnum = {
+  invId: 'invId',
+  userId: 'userId',
+  planType: 'planType',
+  period: 'period',
+  amount: 'amount',
+  status: 'status',
+  isRecurringInit: 'isRecurringInit',
+  description: 'description',
+  createdAt: 'createdAt',
+  paidAt: 'paidAt'
+} as const
+
+export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
 export const PromoCodeScalarFieldEnum = {

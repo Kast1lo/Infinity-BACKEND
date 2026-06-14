@@ -29,11 +29,13 @@ export type AggregateUser = {
 export type UserAvgAggregateOutputType = {
   storageUsed: number | null
   aiCallsToday: number | null
+  recurringParentInvId: number | null
 }
 
 export type UserSumAggregateOutputType = {
   storageUsed: bigint | null
   aiCallsToday: number | null
+  recurringParentInvId: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -60,6 +62,10 @@ export type UserMinAggregateOutputType = {
   storageUsed: bigint | null
   aiCallsToday: number | null
   aiCallsResetAt: Date | null
+  cardBound: boolean | null
+  cardLast4: string | null
+  autoRenew: boolean | null
+  recurringParentInvId: number | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -86,6 +92,10 @@ export type UserMaxAggregateOutputType = {
   storageUsed: bigint | null
   aiCallsToday: number | null
   aiCallsResetAt: Date | null
+  cardBound: boolean | null
+  cardLast4: string | null
+  autoRenew: boolean | null
+  recurringParentInvId: number | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -112,6 +122,10 @@ export type UserCountAggregateOutputType = {
   storageUsed: number
   aiCallsToday: number
   aiCallsResetAt: number
+  cardBound: number
+  cardLast4: number
+  autoRenew: number
+  recurringParentInvId: number
   _all: number
 }
 
@@ -119,11 +133,13 @@ export type UserCountAggregateOutputType = {
 export type UserAvgAggregateInputType = {
   storageUsed?: true
   aiCallsToday?: true
+  recurringParentInvId?: true
 }
 
 export type UserSumAggregateInputType = {
   storageUsed?: true
   aiCallsToday?: true
+  recurringParentInvId?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -150,6 +166,10 @@ export type UserMinAggregateInputType = {
   storageUsed?: true
   aiCallsToday?: true
   aiCallsResetAt?: true
+  cardBound?: true
+  cardLast4?: true
+  autoRenew?: true
+  recurringParentInvId?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -176,6 +196,10 @@ export type UserMaxAggregateInputType = {
   storageUsed?: true
   aiCallsToday?: true
   aiCallsResetAt?: true
+  cardBound?: true
+  cardLast4?: true
+  autoRenew?: true
+  recurringParentInvId?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -202,6 +226,10 @@ export type UserCountAggregateInputType = {
   storageUsed?: true
   aiCallsToday?: true
   aiCallsResetAt?: true
+  cardBound?: true
+  cardLast4?: true
+  autoRenew?: true
+  recurringParentInvId?: true
   _all?: true
 }
 
@@ -315,6 +343,10 @@ export type UserGroupByOutputType = {
   storageUsed: bigint
   aiCallsToday: number
   aiCallsResetAt: Date | null
+  cardBound: boolean
+  cardLast4: string | null
+  autoRenew: boolean
+  recurringParentInvId: number | null
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
   _sum: UserSumAggregateOutputType | null
@@ -364,7 +396,12 @@ export type UserWhereInput = {
   storageUsed?: Prisma.BigIntFilter<"User"> | bigint | number
   aiCallsToday?: Prisma.IntFilter<"User"> | number
   aiCallsResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  cardBound?: Prisma.BoolFilter<"User"> | boolean
+  cardLast4?: Prisma.StringNullableFilter<"User"> | string | null
+  autoRenew?: Prisma.BoolFilter<"User"> | boolean
+  recurringParentInvId?: Prisma.IntNullableFilter<"User"> | number | null
   promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
+  payments?: Prisma.PaymentListRelationFilter
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -398,7 +435,12 @@ export type UserOrderByWithRelationInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
   aiCallsResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardBound?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoRenew?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrderInput | Prisma.SortOrder
   promoCode?: Prisma.PromoCodeOrderByWithRelationInput
+  payments?: Prisma.PaymentOrderByRelationAggregateInput
   files?: Prisma.FileOrderByRelationAggregateInput
   folders?: Prisma.FolderOrderByRelationAggregateInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
@@ -435,7 +477,12 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   storageUsed?: Prisma.BigIntFilter<"User"> | bigint | number
   aiCallsToday?: Prisma.IntFilter<"User"> | number
   aiCallsResetAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  cardBound?: Prisma.BoolFilter<"User"> | boolean
+  cardLast4?: Prisma.StringNullableFilter<"User"> | string | null
+  autoRenew?: Prisma.BoolFilter<"User"> | boolean
+  recurringParentInvId?: Prisma.IntNullableFilter<"User"> | number | null
   promoCode?: Prisma.XOR<Prisma.PromoCodeNullableScalarRelationFilter, Prisma.PromoCodeWhereInput> | null
+  payments?: Prisma.PaymentListRelationFilter
   files?: Prisma.FileListRelationFilter
   folders?: Prisma.FolderListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -469,6 +516,10 @@ export type UserOrderByWithAggregationInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
   aiCallsResetAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cardBound?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoRenew?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
@@ -503,6 +554,10 @@ export type UserScalarWhereWithAggregatesInput = {
   storageUsed?: Prisma.BigIntWithAggregatesFilter<"User"> | bigint | number
   aiCallsToday?: Prisma.IntWithAggregatesFilter<"User"> | number
   aiCallsResetAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  cardBound?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  cardLast4?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  autoRenew?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  recurringParentInvId?: Prisma.IntNullableWithAggregatesFilter<"User"> | number | null
 }
 
 export type UserCreateInput = {
@@ -529,7 +584,12 @@ export type UserCreateInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -563,7 +623,12 @@ export type UserUncheckedCreateInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -597,7 +662,12 @@ export type UserUpdateInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -631,7 +701,12 @@ export type UserUncheckedUpdateInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -665,6 +740,10 @@ export type UserCreateManyInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -691,6 +770,10 @@ export type UserUpdateManyMutationInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -717,6 +800,10 @@ export type UserUncheckedUpdateManyInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -743,11 +830,16 @@ export type UserCountOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
   aiCallsResetAt?: Prisma.SortOrder
+  cardBound?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrder
+  autoRenew?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrder
 }
 
 export type UserAvgOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -774,6 +866,10 @@ export type UserMaxOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
   aiCallsResetAt?: Prisma.SortOrder
+  cardBound?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrder
+  autoRenew?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -800,11 +896,16 @@ export type UserMinOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
   aiCallsResetAt?: Prisma.SortOrder
+  cardBound?: Prisma.SortOrder
+  cardLast4?: Prisma.SortOrder
+  autoRenew?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrder
 }
 
 export type UserSumOrderByAggregateInput = {
   storageUsed?: Prisma.SortOrder
   aiCallsToday?: Prisma.SortOrder
+  recurringParentInvId?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -853,6 +954,14 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserCreateNestedOneWithoutNotificationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutNotificationsInput, Prisma.UserUncheckedCreateWithoutNotificationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutNotificationsInput
@@ -865,6 +974,20 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutNotificationsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type UserCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.UserUpsertWithoutPaymentsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPaymentsInput, Prisma.UserUpdateWithoutPaymentsInput>, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
 }
 
 export type UserCreateNestedOneWithoutPromoCodeInput = {
@@ -995,7 +1118,12 @@ export type UserCreateWithoutNotificationsInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -1028,7 +1156,12 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -1077,7 +1210,12 @@ export type UserUpdateWithoutNotificationsInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -1110,6 +1248,178 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  projectShares?: Prisma.ProjectShareUncheckedUpdateManyWithoutUserNestedInput
+  folderShares?: Prisma.FolderShareUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPaymentsInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
+  pendingEmail?: string | null
+  emailChangeCode?: string | null
+  emailChangeCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  files?: Prisma.FileCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  projectShares?: Prisma.ProjectShareCreateNestedManyWithoutUserInput
+  folderShares?: Prisma.FolderShareCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPaymentsInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
+  pendingEmail?: string | null
+  emailChangeCode?: string | null
+  emailChangeCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  projectShares?: Prisma.ProjectShareUncheckedCreateNestedManyWithoutUserInput
+  folderShares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPaymentsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+}
+
+export type UserUpsertWithoutPaymentsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsInput, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPaymentsInput, Prisma.UserUncheckedCreateWithoutPaymentsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPaymentsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPaymentsInput, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type UserUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pendingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  projectShares?: Prisma.ProjectShareUpdateManyWithoutUserNestedInput
+  folderShares?: Prisma.FolderShareUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPaymentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pendingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
@@ -1117,6 +1427,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
   projectShares?: Prisma.ProjectShareUncheckedUpdateManyWithoutUserNestedInput
   folderShares?: Prisma.FolderShareUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPromoCodeInput = {
@@ -1143,6 +1454,11 @@ export type UserCreateWithoutPromoCodeInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -1176,6 +1492,11 @@ export type UserUncheckedCreateWithoutPromoCodeInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -1225,6 +1546,11 @@ export type UserUpdateWithoutPromoCodeInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -1258,6 +1584,11 @@ export type UserUncheckedUpdateWithoutPromoCodeInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -1291,7 +1622,12 @@ export type UserCreateWithoutProjectsInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -1324,7 +1660,12 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -1373,7 +1714,12 @@ export type UserUpdateWithoutProjectsInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -1406,7 +1752,12 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -1439,7 +1790,12 @@ export type UserCreateWithoutProjectSharesInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -1472,7 +1828,12 @@ export type UserUncheckedCreateWithoutProjectSharesInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -1521,7 +1882,12 @@ export type UserUpdateWithoutProjectSharesInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -1554,7 +1920,12 @@ export type UserUncheckedUpdateWithoutProjectSharesInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -1587,7 +1958,12 @@ export type UserCreateWithoutTasksInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
@@ -1620,7 +1996,12 @@ export type UserUncheckedCreateWithoutTasksInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
@@ -1669,7 +2050,12 @@ export type UserUpdateWithoutTasksInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
@@ -1702,7 +2088,12 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
@@ -1735,7 +2126,12 @@ export type UserCreateWithoutFilesInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
@@ -1768,7 +2164,12 @@ export type UserUncheckedCreateWithoutFilesInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
@@ -1817,7 +2218,12 @@ export type UserUpdateWithoutFilesInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
@@ -1850,7 +2256,12 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
@@ -1883,7 +2294,12 @@ export type UserCreateWithoutFoldersInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
@@ -1916,7 +2332,12 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
   projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
@@ -1965,7 +2386,12 @@ export type UserUpdateWithoutFoldersInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
@@ -1998,7 +2424,12 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
@@ -2031,7 +2462,12 @@ export type UserCreateWithoutFolderSharesInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   files?: Prisma.FileCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
@@ -2064,7 +2500,12 @@ export type UserUncheckedCreateWithoutFolderSharesInput = {
   storageUsed?: bigint | number
   aiCallsToday?: number
   aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
   promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
   folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
@@ -2113,7 +2554,12 @@ export type UserUpdateWithoutFolderSharesInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
@@ -2146,7 +2592,12 @@ export type UserUncheckedUpdateWithoutFolderSharesInput = {
   storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
   aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
   folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
@@ -2161,6 +2612,7 @@ export type UserUncheckedUpdateWithoutFolderSharesInput = {
  */
 
 export type UserCountOutputType = {
+  payments: number
   files: number
   folders: number
   tasks: number
@@ -2171,6 +2623,7 @@ export type UserCountOutputType = {
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   files?: boolean | UserCountOutputTypeCountFilesArgs
   folders?: boolean | UserCountOutputTypeCountFoldersArgs
   tasks?: boolean | UserCountOutputTypeCountTasksArgs
@@ -2188,6 +2641,13 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentWhereInput
 }
 
 /**
@@ -2264,7 +2724,12 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   storageUsed?: boolean
   aiCallsToday?: boolean
   aiCallsResetAt?: boolean
+  cardBound?: boolean
+  cardLast4?: boolean
+  autoRenew?: boolean
+  recurringParentInvId?: boolean
   promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
@@ -2299,6 +2764,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   storageUsed?: boolean
   aiCallsToday?: boolean
   aiCallsResetAt?: boolean
+  cardBound?: boolean
+  cardLast4?: boolean
+  autoRenew?: boolean
+  recurringParentInvId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2325,6 +2794,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   storageUsed?: boolean
   aiCallsToday?: boolean
   aiCallsResetAt?: boolean
+  cardBound?: boolean
+  cardLast4?: boolean
+  autoRenew?: boolean
+  recurringParentInvId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -2351,11 +2824,16 @@ export type UserSelectScalar = {
   storageUsed?: boolean
   aiCallsToday?: boolean
   aiCallsResetAt?: boolean
+  cardBound?: boolean
+  cardLast4?: boolean
+  autoRenew?: boolean
+  recurringParentInvId?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "resetCode" | "resetCodeExpiresAt" | "pendingEmail" | "emailChangeCode" | "emailChangeCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed" | "aiCallsToday" | "aiCallsResetAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "passwordHash" | "avatarKey" | "createdAt" | "updatedAt" | "googleId" | "isVerified" | "verificationCode" | "verificationCodeExpiresAt" | "resetCode" | "resetCodeExpiresAt" | "pendingEmail" | "emailChangeCode" | "emailChangeCodeExpiresAt" | "planType" | "planExpiresAt" | "isFrozen" | "frozenAt" | "storageUsed" | "aiCallsToday" | "aiCallsResetAt" | "cardBound" | "cardLast4" | "autoRenew" | "recurringParentInvId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   promoCode?: boolean | Prisma.User$promoCodeArgs<ExtArgs>
+  payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   folders?: boolean | Prisma.User$foldersArgs<ExtArgs>
   tasks?: boolean | Prisma.User$tasksArgs<ExtArgs>
@@ -2372,6 +2850,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     promoCode: Prisma.$PromoCodePayload<ExtArgs> | null
+    payments: Prisma.$PaymentPayload<ExtArgs>[]
     files: Prisma.$FilePayload<ExtArgs>[]
     folders: Prisma.$FolderPayload<ExtArgs>[]
     tasks: Prisma.$TaskPayload<ExtArgs>[]
@@ -2404,6 +2883,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     storageUsed: bigint
     aiCallsToday: number
     aiCallsResetAt: Date | null
+    cardBound: boolean
+    cardLast4: string | null
+    autoRenew: boolean
+    recurringParentInvId: number | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -2799,6 +3282,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   promoCode<T extends Prisma.User$promoCodeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$promoCodeArgs<ExtArgs>>): Prisma.Prisma__PromoCodeClient<runtime.Types.Result.GetResult<Prisma.$PromoCodePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.User$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   folders<T extends Prisma.User$foldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$foldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tasks<T extends Prisma.User$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2858,6 +3342,10 @@ export interface UserFieldRefs {
   readonly storageUsed: Prisma.FieldRef<"User", 'BigInt'>
   readonly aiCallsToday: Prisma.FieldRef<"User", 'Int'>
   readonly aiCallsResetAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly cardBound: Prisma.FieldRef<"User", 'Boolean'>
+  readonly cardLast4: Prisma.FieldRef<"User", 'String'>
+  readonly autoRenew: Prisma.FieldRef<"User", 'Boolean'>
+  readonly recurringParentInvId: Prisma.FieldRef<"User", 'Int'>
 }
     
 
@@ -3267,6 +3755,30 @@ export type User$promoCodeArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   include?: Prisma.PromoCodeInclude<ExtArgs> | null
   where?: Prisma.PromoCodeWhereInput
+}
+
+/**
+ * User.payments
+ */
+export type User$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Payment
+   */
+  select?: Prisma.PaymentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Payment
+   */
+  omit?: Prisma.PaymentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentInclude<ExtArgs> | null
+  where?: Prisma.PaymentWhereInput
+  orderBy?: Prisma.PaymentOrderByWithRelationInput | Prisma.PaymentOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
 }
 
 /**

@@ -7,7 +7,7 @@ import {
 import * as crypto from 'crypto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaDatabaseService } from '../prisma-database/prisma-database.service';
-import { PLAN_LIMITS, PlanType } from './plan.constants';
+import { PLAN_LIMITS, PLAN_PRICES, PaidPlan, PlanType } from './plan.constants';
 import { PlanInfoResponse } from './interfaces/plan-info.response ';
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -27,6 +27,9 @@ export class PlanService {
         isFrozen:      true,
         frozenAt:      true,
         storageUsed:   true,
+        cardBound:     true,
+        cardLast4:     true,
+        autoRenew:     true,
       },
     });
 
@@ -66,7 +69,26 @@ export class PlanService {
           ? Math.min(100, Math.round((usedBytes / limitBytes) * 100))
           : 0,
       },
+      cardBound: user.cardBound,
+      cardLast4: user.cardLast4 ?? null,
+      autoRenew: user.autoRenew,
     };
+  }
+
+  getPricing() {
+    const order: PaidPlan[] = ['pulse', 'horizon', 'eternal'];
+    return order.map((plan) => {
+      const price  = PLAN_PRICES[plan];
+      const limits = PLAN_LIMITS[plan];
+      return {
+        plan,
+        label:     limits.label,
+        amount:    price.amount,
+        period:    price.period,            // month | year | once
+        recurring: price.recurring,
+        storageGb: Number(limits.storageBytes / (1024n * 1024n * 1024n)),
+      };
+    });
   }
 
   async checkStorageLimit(userId: string, fileSize: bigint): Promise<void> {

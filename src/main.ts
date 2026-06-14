@@ -63,6 +63,7 @@ async function bootstrap() {
           '/infinity-life',
           '/user',
           '/plan',
+          '/payment',
           '/api',
         ];
 

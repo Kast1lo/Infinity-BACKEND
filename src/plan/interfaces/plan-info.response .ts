@@ -13,4 +13,7 @@ export interface PlanInfoResponse {
   daysLeft:       number | null;
   freezeDaysLeft: number | null;
   storage:        StorageInfo;
+  cardBound:      boolean;
+  cardLast4:      string | null;
+  autoRenew:      boolean;
 }

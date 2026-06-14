@@ -39,7 +39,14 @@ model User {
   aiCallsToday   Int       @default(0)
   aiCallsResetAt DateTime?
 
+  // Robokassa: привязка карты и автопродление
+  cardBound            Boolean @default(false)
+  cardLast4            String?
+  autoRenew            Boolean @default(false)
+  recurringParentInvId Int?
+
   promoCode     PromoCode? @relation("UsedPromo")
+  payments      Payment[]
 
   files         File[]
   folders       Folder[]
@@ -68,6 +75,23 @@ model Notification {
 
   @@index([userId, isRead])
   @@index([userId, createdAt])
+}
+
+model Payment {
+  invId           Int       @id @default(autoincrement())  // Robokassa InvId
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planType        String                                   // pulse | horizon | eternal
+  period          String                                   // month | year | once
+  amount          Int                                      // рубли (целые)
+  status          String    @default("pending")            // pending | success | fail
+  isRecurringInit Boolean   @default(false)                // первый (привязочный) платёж рекуррента
+  description     String?
+  createdAt       DateTime  @default(now())
+  paidAt          DateTime?
+
+  @@index([userId])
+  @@index([status])
 }
 
 model PromoCode {

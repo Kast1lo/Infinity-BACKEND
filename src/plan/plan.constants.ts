@@ -39,6 +39,21 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimit> = {
   },
 };
 
+// Цены тарифов (рубли). ⚠️ Подставь свои значения — это плейсхолдеры.
+export type PaidPlan = 'pulse' | 'horizon' | 'eternal';
+
+export interface PlanPrice {
+  amount: number;                         // рубли
+  period: 'month' | 'year' | 'once';
+  recurring: boolean;                     // нужна ли привязка карты (рекуррент)
+}
+
+export const PLAN_PRICES: Record<PaidPlan, PlanPrice> = {
+  pulse:   { amount: 399,  period: 'month', recurring: true  },
+  horizon: { amount: 3599, period: 'year',  recurring: true  },
+  eternal: { amount: 4990, period: 'once',  recurring: false },
+};
+
 export const ADMIN_EMAILS: string[] = (process.env.ADMIN_EMAILS ?? '')
   .split(',')
   .map(e => e.trim())
