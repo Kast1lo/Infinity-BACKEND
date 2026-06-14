@@ -208,7 +208,11 @@ export const FolderScalarFieldEnum = {
   updatedAt: 'updatedAt',
   isShared: 'isShared',
   isStarred: 'isStarred',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  sharedAt: 'sharedAt',
+  shareExpiresAt: 'shareExpiresAt',
+  sharePasswordHash: 'sharePasswordHash',
+  shareSlug: 'shareSlug'
 } as const
 
 export type FolderScalarFieldEnum = (typeof FolderScalarFieldEnum)[keyof typeof FolderScalarFieldEnum]

@@ -248,6 +248,85 @@ export class FileSystemController {
     return this.fileSystemService.getSharedFiles(req.user.userId);
   }
 
+  @ApiOperation({ summary: 'Список расшаренных папок пользователя' })
+  @ApiCookieAuth('access_token')
+  @ApiResponse({ status: 200, description: 'Список публичных ссылок на папки' })
+  @Get('shared-folders')
+  @UseGuards(AuthGuard('jwt'))
+  async getSharedFolders(@Req() req) {
+    return this.fileSystemService.getSharedFolders(req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Настроить публичную ссылку на папку (вкл/выкл, срок, пароль)' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @ApiBody({ type: UpdateShareDto })
+  @ApiResponse({ status: 200, description: 'Настройки ссылки на папку обновлены' })
+  @Patch('share-folder/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async setFolderShared(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() dto: UpdateShareDto,
+  ) {
+    return this.fileSystemService.updateFolderShare(req.user.userId, id, {
+      isShared: dto.isShared,
+      expiresInDays: dto.expiresInDays ?? null,
+      password: dto.password,
+    });
+  }
+
+  @ApiOperation({ summary: 'Скачать публично расшаренную папку ZIP-архивом (без авторизации)' })
+  @ApiParam({ name: 'slug', description: 'Идентификатор публичной ссылки папки' })
+  @ApiResponse({ status: 200, description: 'ZIP-архив папки (application/zip)' })
+  @Get('share-folder/:slug/download')
+  async downloadSharedFolderPublic(
+    @Param('slug') slug: string,
+    @Res() res: Response,
+    @Query('password') password?: string,
+  ) {
+    await this.fileSystemService.streamSharedFolderZip(slug, res, password);
+  }
+
+  @ApiOperation({ summary: 'Просмотр содержимого публично расшаренной папки (без авторизации)' })
+  @ApiParam({ name: 'slug', description: 'Идентификатор публичной ссылки папки' })
+  @ApiQuery({ name: 'path', required: false, description: 'Относительный путь внутри папки' })
+  @ApiResponse({ status: 200, description: 'Содержимое папки: подпапки и файлы с presigned ссылками' })
+  @Get('share-folder/:slug')
+  async getShareFolderPublic(
+    @Param('slug') slug: string,
+    @Query('path') path?: string,
+    @Query('password') password?: string,
+  ) {
+    try {
+      const result = await this.fileSystemService.getFolderForShare(slug, path ?? '', password);
+
+      if ('expired' in result) {
+        return { success: false, expired: true, message: 'Срок действия ссылки истёк' };
+      }
+      if ('requiresPassword' in result && !('ok' in result)) {
+        return { success: false, requiresPassword: true, message: 'Требуется пароль' };
+      }
+
+      return {
+        success: true,
+        data: {
+          rootName: result.rootName,
+          currentName: result.currentName,
+          breadcrumb: result.breadcrumb,
+          requiresPassword: result.requiresPassword,
+          folders: result.folders,
+          files: result.files,
+        },
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Папка не найдена',
+      };
+    }
+  }
+
   @ApiOperation({ summary: 'Список избранных файлов и папок' })
   @ApiCookieAuth('access_token')
   @ApiResponse({ status: 200, description: 'Избранное пользователя' })

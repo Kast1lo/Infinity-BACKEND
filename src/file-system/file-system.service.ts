@@ -764,4 +764,207 @@ export class FileSystemService {
     });
     return { ...updated, size: updated.size.toString() };
   }
+
+  // ─── Шаринг папок (публичная ссылка по slug) ───
+
+  // Настройка публичной ссылки на папку: вкл/выкл, срок, пароль
+  async updateFolderShare(
+    userId: string,
+    id: string,
+    opts: { isShared: boolean; expiresInDays?: number | null; password?: string | null },
+  ) {
+    const folder = await this.prisma.folder.findFirst({ where: { id, ownerId: userId, deletedAt: null } });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+
+    // Выключение — полный отзыв ссылки (slug сбрасываем тоже)
+    if (!opts.isShared) {
+      const updated = await this.prisma.folder.update({
+        where: { id },
+        data:  { isShared: false, sharedAt: null, shareExpiresAt: null, sharePasswordHash: null, shareSlug: null },
+        select: { id: true, name: true, isShared: true },
+      });
+      return { success: true, data: { ...updated, slug: null, hasPassword: false, shareExpiresAt: null } };
+    }
+
+    const shareExpiresAt = opts.expiresInDays && opts.expiresInDays > 0
+      ? new Date(Date.now() + opts.expiresInDays * 86_400_000)
+      : null;
+
+    // password: строка — установить, null — снять, undefined — оставить как было
+    let passwordPatch: { sharePasswordHash?: string | null } = {};
+    if (opts.password === null) passwordPatch = { sharePasswordHash: null };
+    else if (typeof opts.password === 'string' && opts.password.length > 0) {
+      passwordPatch = { sharePasswordHash: await argon2.hash(opts.password) };
+    }
+
+    const slug = folder.shareSlug ?? crypto.randomBytes(9).toString('base64url');
+
+    const updated = await this.prisma.folder.update({
+      where: { id },
+      data:  { isShared: true, sharedAt: folder.sharedAt ?? new Date(), shareExpiresAt, shareSlug: slug, ...passwordPatch },
+      select: { id: true, name: true, isShared: true, shareExpiresAt: true, sharePasswordHash: true, shareSlug: true },
+    });
+
+    return {
+      success: true,
+      data: {
+        id: updated.id,
+        name: updated.name,
+        isShared: updated.isShared,
+        slug: updated.shareSlug,
+        shareExpiresAt: updated.shareExpiresAt,
+        hasPassword: !!updated.sharePasswordHash,
+      },
+    };
+  }
+
+  // Список расшаренных папок пользователя
+  async getSharedFolders(userId: string) {
+    const folders = await this.prisma.folder.findMany({
+      where:   { ownerId: userId, isShared: true, deletedAt: null },
+      orderBy: { sharedAt: 'desc' },
+    });
+    const now = Date.now();
+    return folders.map((f) => ({
+      id: f.id,
+      name: f.name,
+      slug: f.shareSlug,
+      sharedAt: f.sharedAt,
+      shareExpiresAt: f.shareExpiresAt,
+      hasPassword: !!f.sharePasswordHash,
+      isExpired: !!f.shareExpiresAt && f.shareExpiresAt.getTime() < now,
+    }));
+  }
+
+  // Внутренний помощник: находит расшаренную папку по slug, проверяет срок + пароль
+  private async resolveSharedFolder(slug: string, password?: string) {
+    const folder = await this.prisma.folder.findFirst({
+      where:  { shareSlug: slug, isShared: true, deletedAt: null },
+      select: { id: true, name: true, path: true, ownerId: true, shareExpiresAt: true, sharePasswordHash: true },
+    });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+
+    const expired = !!folder.shareExpiresAt && folder.shareExpiresAt.getTime() < Date.now();
+    const requiresPassword = !!folder.sharePasswordHash;
+    let passwordOk = !requiresPassword;
+    if (requiresPassword && typeof password === 'string' && password.length > 0) {
+      passwordOk = await argon2.verify(folder.sharePasswordHash!, password).catch(() => false);
+    }
+
+    return { folder, expired, requiresPassword, passwordOk };
+  }
+
+  // Публичный просмотр содержимого расшаренной папки (с навигацией по подпапкам через relPath)
+  async getFolderForShare(slug: string, relPath: string, password?: string) {
+    const { folder, expired, requiresPassword, passwordOk } = await this.resolveSharedFolder(slug, password);
+
+    if (expired) return { expired: true as const };
+    if (requiresPassword && !passwordOk) return { requiresPassword: true as const };
+
+    // Разрешаем целевую папку внутри расшаренного поддерева, не выходя за его пределы
+    const segments = (relPath ?? '').split('/').map((s) => s.trim()).filter(Boolean);
+    let current = folder;
+    const breadcrumb: { name: string }[] = [];
+
+    for (const segment of segments) {
+      const child = await this.prisma.folder.findFirst({
+        where:  { parentId: current.id, name: segment, deletedAt: null },
+        select: { id: true, name: true, path: true, ownerId: true, shareExpiresAt: true, sharePasswordHash: true },
+      });
+      if (!child) throw new NotFoundException('Папка не найдена');
+      current = child;
+      breadcrumb.push({ name: child.name });
+    }
+
+    const [childFolders, files] = await Promise.all([
+      this.prisma.folder.findMany({
+        where:   { parentId: current.id, deletedAt: null },
+        orderBy: { name: 'asc' },
+        select:  { id: true, name: true },
+      }),
+      this.prisma.file.findMany({
+        where:   { folderId: current.id, deletedAt: null },
+        orderBy: { name: 'asc' },
+      }),
+    ]);
+
+    const mappedFiles = await Promise.all(
+      files.map(async (file) => ({
+        id: file.id,
+        name: file.name,
+        size: file.size.toString(),
+        mimeType: file.mimeType,
+        createdAt: file.createdAt,
+        downloadUrl: await this.getPresignedUrl(file.path, 3600 * 24),
+      })),
+    );
+
+    return {
+      ok: true as const,
+      rootName: folder.name,
+      currentName: current.name,
+      breadcrumb,
+      requiresPassword,
+      folders: childFolders,
+      files: mappedFiles,
+    };
+  }
+
+  // Публичное скачивание всей расшаренной папки ZIP-архивом
+  async streamSharedFolderZip(slug: string, res: Response, password?: string) {
+    const { folder, expired, requiresPassword, passwordOk } = await this.resolveSharedFolder(slug, password);
+
+    if (expired) throw new GoneException('Срок действия ссылки истёк');
+    if (requiresPassword && !passwordOk) throw new ForbiddenException('Требуется пароль');
+
+    const full = await this.prisma.folder.findUnique({
+      where:   { id: folder.id },
+      include: { files: { where: { deletedAt: null } }, children: { where: { deletedAt: null }, include: { files: true, children: true } } },
+    });
+    if (!full) throw new NotFoundException('Папка не найдена');
+
+    const filesToZip: { path: string; name: string }[] = [];
+    const collectFiles = async (currentFolder: any, prefix = '') => {
+      for (const file of currentFolder.files) {
+        if (file.deletedAt) continue;
+        filesToZip.push({ path: file.path, name: `${prefix}${file.name}` });
+      }
+      for (const child of currentFolder.children) {
+        if (child.deletedAt) continue;
+        const childFolder = await this.prisma.folder.findUnique({
+          where:   { id: child.id },
+          include: { files: { where: { deletedAt: null } }, children: { where: { deletedAt: null } } },
+        });
+        if (childFolder) await collectFiles(childFolder, `${prefix}${child.name}/`);
+      }
+    };
+    await collectFiles(full, `${full.name}/`);
+
+    if (filesToZip.length === 0) {
+      res.status(200).send('Папка пуста');
+      return;
+    }
+
+    res.set({
+      'Content-Type':        'application/zip',
+      'Content-Disposition': `attachment; filename="${full.name}.zip"`,
+    });
+
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    archive.on('error', () => { if (!res.headersSent) res.status(500).send('Ошибка создания ZIP'); });
+    archive.pipe(res);
+
+    for (const file of filesToZip) {
+      try {
+        const { Body } = await this.S3Client.send(new GetObjectCommand({ Bucket: this.bucketName, Key: file.path }));
+        const chunks: Buffer[] = [];
+        for await (const chunk of Body as NodeJS.ReadableStream) chunks.push(Buffer.from(chunk));
+        archive.append(Buffer.concat(chunks), { name: file.name });
+      } catch {
+        archive.append(Buffer.from('Ошибка чтения файла'), { name: `${file.name}.error.txt` });
+      }
+    }
+
+    archive.finalize();
+  }
 }
