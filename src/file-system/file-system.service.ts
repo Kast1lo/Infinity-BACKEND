@@ -783,6 +783,60 @@ export class FileSystemService {
     return { ...updated, size: updated.size.toString() };
   }
 
+  // Перемещает папку в другую папку (или в корень). Пересчитывает путь поддерева.
+  async moveFolder(userId: string, folderId: string, targetFolderId: string | null) {
+    const folder = await this.prisma.folder.findFirst({ where: { id: folderId, ownerId: userId, deletedAt: null } });
+    if (!folder) throw new NotFoundException('Папка не найдена');
+
+    if (targetFolderId === folderId) throw new BadRequestException('Нельзя переместить папку саму в себя');
+    if ((folder.parentId ?? null) === targetFolderId) {
+      return { ...folder }; // уже здесь — ничего не делаем
+    }
+
+    let targetPath = '';
+    if (targetFolderId) {
+      const target = await this.prisma.folder.findFirst({ where: { id: targetFolderId, ownerId: userId, deletedAt: null } });
+      if (!target) throw new NotFoundException('Целевая папка не найдена');
+
+      // Запрет перемещения внутрь собственного поддерева
+      const { folderIds } = await this.collectSubtree(folderId);
+      if (folderIds.includes(targetFolderId)) {
+        throw new BadRequestException('Нельзя переместить папку в её собственную подпапку');
+      }
+      targetPath = target.path;
+    }
+
+    const newPath = `${targetPath}/${folder.name}`;
+    if (newPath.split('/').length > 10) throw new BadRequestException('Максимальная глубина папок 10');
+
+    // Проверка коллизии имени в целевой папке
+    const existing = await this.prisma.folder.findFirst({
+      where: { ownerId: userId, path: newPath, deletedAt: null, NOT: { id: folderId } },
+    });
+    if (existing) throw new BadRequestException('Папка с таким именем уже существует в выбранном месте');
+
+    const oldPath = folder.path;
+
+    // Пересчитываем путь самой папки и всех вложенных папок (замена префикса)
+    const { folderIds } = await this.collectSubtree(folderId);
+    const descendants = await this.prisma.folder.findMany({
+      where:  { id: { in: folderIds.filter(id => id !== folderId) } },
+      select: { id: true, path: true },
+    });
+
+    await this.prisma.$transaction([
+      this.prisma.folder.update({ where: { id: folderId }, data: { parentId: targetFolderId, path: newPath } }),
+      ...descendants.map(d =>
+        this.prisma.folder.update({
+          where: { id: d.id },
+          data:  { path: newPath + d.path.slice(oldPath.length) },
+        }),
+      ),
+    ]);
+
+    return { id: folderId, parentId: targetFolderId, path: newPath };
+  }
+
   // ─── Шаринг папок (публичная ссылка по slug) ───
 
   // Настройка публичной ссылки на папку: вкл/выкл, срок, пароль

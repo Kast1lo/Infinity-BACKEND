@@ -225,6 +225,21 @@ export class FileSystemController {
     return this.fileSystemService.moveFile(req.user.userId, id, dto.folderId);
   }
 
+  @ApiOperation({ summary: 'Переместить папку в другую папку' })
+  @ApiCookieAuth('access_token')
+  @ApiParam({ name: 'id', description: 'UUID папки' })
+  @ApiBody({ schema: { type: 'object', properties: { folderId: { type: 'string', nullable: true, example: 'uuid-of-folder' } } } })
+  @ApiResponse({ status: 200, description: 'Папка перемещена' })
+  @Patch('move-folder/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async moveFolder(
+    @Req() req,
+    @Param('id') id: string,
+    @Body() dto: { folderId: string | null },
+  ) {
+    return this.fileSystemService.moveFolder(req.user.userId, id, dto.folderId);
+  }
+
   @ApiOperation({ summary: 'Скачать публично опубликованный файл напрямую (без авторизации)' })
   @ApiParam({ name: 'username', description: 'Имя пользователя-владельца' })
   @ApiParam({ name: 'filename', description: 'Имя файла' })
