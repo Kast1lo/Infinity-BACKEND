@@ -130,18 +130,37 @@ export class PaymentService {
       return false;
     }
 
-    // Идемпотентность — повторный коллбэк не активирует тариф дважды.
+    // Быстрый путь идемпотентности — платёж уже обработан.
     if (payment.status === 'success') return true;
 
-    await this.activatePlan(payment.userId, payment.planType as PaidPlan, payment.period, {
-      isRecurringInit: payment.isRecurringInit,
-      invId:           payment.invId,
-    });
-
-    await this.prisma.payment.update({
-      where: { invId },
+    // Атомарный «захват» платежа: условный апдейт pending→success выполняется
+    // одним запросом, поэтому из нескольких параллельных/повторных коллбэков
+    // Robokassa ровно один получит count=1 и активирует тариф — гонки двойной
+    // активации больше нет.
+    const claim = await this.prisma.payment.updateMany({
+      where: { invId, status: 'pending' },
       data:  { status: 'success', paidAt: new Date() },
     });
+    if (claim.count === 0) {
+      // Платёж уже забрал другой коллбэк — повторно тариф не активируем.
+      return true;
+    }
+
+    try {
+      await this.activatePlan(payment.userId, payment.planType as PaidPlan, payment.period, {
+        isRecurringInit: payment.isRecurringInit,
+        invId:           payment.invId,
+      });
+    } catch (e: any) {
+      // Активация не удалась — откатываем захват, чтобы повторный коллбэк
+      // (или сверка) обработал платёж заново, а не оставил «оплачено без тарифа».
+      await this.prisma.payment.update({
+        where: { invId },
+        data:  { status: 'pending', paidAt: null },
+      });
+      this.logger.error(`ResultURL: активация InvId=${invId} не удалась (${e?.message}) — статус возвращён в pending`);
+      return false;
+    }
 
     return true;
   }

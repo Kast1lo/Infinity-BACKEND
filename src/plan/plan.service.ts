@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import * as crypto from 'crypto';
@@ -10,12 +11,16 @@ import { PrismaDatabaseService } from '../prisma-database/prisma-database.servic
 import { PLAN_LIMITS, PLAN_PRICES, PaidPlan, PlanType } from './plan.constants';
 import { PlanInfoResponse } from './interfaces/plan-info.response ';
 import { NotificationsService } from '../notifications/notifications.service';
+import { StorageService } from '../services/files.service';
 
 @Injectable()
 export class PlanService {
+  private readonly logger = new Logger('PlanService');
+
   constructor(
     private readonly prisma: PrismaDatabaseService,
     private readonly notifications: NotificationsService,
+    private readonly storage: StorageService,
   ) {}
 
   async getPlanInfo(userId: string): Promise<PlanInfoResponse> {
@@ -387,6 +392,19 @@ export class PlanService {
     });
 
     for (const { id } of toDelete) {
+      // Сначала удаляем сами объекты из S3. Без этого строки в БД стираются,
+      // а файлы остаются в хранилище — это и утечка места/денег, и нарушение
+      // политики удаления данных (152-ФЗ обещает фактическое удаление).
+      const files = await this.prisma.file.findMany({
+        where:  { ownerId: id },
+        select: { path: true },
+      });
+      for (const f of files) {
+        await this.storage.deleteFile(f.path).catch(err =>
+          this.logger.warn(`Не удалось удалить объект S3 "${f.path}" пользователя ${id}: ${err?.message}`),
+        );
+      }
+
       await this.prisma.$transaction([
         this.prisma.file.deleteMany({ where: { ownerId: id } }),
         this.prisma.folder.deleteMany({ where: { ownerId: id } }),
