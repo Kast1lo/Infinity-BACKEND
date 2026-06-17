@@ -173,14 +173,31 @@ model Task {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  column   TaskColumn? @relation(fields: [columnId], references: [id], onDelete: SetNull)
-  project  Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  subtasks Subtask[]
-  user     User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  column      TaskColumn?      @relation(fields: [columnId], references: [id], onDelete: SetNull)
+  project     Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  subtasks    Subtask[]
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments TaskAttachment[]
 
   @@index([userId])
   @@index([columnId])
   @@index([projectId])
+}
+
+// Связь «задача ↔ файл из хранилища». Join-модель, а не File.taskId:
+// один файл можно прикрепить к нескольким задачам, а открепление не удаляет
+// сам файл из хранилища.
+model TaskAttachment {
+  id        String   @id @default(uuid())
+  taskId    String
+  fileId    String
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, fileId])
+  @@index([taskId])
+  @@index([fileId])
 }
 
 model Subtask {
@@ -221,6 +238,7 @@ model File {
   sharePasswordHash String?
   owner       User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  taskAttachments TaskAttachment[]
 
   @@index([ownerId, path])
   @@index([ownerId, deletedAt])

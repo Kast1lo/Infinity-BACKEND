@@ -12,5 +12,6 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
   imports: [PlanModule, ConfigModule, PrismaDatabaseModule, JwtModule, NotificationsModule],
   controllers: [FileSystemController, ],
   providers: [FileSystemService, PrismaDatabaseService, JwtService],
+  exports: [FileSystemService],
 })
 export class FileSystemModule {}

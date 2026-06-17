@@ -1,4 +1,8 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Delete, Body, Param, Query, Req, UseGuards,
+  UseInterceptors, UploadedFiles,
+} from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from '@nestjs/passport';
 import { InfinityLifeService } from './infinity-life.service';
 import { CreateTaskDto } from './DTO/create-task.dto';
@@ -8,6 +12,7 @@ import { CreateColumnDto } from './DTO/create-column.dto';
 import { UpdateColumnDto } from './DTO/update-column.dto';
 import { MoveTaskDto } from './DTO/move-task.dto';
 import { SnoozeReminderDto } from './DTO/snooze-reminder.dto';
+import { LinkAttachmentsDto } from './DTO/link-attachments.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -118,6 +123,61 @@ export class InfinityLifeController {
     @Body() dto: MoveTaskDto,
   ) {
     return this.infinityLifeService.moveTaskToColumn(taskId, dto.columnId, req.user.userId);
+  }
+
+  // ─────────────────────────── Вложения файлов ───────────────────────────
+
+  @ApiOperation({ summary: 'Файлы, прикреплённые к задаче' })
+  @ApiParam({ name: 'taskId', description: 'UUID задачи' })
+  @ApiResponse({ status: 200, description: 'Список вложений' })
+  @Get('tasks/:taskId/attachments')
+  @UseGuards(AuthGuard('jwt'))
+  async getTaskAttachments(@Req() req, @Param('taskId') taskId: string) {
+    return this.infinityLifeService.getTaskAttachments(taskId, req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Прикрепить к задаче существующие файлы из хранилища' })
+  @ApiParam({ name: 'taskId', description: 'UUID задачи' })
+  @ApiBody({ type: LinkAttachmentsDto })
+  @ApiResponse({ status: 201, description: 'Файлы прикреплены' })
+  @Post('tasks/:taskId/attachments/link')
+  @UseGuards(AuthGuard('jwt'))
+  async linkAttachments(@Req() req, @Param('taskId') taskId: string, @Body() dto: LinkAttachmentsDto) {
+    return this.infinityLifeService.linkAttachments(taskId, dto.fileIds, req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Загрузить внешние файлы и прикрепить к задаче (сохраняются в хранилище)' })
+  @ApiParam({ name: 'taskId', description: 'UUID задачи' })
+  @ApiResponse({ status: 201, description: 'Файлы загружены и прикреплены' })
+  @ApiResponse({ status: 403, description: 'Превышена квота хранилища' })
+  @Post('tasks/:taskId/attachments/upload')
+  @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(FilesInterceptor('file', 20))
+  async uploadAttachments(
+    @Req() req,
+    @Param('taskId') taskId: string,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    return this.infinityLifeService.uploadAttachments(taskId, files, req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Открепить файл от задачи (файл в хранилище остаётся)' })
+  @ApiParam({ name: 'taskId', description: 'UUID задачи' })
+  @ApiParam({ name: 'fileId', description: 'UUID файла' })
+  @ApiResponse({ status: 200, description: 'Файл откреплён' })
+  @Delete('tasks/:taskId/attachments/:fileId')
+  @UseGuards(AuthGuard('jwt'))
+  async unlinkAttachment(@Req() req, @Param('taskId') taskId: string, @Param('fileId') fileId: string) {
+    return this.infinityLifeService.unlinkAttachment(taskId, fileId, req.user.userId);
+  }
+
+  @ApiOperation({ summary: 'Все файлы, прикреплённые к задачам проекта' })
+  @ApiQuery({ name: 'projectId', description: 'UUID проекта', required: true })
+  @ApiResponse({ status: 200, description: 'Список файлов проекта' })
+  @Get('project-files')
+  @UseGuards(AuthGuard('jwt'))
+  async getProjectFiles(@Req() req, @Query('projectId') projectId: string) {
+    return this.infinityLifeService.getProjectFiles(projectId, req.user.userId);
   }
 
   @ApiOperation({ summary: 'Создать подзадачу' })

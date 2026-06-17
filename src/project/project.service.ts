@@ -3,6 +3,7 @@ import { PrismaDatabaseService } from 'src/prisma-database/prisma-database.servi
 import { PlanService } from 'src/plan/plan.service';
 import { OllamaService } from 'src/ollama/ollama.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
+import { StorageService } from 'src/services/files.service';
 import { Priority } from 'src/generated/prisma/browser';
 import { CreateProjectDto } from './DTO/create-project.dto';
 import { UpdateProjectDto } from './DTO/update-project.dto';
@@ -18,6 +19,7 @@ export class ProjectService {
     private readonly planService:     PlanService,
     private readonly ollamaService:   OllamaService,
     private readonly notifications:   NotificationsService,
+    private readonly storage:         StorageService,
   ) {}
 
   // ─── Доступ (владелец или участник с ролью) ───
@@ -275,35 +277,42 @@ export class ProjectService {
     return role === 'VIEWER' ? 'VIEWER' : 'EDITOR';
   }
 
+  private async avatarUrl(avatarKey?: string | null): Promise<string | null> {
+    if (!avatarKey) return null;
+    return this.storage.getPresignedUrl(avatarKey, 3600 * 24).catch(() => null);
+  }
+
   async listMembers(projectId: string, userId: string) {
     await this.assertAccess(projectId, userId, 'VIEWER');
 
     const project = await this.prisma.project.findUnique({
       where:   { id: projectId },
-      select:  { userId: true, user: { select: { id: true, username: true, email: true } } },
+      select:  { userId: true, user: { select: { id: true, username: true, email: true, avatarKey: true } } },
     });
     if (!project) throw new NotFoundException('Проект не найден');
 
     const shares = await this.prisma.projectShare.findMany({
       where:   { projectId },
       orderBy: { createdAt: 'asc' },
-      include: { user: { select: { id: true, username: true, email: true } } },
+      include: { user: { select: { id: true, username: true, email: true, avatarKey: true } } },
     });
 
     const owner = {
-      userId:   project.user!.id,
-      username: project.user!.username,
-      email:    project.user!.email,
-      role:     'OWNER' as const,
-      isOwner:  true,
+      userId:    project.user!.id,
+      username:  project.user!.username,
+      email:     project.user!.email,
+      avatarUrl: await this.avatarUrl(project.user!.avatarKey),
+      role:      'OWNER' as const,
+      isOwner:   true,
     };
-    const members = shares.map(s => ({
-      userId:   s.user.id,
-      username: s.user.username,
-      email:    s.user.email,
-      role:     s.role,
-      isOwner:  false,
-    }));
+    const members = await Promise.all(shares.map(async s => ({
+      userId:    s.user.id,
+      username:  s.user.username,
+      email:     s.user.email,
+      avatarUrl: await this.avatarUrl(s.user.avatarKey),
+      role:      s.role,
+      isOwner:   false,
+    })));
 
     return [owner, ...members];
   }

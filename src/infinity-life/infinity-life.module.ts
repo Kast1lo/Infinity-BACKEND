@@ -6,9 +6,10 @@ import { PrismaDatabaseModule } from 'src/prisma-database/prisma-database.module
 import { ConfigModule } from '@nestjs/config/dist/config.module';
 import { PlanModule } from 'src/plan/plan.module';
 import { ProjectModule } from 'src/project/project.module';
+import { FileSystemModule } from 'src/file-system/file-system.module';
 
 @Module({
-  imports: [PlanModule, ProjectModule, ConfigModule, PrismaDatabaseModule, JwtModule],
+  imports: [PlanModule, ProjectModule, ConfigModule, PrismaDatabaseModule, JwtModule, FileSystemModule],
   controllers: [InfinityLifeController],
   providers: [InfinityLifeService],
 })

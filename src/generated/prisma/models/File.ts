@@ -306,6 +306,7 @@ export type FileWhereInput = {
   sharePasswordHash?: Prisma.StringNullableFilter<"File"> | string | null
   owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   folder?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
+  taskAttachments?: Prisma.TaskAttachmentListRelationFilter
 }
 
 export type FileOrderByWithRelationInput = {
@@ -327,6 +328,7 @@ export type FileOrderByWithRelationInput = {
   sharePasswordHash?: Prisma.SortOrderInput | Prisma.SortOrder
   owner?: Prisma.UserOrderByWithRelationInput
   folder?: Prisma.FolderOrderByWithRelationInput
+  taskAttachments?: Prisma.TaskAttachmentOrderByRelationAggregateInput
 }
 
 export type FileWhereUniqueInput = Prisma.AtLeast<{
@@ -351,6 +353,7 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   sharePasswordHash?: Prisma.StringNullableFilter<"File"> | string | null
   owner?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   folder?: Prisma.XOR<Prisma.FolderNullableScalarRelationFilter, Prisma.FolderWhereInput> | null
+  taskAttachments?: Prisma.TaskAttachmentListRelationFilter
 }, "id">
 
 export type FileOrderByWithAggregationInput = {
@@ -416,6 +419,7 @@ export type FileCreateInput = {
   sharePasswordHash?: string | null
   owner?: Prisma.UserCreateNestedOneWithoutFilesInput
   folder?: Prisma.FolderCreateNestedOneWithoutFilesInput
+  taskAttachments?: Prisma.TaskAttachmentCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateInput = {
@@ -435,6 +439,7 @@ export type FileUncheckedCreateInput = {
   sharedAt?: Date | string | null
   shareExpiresAt?: Date | string | null
   sharePasswordHash?: string | null
+  taskAttachments?: Prisma.TaskAttachmentUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileUpdateInput = {
@@ -454,6 +459,7 @@ export type FileUpdateInput = {
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owner?: Prisma.UserUpdateOneWithoutFilesNestedInput
   folder?: Prisma.FolderUpdateOneWithoutFilesNestedInput
+  taskAttachments?: Prisma.TaskAttachmentUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateInput = {
@@ -473,6 +479,7 @@ export type FileUncheckedUpdateInput = {
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taskAttachments?: Prisma.TaskAttachmentUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateManyInput = {
@@ -538,6 +545,11 @@ export type FileListRelationFilter = {
 
 export type FileOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type FileScalarRelationFilter = {
+  is?: Prisma.FileWhereInput
+  isNot?: Prisma.FileWhereInput
 }
 
 export type FileCountOrderByAggregateInput = {
@@ -647,6 +659,20 @@ export type FileUncheckedUpdateManyWithoutOwnerNestedInput = {
   deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
 }
 
+export type FileCreateNestedOneWithoutTaskAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutTaskAttachmentsInput, Prisma.FileUncheckedCreateWithoutTaskAttachmentsInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutTaskAttachmentsInput
+  connect?: Prisma.FileWhereUniqueInput
+}
+
+export type FileUpdateOneRequiredWithoutTaskAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutTaskAttachmentsInput, Prisma.FileUncheckedCreateWithoutTaskAttachmentsInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutTaskAttachmentsInput
+  upsert?: Prisma.FileUpsertWithoutTaskAttachmentsInput
+  connect?: Prisma.FileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileUpdateToOneWithWhereWithoutTaskAttachmentsInput, Prisma.FileUpdateWithoutTaskAttachmentsInput>, Prisma.FileUncheckedUpdateWithoutTaskAttachmentsInput>
+}
+
 export type FileCreateNestedManyWithoutFolderInput = {
   create?: Prisma.XOR<Prisma.FileCreateWithoutFolderInput, Prisma.FileUncheckedCreateWithoutFolderInput> | Prisma.FileCreateWithoutFolderInput[] | Prisma.FileUncheckedCreateWithoutFolderInput[]
   connectOrCreate?: Prisma.FileCreateOrConnectWithoutFolderInput | Prisma.FileCreateOrConnectWithoutFolderInput[]
@@ -705,6 +731,7 @@ export type FileCreateWithoutOwnerInput = {
   shareExpiresAt?: Date | string | null
   sharePasswordHash?: string | null
   folder?: Prisma.FolderCreateNestedOneWithoutFilesInput
+  taskAttachments?: Prisma.TaskAttachmentCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutOwnerInput = {
@@ -723,6 +750,7 @@ export type FileUncheckedCreateWithoutOwnerInput = {
   sharedAt?: Date | string | null
   shareExpiresAt?: Date | string | null
   sharePasswordHash?: string | null
+  taskAttachments?: Prisma.TaskAttachmentUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutOwnerInput = {
@@ -773,6 +801,98 @@ export type FileScalarWhereInput = {
   sharePasswordHash?: Prisma.StringNullableFilter<"File"> | string | null
 }
 
+export type FileCreateWithoutTaskAttachmentsInput = {
+  id?: string
+  name: string
+  path: string
+  size: bigint | number
+  mimeType?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isShared?: boolean
+  isStarred?: boolean
+  downloadUrl?: string | null
+  deletedAt?: Date | string | null
+  sharedAt?: Date | string | null
+  shareExpiresAt?: Date | string | null
+  sharePasswordHash?: string | null
+  owner?: Prisma.UserCreateNestedOneWithoutFilesInput
+  folder?: Prisma.FolderCreateNestedOneWithoutFilesInput
+}
+
+export type FileUncheckedCreateWithoutTaskAttachmentsInput = {
+  id?: string
+  name: string
+  path: string
+  size: bigint | number
+  mimeType?: string | null
+  ownerId: string
+  folderId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isShared?: boolean
+  isStarred?: boolean
+  downloadUrl?: string | null
+  deletedAt?: Date | string | null
+  sharedAt?: Date | string | null
+  shareExpiresAt?: Date | string | null
+  sharePasswordHash?: string | null
+}
+
+export type FileCreateOrConnectWithoutTaskAttachmentsInput = {
+  where: Prisma.FileWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCreateWithoutTaskAttachmentsInput, Prisma.FileUncheckedCreateWithoutTaskAttachmentsInput>
+}
+
+export type FileUpsertWithoutTaskAttachmentsInput = {
+  update: Prisma.XOR<Prisma.FileUpdateWithoutTaskAttachmentsInput, Prisma.FileUncheckedUpdateWithoutTaskAttachmentsInput>
+  create: Prisma.XOR<Prisma.FileCreateWithoutTaskAttachmentsInput, Prisma.FileUncheckedCreateWithoutTaskAttachmentsInput>
+  where?: Prisma.FileWhereInput
+}
+
+export type FileUpdateToOneWithWhereWithoutTaskAttachmentsInput = {
+  where?: Prisma.FileWhereInput
+  data: Prisma.XOR<Prisma.FileUpdateWithoutTaskAttachmentsInput, Prisma.FileUncheckedUpdateWithoutTaskAttachmentsInput>
+}
+
+export type FileUpdateWithoutTaskAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owner?: Prisma.UserUpdateOneWithoutFilesNestedInput
+  folder?: Prisma.FolderUpdateOneWithoutFilesNestedInput
+}
+
+export type FileUncheckedUpdateWithoutTaskAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  path?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  folderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isStarred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  downloadUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type FileCreateWithoutFolderInput = {
   id?: string
   name: string
@@ -789,6 +909,7 @@ export type FileCreateWithoutFolderInput = {
   shareExpiresAt?: Date | string | null
   sharePasswordHash?: string | null
   owner?: Prisma.UserCreateNestedOneWithoutFilesInput
+  taskAttachments?: Prisma.TaskAttachmentCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutFolderInput = {
@@ -807,6 +928,7 @@ export type FileUncheckedCreateWithoutFolderInput = {
   sharedAt?: Date | string | null
   shareExpiresAt?: Date | string | null
   sharePasswordHash?: string | null
+  taskAttachments?: Prisma.TaskAttachmentUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutFolderInput = {
@@ -869,6 +991,7 @@ export type FileUpdateWithoutOwnerInput = {
   shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   folder?: Prisma.FolderUpdateOneWithoutFilesNestedInput
+  taskAttachments?: Prisma.TaskAttachmentUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutOwnerInput = {
@@ -887,6 +1010,7 @@ export type FileUncheckedUpdateWithoutOwnerInput = {
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taskAttachments?: Prisma.TaskAttachmentUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutOwnerInput = {
@@ -941,6 +1065,7 @@ export type FileUpdateWithoutFolderInput = {
   shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owner?: Prisma.UserUpdateOneWithoutFilesNestedInput
+  taskAttachments?: Prisma.TaskAttachmentUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutFolderInput = {
@@ -959,6 +1084,7 @@ export type FileUncheckedUpdateWithoutFolderInput = {
   sharedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   shareExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sharePasswordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taskAttachments?: Prisma.TaskAttachmentUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutFolderInput = {
@@ -980,6 +1106,35 @@ export type FileUncheckedUpdateManyWithoutFolderInput = {
 }
 
 
+/**
+ * Count Type FileCountOutputType
+ */
+
+export type FileCountOutputType = {
+  taskAttachments: number
+}
+
+export type FileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  taskAttachments?: boolean | FileCountOutputTypeCountTaskAttachmentsArgs
+}
+
+/**
+ * FileCountOutputType without action
+ */
+export type FileCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileCountOutputType
+   */
+  select?: Prisma.FileCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * FileCountOutputType without action
+ */
+export type FileCountOutputTypeCountTaskAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskAttachmentWhereInput
+}
+
 
 export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1000,6 +1155,8 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sharePasswordHash?: boolean
   owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
+  taskAttachments?: boolean | Prisma.File$taskAttachmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1067,6 +1224,8 @@ export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
   folder?: boolean | Prisma.File$folderArgs<ExtArgs>
+  taskAttachments?: boolean | Prisma.File$taskAttachmentsArgs<ExtArgs>
+  _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   owner?: boolean | Prisma.File$ownerArgs<ExtArgs>
@@ -1082,6 +1241,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     owner: Prisma.$UserPayload<ExtArgs> | null
     folder: Prisma.$FolderPayload<ExtArgs> | null
+    taskAttachments: Prisma.$TaskAttachmentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1496,6 +1656,7 @@ export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   owner<T extends Prisma.File$ownerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$ownerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   folder<T extends Prisma.File$folderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$folderArgs<ExtArgs>>): Prisma.Prisma__FolderClient<runtime.Types.Result.GetResult<Prisma.$FolderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  taskAttachments<T extends Prisma.File$taskAttachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$taskAttachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1977,6 +2138,30 @@ export type File$folderArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.FolderInclude<ExtArgs> | null
   where?: Prisma.FolderWhereInput
+}
+
+/**
+ * File.taskAttachments
+ */
+export type File$taskAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TaskAttachment
+   */
+  select?: Prisma.TaskAttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TaskAttachment
+   */
+  omit?: Prisma.TaskAttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskAttachmentInclude<ExtArgs> | null
+  where?: Prisma.TaskAttachmentWhereInput
+  orderBy?: Prisma.TaskAttachmentOrderByWithRelationInput | Prisma.TaskAttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.TaskAttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskAttachmentScalarFieldEnum | Prisma.TaskAttachmentScalarFieldEnum[]
 }
 
 /**

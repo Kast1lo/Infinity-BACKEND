@@ -59,6 +59,7 @@ export const ModelName = {
   ProjectShare: 'ProjectShare',
   TaskColumn: 'TaskColumn',
   Task: 'Task',
+  TaskAttachment: 'TaskAttachment',
   Subtask: 'Subtask',
   File: 'File',
   Folder: 'Folder',
@@ -216,6 +217,16 @@ export const TaskScalarFieldEnum = {
 } as const
 
 export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskAttachmentScalarFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  fileId: 'fileId',
+  createdAt: 'createdAt'
+} as const
+
+export type TaskAttachmentScalarFieldEnum = (typeof TaskAttachmentScalarFieldEnum)[keyof typeof TaskAttachmentScalarFieldEnum]
 
 
 export const SubtaskScalarFieldEnum = {

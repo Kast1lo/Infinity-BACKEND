@@ -6,13 +6,15 @@ import { CreateSubtaskDto } from './DTO/create-subtask.dto';
 import { Priority } from 'src/generated/prisma/browser';
 import { PlanService } from '../plan/plan.service';
 import { ProjectService } from '../project/project.service';
+import { FileSystemService } from '../file-system/file-system.service';
 
 @Injectable()
 export class InfinityLifeService {
   constructor(
-    private readonly prisma:          PrismaDatabaseService,
-    private readonly planService:     PlanService,
-    private readonly projectService:  ProjectService,
+    private readonly prisma:           PrismaDatabaseService,
+    private readonly planService:      PlanService,
+    private readonly projectService:   ProjectService,
+    private readonly fileSystemService: FileSystemService,
   ) {}
 
   async createTask(dto: CreateTaskDto, userId: string) {
@@ -293,16 +295,127 @@ export class InfinityLifeService {
     if (!projectId) throw new BadRequestException('Не указан проект (projectId)');
     await this.projectService.assertAccess(projectId, userId, 'VIEWER');
 
-    return this.prisma.taskColumn.findMany({
+    const columns = await this.prisma.taskColumn.findMany({
       where:   { projectId },
       include: {
         tasks: {
-          include: { subtasks: true },
+          include: {
+            subtasks: true,
+            attachments: { include: { file: true }, orderBy: { createdAt: 'asc' } },
+          },
           orderBy: { order: 'asc' },
         },
       },
       orderBy: { order: 'asc' },
     });
+
+    // Разворачиваем вложения в безопасный для JSON вид (BigInt → number, presigned URL).
+    for (const col of columns) {
+      for (const task of col.tasks as any[]) {
+        task.attachments = await Promise.all(
+          (task.attachments as any[]).map((a) => this.mapAttachment(a)),
+        );
+      }
+    }
+    return columns;
+  }
+
+  // ─────────────────────────── Вложения файлов к задачам ───────────────────────────
+
+  // Приводит запись TaskAttachment (с включённым file) к JSON-safe виду.
+  private async mapAttachment(att: any) {
+    const f = att.file;
+    return {
+      id:          att.id,
+      fileId:      f.id,
+      name:        f.name,
+      mimeType:    f.mimeType ?? null,
+      size:        Number(f.size),
+      isStarred:   f.isStarred,
+      createdAt:   att.createdAt,
+      downloadUrl: await this.fileSystemService.getPresignedUrl(f.path, 3600 * 24),
+    };
+  }
+
+  // Проверяет доступ к проекту задачи и возвращает её projectId.
+  private async assertTaskAccess(taskId: string, userId: string, role: 'VIEWER' | 'EDITOR') {
+    const task = await this.prisma.task.findUnique({
+      where:  { id: taskId },
+      select: { projectId: true },
+    });
+    if (!task) throw new NotFoundException('Задача не найдена');
+    await this.projectService.assertAccess(task.projectId, userId, role);
+    return task.projectId;
+  }
+
+  // Прикрепить уже существующие в хранилище файлы пользователя к задаче.
+  async linkAttachments(taskId: string, fileIds: string[], userId: string) {
+    await this.assertTaskAccess(taskId, userId, 'EDITOR');
+
+    const ids = Array.from(new Set(fileIds));
+    const files = await this.prisma.file.findMany({
+      where:  { id: { in: ids }, ownerId: userId, deletedAt: null },
+      select: { id: true },
+    });
+    if (files.length !== ids.length) {
+      throw new NotFoundException('Некоторые файлы не найдены или недоступны');
+    }
+
+    await this.prisma.taskAttachment.createMany({
+      data: ids.map((fileId) => ({ taskId, fileId })),
+      skipDuplicates: true,
+    });
+
+    return this.getTaskAttachments(taskId, userId);
+  }
+
+  // Загрузить внешние файлы: сохраняем их в хранилище пользователя (с учётом квоты)
+  // через FileSystemService, затем прикрепляем к задаче.
+  async uploadAttachments(taskId: string, files: Express.Multer.File[], userId: string) {
+    await this.assertTaskAccess(taskId, userId, 'EDITOR');
+    if (!files?.length) throw new BadRequestException('Файлы не найдены');
+
+    for (const file of files) {
+      const created = await this.fileSystemService.uploadFile(userId, file, {} as any);
+      await this.prisma.taskAttachment.create({
+        data: { taskId, fileId: created.id },
+      });
+    }
+
+    return this.getTaskAttachments(taskId, userId);
+  }
+
+  // Открепить файл от задачи (сам файл в хранилище остаётся).
+  async unlinkAttachment(taskId: string, fileId: string, userId: string) {
+    await this.assertTaskAccess(taskId, userId, 'EDITOR');
+    await this.prisma.taskAttachment.deleteMany({ where: { taskId, fileId } });
+    return { success: true };
+  }
+
+  async getTaskAttachments(taskId: string, userId: string) {
+    await this.assertTaskAccess(taskId, userId, 'VIEWER');
+    const attachments = await this.prisma.taskAttachment.findMany({
+      where:   { taskId },
+      include: { file: true },
+      orderBy: { createdAt: 'asc' },
+    });
+    return Promise.all(attachments.map((a) => this.mapAttachment(a)));
+  }
+
+  // Все файлы, прикреплённые к задачам проекта (для общего списка на странице проекта).
+  async getProjectFiles(projectId: string, userId: string) {
+    await this.projectService.assertAccess(projectId, userId, 'VIEWER');
+    const attachments = await this.prisma.taskAttachment.findMany({
+      where:   { task: { projectId } },
+      include: { file: true, task: { select: { id: true, title: true } } },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return Promise.all(attachments.map(async (a) => ({
+      ...(await this.mapAttachment(a)),
+      taskId:    a.task.id,
+      taskTitle: a.task.title,
+    })));
   }
 
   async updateColumn(columnId: string, dto: { name: string }, userId: string) {
