@@ -64,6 +64,9 @@ async function bootstrap() {
           '/user',
           '/plan',
           '/payment',
+          '/notes',
+          '/projects',
+          '/notifications',
           '/api',
         ];
 

@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Note: 'Note',
+  NoteImage: 'NoteImage',
   Notification: 'Notification',
   Payment: 'Payment',
   PromoCode: 'PromoCode',
@@ -113,6 +115,31 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const NoteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  content: 'content',
+  color: 'color',
+  isPinned: 'isPinned',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const NoteImageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  path: 'path',
+  mimeType: 'mimeType',
+  createdAt: 'createdAt'
+} as const
+
+export type NoteImageScalarFieldEnum = (typeof NoteImageScalarFieldEnum)[keyof typeof NoteImageScalarFieldEnum]
 
 
 export const NotificationScalarFieldEnum = {

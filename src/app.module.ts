@@ -14,6 +14,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { PlanModule } from './plan/plan.module';
 import { PaymentModule } from './payment/payment.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { NotesModule } from './notes/notes.module';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 
 @Module({
@@ -34,6 +35,7 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
     PlanModule,
     PaymentModule,
     NotificationsModule,
+    NotesModule,
   ],
   controllers: [AppController],
   providers:   [

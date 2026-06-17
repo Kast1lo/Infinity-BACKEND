@@ -44,6 +44,29 @@ export class StorageService {
     return key;
     }
 
+    async uploadNoteImage(file: Express.Multer.File, userId: string): Promise<string> {
+    if (!ALLOWED_AVATAR_MIME_TYPES.has(file.mimetype)) {
+      throw new BadRequestException('Картинка должна быть изображением (JPEG, PNG, GIF, WebP, BMP)');
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new BadRequestException('Максимальный размер картинки — 10 МБ');
+    }
+    const ext = file.mimetype.split('/')[1] || 'jpg';
+    const key = `notes/${userId}/${crypto.randomUUID()}.${ext}`;
+    const upload = new Upload({
+        client: this.S3Client,
+        params: {
+        Bucket: this.bucketName,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        ACL: 'private',
+        },
+    });
+    await upload.done();
+    return key;
+    }
+
     async deleteFile(key: string): Promise<void> {
     await this.S3Client.send(new DeleteObjectCommand({
         Bucket: this.bucketName,
