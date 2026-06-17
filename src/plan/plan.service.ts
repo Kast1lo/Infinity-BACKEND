@@ -27,14 +27,16 @@ export class PlanService {
     const user = await this.prisma.user.findUnique({
       where:  { id: userId },
       select: {
-        planType:      true,
-        planExpiresAt: true,
-        isFrozen:      true,
-        frozenAt:      true,
-        storageUsed:   true,
-        cardBound:     true,
-        cardLast4:     true,
-        autoRenew:     true,
+        planType:       true,
+        planExpiresAt:  true,
+        isFrozen:       true,
+        frozenAt:       true,
+        storageUsed:    true,
+        cardBound:      true,
+        cardLast4:      true,
+        autoRenew:      true,
+        aiCallsToday:   true,
+        aiCallsResetAt: true,
       },
     });
 
@@ -42,6 +44,17 @@ export class PlanService {
 
     const planType = (user.planType ?? 'spark') as PlanType;
     const limits   = PLAN_LIMITS[planType] ?? PLAN_LIMITS.spark;
+
+    // Остаток задач: сколько уже создано против лимита тарифа (Infinity → -1 = безлимит).
+    const taskUsed  = await this.prisma.task.count({ where: { userId } });
+    const taskLimit = limits.maxTasks === Infinity ? -1 : limits.maxTasks;
+
+    // Остаток AI-генераций на сегодня (с учётом суточного сброса счётчика).
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const aiNeedsReset = !user.aiCallsResetAt || user.aiCallsResetAt < startOfToday;
+    const aiUsed  = aiNeedsReset ? 0 : user.aiCallsToday;
+    const aiLimit = limits.aiCallsPerDay === Infinity ? -1 : limits.aiCallsPerDay;
 
     let daysLeft: number | null = null;
     if (planType === 'spark' && user.planExpiresAt) {
@@ -74,6 +87,8 @@ export class PlanService {
           ? Math.min(100, Math.round((usedBytes / limitBytes) * 100))
           : 0,
       },
+      tasks: { used: taskUsed, limit: taskLimit },
+      ai:    { used: aiUsed,   limit: aiLimit  },
       cardBound: user.cardBound,
       cardLast4: user.cardLast4 ?? null,
       autoRenew: user.autoRenew,
