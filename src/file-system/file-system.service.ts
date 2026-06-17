@@ -963,7 +963,11 @@ export class FileSystemService {
   private async resolveSharedFolder(slug: string, password?: string) {
     const folder = await this.prisma.folder.findFirst({
       where:  { shareSlug: slug, isShared: true, deletedAt: null },
-      select: { id: true, name: true, path: true, ownerId: true, shareExpiresAt: true, sharePasswordHash: true },
+      select: {
+        id: true, name: true, path: true, ownerId: true,
+        shareExpiresAt: true, sharePasswordHash: true,
+        owner: { select: { username: true, email: true, avatarKey: true } },
+      },
     });
     if (!folder) throw new NotFoundException('Папка не найдена');
 
@@ -984,9 +988,10 @@ export class FileSystemService {
     if (expired) return { expired: true as const };
     if (requiresPassword && !passwordOk) return { requiresPassword: true as const };
 
-    // Разрешаем целевую папку внутри расшаренного поддерева, не выходя за его пределы
+    // Разрешаем целевую папку внутри расшаренного поддерева, не выходя за его пределы.
+    // current нужен только для навигации (id/name); owner берём из корневого folder.
     const segments = (relPath ?? '').split('/').map((s) => s.trim()).filter(Boolean);
-    let current = folder;
+    let current: { id: string; name: string } = folder;
     const breadcrumb: { name: string }[] = [];
 
     for (const segment of segments) {
@@ -1028,20 +1033,39 @@ export class FileSystemService {
       currentName: current.name,
       breadcrumb,
       requiresPassword,
+      owner: {
+        name:      folder.owner?.username ?? folder.owner?.email ?? null,
+        avatarUrl: folder.owner?.avatarKey
+          ? await this.getPresignedUrl(folder.owner.avatarKey, 3600 * 24)
+          : null,
+      },
       folders: childFolders,
       files: mappedFiles,
     };
   }
 
-  // Публичное скачивание всей расшаренной папки ZIP-архивом
-  async streamSharedFolderZip(slug: string, res: Response, password?: string) {
+  // Публичное скачивание расшаренной папки ZIP-архивом.
+  // relPath позволяет скачать конкретную подпапку внутри расшаренного поддерева.
+  async streamSharedFolderZip(slug: string, res: Response, password?: string, relPath = '') {
     const { folder, expired, requiresPassword, passwordOk } = await this.resolveSharedFolder(slug, password);
 
     if (expired) throw new GoneException('Срок действия ссылки истёк');
     if (requiresPassword && !passwordOk) throw new ForbiddenException('Требуется пароль');
 
+    // Спускаемся по относительному пути, не выходя за пределы расшаренного поддерева.
+    const segments = (relPath ?? '').split('/').map((s) => s.trim()).filter(Boolean);
+    let targetId = folder.id;
+    for (const segment of segments) {
+      const child = await this.prisma.folder.findFirst({
+        where:  { parentId: targetId, name: segment, deletedAt: null },
+        select: { id: true },
+      });
+      if (!child) throw new NotFoundException('Папка не найдена');
+      targetId = child.id;
+    }
+
     const full = await this.prisma.folder.findUnique({
-      where:   { id: folder.id },
+      where:   { id: targetId },
       include: { files: { where: { deletedAt: null } }, children: { where: { deletedAt: null }, include: { files: true, children: true } } },
     });
     if (!full) throw new NotFoundException('Папка не найдена');

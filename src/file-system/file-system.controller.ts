@@ -299,8 +299,9 @@ export class FileSystemController {
     @Param('slug') slug: string,
     @Res() res: Response,
     @Query('password') password?: string,
+    @Query('path') path?: string,
   ) {
-    await this.fileSystemService.streamSharedFolderZip(slug, res, password);
+    await this.fileSystemService.streamSharedFolderZip(slug, res, password, path ?? '');
   }
 
   @ApiOperation({ summary: 'Просмотр содержимого публично расшаренной папки (без авторизации)' })
@@ -330,6 +331,7 @@ export class FileSystemController {
           currentName: result.currentName,
           breadcrumb: result.breadcrumb,
           requiresPassword: result.requiresPassword,
+          owner: result.owner,
           folders: result.folders,
           files: result.files,
         },
