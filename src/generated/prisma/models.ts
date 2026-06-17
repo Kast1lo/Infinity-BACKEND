@@ -10,6 +10,7 @@
  */
 export type * from './models/User.js'
 export type * from './models/Note.js'
+export type * from './models/CalendarTask.js'
 export type * from './models/NoteImage.js'
 export type * from './models/Notification.js'
 export type * from './models/Payment.js'

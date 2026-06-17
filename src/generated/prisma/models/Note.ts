@@ -31,6 +31,7 @@ export type NoteMinAggregateOutputType = {
   content: string | null
   color: string | null
   isPinned: boolean | null
+  date: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -42,6 +43,7 @@ export type NoteMaxAggregateOutputType = {
   content: string | null
   color: string | null
   isPinned: boolean | null
+  date: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -53,6 +55,7 @@ export type NoteCountAggregateOutputType = {
   content: number
   color: number
   isPinned: number
+  date: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -66,6 +69,7 @@ export type NoteMinAggregateInputType = {
   content?: true
   color?: true
   isPinned?: true
+  date?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,6 +81,7 @@ export type NoteMaxAggregateInputType = {
   content?: true
   color?: true
   isPinned?: true
+  date?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -88,6 +93,7 @@ export type NoteCountAggregateInputType = {
   content?: true
   color?: true
   isPinned?: true
+  date?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -172,6 +178,7 @@ export type NoteGroupByOutputType = {
   content: string
   color: string | null
   isPinned: boolean
+  date: Date | null
   createdAt: Date
   updatedAt: Date
   _count: NoteCountAggregateOutputType | null
@@ -204,6 +211,7 @@ export type NoteWhereInput = {
   content?: Prisma.StringFilter<"Note"> | string
   color?: Prisma.StringNullableFilter<"Note"> | string | null
   isPinned?: Prisma.BoolFilter<"Note"> | boolean
+  date?: Prisma.DateTimeNullableFilter<"Note"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -216,6 +224,7 @@ export type NoteOrderByWithRelationInput = {
   content?: Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   isPinned?: Prisma.SortOrder
+  date?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -231,6 +240,7 @@ export type NoteWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringFilter<"Note"> | string
   color?: Prisma.StringNullableFilter<"Note"> | string | null
   isPinned?: Prisma.BoolFilter<"Note"> | boolean
+  date?: Prisma.DateTimeNullableFilter<"Note"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -243,6 +253,7 @@ export type NoteOrderByWithAggregationInput = {
   content?: Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   isPinned?: Prisma.SortOrder
+  date?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.NoteCountOrderByAggregateInput
@@ -260,6 +271,7 @@ export type NoteScalarWhereWithAggregatesInput = {
   content?: Prisma.StringWithAggregatesFilter<"Note"> | string
   color?: Prisma.StringNullableWithAggregatesFilter<"Note"> | string | null
   isPinned?: Prisma.BoolWithAggregatesFilter<"Note"> | boolean
+  date?: Prisma.DateTimeNullableWithAggregatesFilter<"Note"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Note"> | Date | string
 }
@@ -270,6 +282,7 @@ export type NoteCreateInput = {
   content?: string
   color?: string | null
   isPinned?: boolean
+  date?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutNotesInput
@@ -282,6 +295,7 @@ export type NoteUncheckedCreateInput = {
   content?: string
   color?: string | null
   isPinned?: boolean
+  date?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -292,6 +306,7 @@ export type NoteUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutNotesNestedInput
@@ -304,6 +319,7 @@ export type NoteUncheckedUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -315,6 +331,7 @@ export type NoteCreateManyInput = {
   content?: string
   color?: string | null
   isPinned?: boolean
+  date?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -325,6 +342,7 @@ export type NoteUpdateManyMutationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -336,6 +354,7 @@ export type NoteUncheckedUpdateManyInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -357,6 +376,7 @@ export type NoteCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   color?: Prisma.SortOrder
   isPinned?: Prisma.SortOrder
+  date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -368,6 +388,7 @@ export type NoteMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   color?: Prisma.SortOrder
   isPinned?: Prisma.SortOrder
+  date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -379,6 +400,7 @@ export type NoteMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   color?: Prisma.SortOrder
   isPinned?: Prisma.SortOrder
+  date?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -431,6 +453,7 @@ export type NoteCreateWithoutUserInput = {
   content?: string
   color?: string | null
   isPinned?: boolean
+  date?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -441,6 +464,7 @@ export type NoteUncheckedCreateWithoutUserInput = {
   content?: string
   color?: string | null
   isPinned?: boolean
+  date?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -481,6 +505,7 @@ export type NoteScalarWhereInput = {
   content?: Prisma.StringFilter<"Note"> | string
   color?: Prisma.StringNullableFilter<"Note"> | string | null
   isPinned?: Prisma.BoolFilter<"Note"> | boolean
+  date?: Prisma.DateTimeNullableFilter<"Note"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
 }
@@ -491,6 +516,7 @@ export type NoteCreateManyUserInput = {
   content?: string
   color?: string | null
   isPinned?: boolean
+  date?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -501,6 +527,7 @@ export type NoteUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -511,6 +538,7 @@ export type NoteUncheckedUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -521,6 +549,7 @@ export type NoteUncheckedUpdateManyWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  date?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -534,6 +563,7 @@ export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   content?: boolean
   color?: boolean
   isPinned?: boolean
+  date?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -546,6 +576,7 @@ export type NoteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   content?: boolean
   color?: boolean
   isPinned?: boolean
+  date?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -558,6 +589,7 @@ export type NoteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   content?: boolean
   color?: boolean
   isPinned?: boolean
+  date?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -570,11 +602,12 @@ export type NoteSelectScalar = {
   content?: boolean
   color?: boolean
   isPinned?: boolean
+  date?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "content" | "color" | "isPinned" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
+export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "title" | "content" | "color" | "isPinned" | "date" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
 export type NoteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -597,6 +630,7 @@ export type $NotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     content: string
     color: string | null
     isPinned: boolean
+    date: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["note"]>
@@ -1029,6 +1063,7 @@ export interface NoteFieldRefs {
   readonly content: Prisma.FieldRef<"Note", 'String'>
   readonly color: Prisma.FieldRef<"Note", 'String'>
   readonly isPinned: Prisma.FieldRef<"Note", 'Boolean'>
+  readonly date: Prisma.FieldRef<"Note", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Note", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Note", 'DateTime'>
 }

@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type Note = Prisma.NoteModel
 /**
+ * Model CalendarTask
+ * 
+ */
+export type CalendarTask = Prisma.CalendarTaskModel
+/**
  * Model NoteImage
  * 
  */

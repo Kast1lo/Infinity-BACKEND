@@ -411,6 +411,7 @@ export type UserWhereInput = {
   notifications?: Prisma.NotificationListRelationFilter
   notes?: Prisma.NoteListRelationFilter
   noteImages?: Prisma.NoteImageListRelationFilter
+  calendarTasks?: Prisma.CalendarTaskListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -452,6 +453,7 @@ export type UserOrderByWithRelationInput = {
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   notes?: Prisma.NoteOrderByRelationAggregateInput
   noteImages?: Prisma.NoteImageOrderByRelationAggregateInput
+  calendarTasks?: Prisma.CalendarTaskOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -496,6 +498,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notifications?: Prisma.NotificationListRelationFilter
   notes?: Prisma.NoteListRelationFilter
   noteImages?: Prisma.NoteImageListRelationFilter
+  calendarTasks?: Prisma.CalendarTaskListRelationFilter
 }, "id" | "email" | "username" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
@@ -605,6 +608,7 @@ export type UserCreateInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -646,6 +650,7 @@ export type UserUncheckedCreateInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -687,6 +692,7 @@ export type UserUpdateInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -728,6 +734,7 @@ export type UserUncheckedUpdateInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -990,6 +997,20 @@ export type UserUpdateOneRequiredWithoutNotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotesInput, Prisma.UserUpdateWithoutNotesInput>, Prisma.UserUncheckedUpdateWithoutNotesInput>
 }
 
+export type UserCreateNestedOneWithoutCalendarTasksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCalendarTasksInput, Prisma.UserUncheckedCreateWithoutCalendarTasksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCalendarTasksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCalendarTasksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCalendarTasksInput, Prisma.UserUncheckedCreateWithoutCalendarTasksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCalendarTasksInput
+  upsert?: Prisma.UserUpsertWithoutCalendarTasksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCalendarTasksInput, Prisma.UserUpdateWithoutCalendarTasksInput>, Prisma.UserUncheckedUpdateWithoutCalendarTasksInput>
+}
+
 export type UserCreateNestedOneWithoutNoteImagesInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutNoteImagesInput, Prisma.UserUncheckedCreateWithoutNoteImagesInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutNoteImagesInput
@@ -1174,6 +1195,7 @@ export type UserCreateWithoutNotesInput = {
   folderShares?: Prisma.FolderShareCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotesInput = {
@@ -1214,6 +1236,7 @@ export type UserUncheckedCreateWithoutNotesInput = {
   folderShares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotesInput = {
@@ -1270,6 +1293,7 @@ export type UserUpdateWithoutNotesInput = {
   folderShares?: Prisma.FolderShareUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotesInput = {
@@ -1309,6 +1333,187 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   projectShares?: Prisma.ProjectShareUncheckedUpdateManyWithoutUserNestedInput
   folderShares?: Prisma.FolderShareUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCalendarTasksInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
+  pendingEmail?: string | null
+  emailChangeCode?: string | null
+  emailChangeCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
+  promoCode?: Prisma.PromoCodeCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  files?: Prisma.FileCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutUserInput
+  projectShares?: Prisma.ProjectShareCreateNestedManyWithoutUserInput
+  folderShares?: Prisma.FolderShareCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteCreateNestedManyWithoutUserInput
+  noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCalendarTasksInput = {
+  id?: string
+  email: string
+  username?: string | null
+  passwordHash: string
+  avatarKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  googleId?: string | null
+  isVerified?: boolean
+  verificationCode?: string | null
+  verificationCodeExpiresAt?: Date | string | null
+  resetCode?: string | null
+  resetCodeExpiresAt?: Date | string | null
+  pendingEmail?: string | null
+  emailChangeCode?: string | null
+  emailChangeCodeExpiresAt?: Date | string | null
+  planType?: string
+  planExpiresAt?: Date | string | null
+  isFrozen?: boolean
+  frozenAt?: Date | string | null
+  storageUsed?: bigint | number
+  aiCallsToday?: number
+  aiCallsResetAt?: Date | string | null
+  cardBound?: boolean
+  cardLast4?: string | null
+  autoRenew?: boolean
+  recurringParentInvId?: number | null
+  promoCode?: Prisma.PromoCodeUncheckedCreateNestedOneWithoutUsedByInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutOwnerInput
+  folders?: Prisma.FolderUncheckedCreateNestedManyWithoutOwnerInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutUserInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutUserInput
+  projectShares?: Prisma.ProjectShareUncheckedCreateNestedManyWithoutUserInput
+  folderShares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
+  noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCalendarTasksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCalendarTasksInput, Prisma.UserUncheckedCreateWithoutCalendarTasksInput>
+}
+
+export type UserUpsertWithoutCalendarTasksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCalendarTasksInput, Prisma.UserUncheckedUpdateWithoutCalendarTasksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCalendarTasksInput, Prisma.UserUncheckedCreateWithoutCalendarTasksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCalendarTasksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCalendarTasksInput, Prisma.UserUncheckedUpdateWithoutCalendarTasksInput>
+}
+
+export type UserUpdateWithoutCalendarTasksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pendingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  promoCode?: Prisma.PromoCodeUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  files?: Prisma.FileUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutUserNestedInput
+  projectShares?: Prisma.ProjectShareUpdateManyWithoutUserNestedInput
+  folderShares?: Prisma.FolderShareUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
+  noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCalendarTasksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  avatarKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  verificationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  resetCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resetCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  pendingEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailChangeCodeExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  planType?: Prisma.StringFieldUpdateOperationsInput | string
+  planExpiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isFrozen?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  frozenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  storageUsed?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  aiCallsToday?: Prisma.IntFieldUpdateOperationsInput | number
+  aiCallsResetAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cardBound?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  cardLast4?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  recurringParentInvId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  promoCode?: Prisma.PromoCodeUncheckedUpdateOneWithoutUsedByNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutOwnerNestedInput
+  folders?: Prisma.FolderUncheckedUpdateManyWithoutOwnerNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutUserNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutUserNestedInput
+  projectShares?: Prisma.ProjectShareUncheckedUpdateManyWithoutUserNestedInput
+  folderShares?: Prisma.FolderShareUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1350,6 +1555,7 @@ export type UserCreateWithoutNoteImagesInput = {
   folderShares?: Prisma.FolderShareCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNoteImagesInput = {
@@ -1390,6 +1596,7 @@ export type UserUncheckedCreateWithoutNoteImagesInput = {
   folderShares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutUserInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNoteImagesInput = {
@@ -1446,6 +1653,7 @@ export type UserUpdateWithoutNoteImagesInput = {
   folderShares?: Prisma.FolderShareUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNoteImagesInput = {
@@ -1486,6 +1694,7 @@ export type UserUncheckedUpdateWithoutNoteImagesInput = {
   folderShares?: Prisma.FolderShareUncheckedUpdateManyWithoutUserNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1526,6 +1735,7 @@ export type UserCreateWithoutNotificationsInput = {
   folderShares?: Prisma.FolderShareCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1566,6 +1776,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   folderShares?: Prisma.FolderShareUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1622,6 +1833,7 @@ export type UserUpdateWithoutNotificationsInput = {
   folderShares?: Prisma.FolderShareUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1662,6 +1874,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   folderShares?: Prisma.FolderShareUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -1702,6 +1915,7 @@ export type UserCreateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -1742,6 +1956,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -1798,6 +2013,7 @@ export type UserUpdateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -1838,6 +2054,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPromoCodeInput = {
@@ -1878,6 +2095,7 @@ export type UserCreateWithoutPromoCodeInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPromoCodeInput = {
@@ -1918,6 +2136,7 @@ export type UserUncheckedCreateWithoutPromoCodeInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPromoCodeInput = {
@@ -1974,6 +2193,7 @@ export type UserUpdateWithoutPromoCodeInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPromoCodeInput = {
@@ -2014,6 +2234,7 @@ export type UserUncheckedUpdateWithoutPromoCodeInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectsInput = {
@@ -2054,6 +2275,7 @@ export type UserCreateWithoutProjectsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectsInput = {
@@ -2094,6 +2316,7 @@ export type UserUncheckedCreateWithoutProjectsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectsInput = {
@@ -2150,6 +2373,7 @@ export type UserUpdateWithoutProjectsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -2190,6 +2414,7 @@ export type UserUncheckedUpdateWithoutProjectsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProjectSharesInput = {
@@ -2230,6 +2455,7 @@ export type UserCreateWithoutProjectSharesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProjectSharesInput = {
@@ -2270,6 +2496,7 @@ export type UserUncheckedCreateWithoutProjectSharesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProjectSharesInput = {
@@ -2326,6 +2553,7 @@ export type UserUpdateWithoutProjectSharesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProjectSharesInput = {
@@ -2366,6 +2594,7 @@ export type UserUncheckedUpdateWithoutProjectSharesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTasksInput = {
@@ -2406,6 +2635,7 @@ export type UserCreateWithoutTasksInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTasksInput = {
@@ -2446,6 +2676,7 @@ export type UserUncheckedCreateWithoutTasksInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTasksInput = {
@@ -2502,6 +2733,7 @@ export type UserUpdateWithoutTasksInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTasksInput = {
@@ -2542,6 +2774,7 @@ export type UserUncheckedUpdateWithoutTasksInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFilesInput = {
@@ -2582,6 +2815,7 @@ export type UserCreateWithoutFilesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFilesInput = {
@@ -2622,6 +2856,7 @@ export type UserUncheckedCreateWithoutFilesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFilesInput = {
@@ -2678,6 +2913,7 @@ export type UserUpdateWithoutFilesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFilesInput = {
@@ -2718,6 +2954,7 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFoldersInput = {
@@ -2758,6 +2995,7 @@ export type UserCreateWithoutFoldersInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFoldersInput = {
@@ -2798,6 +3036,7 @@ export type UserUncheckedCreateWithoutFoldersInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFoldersInput = {
@@ -2854,6 +3093,7 @@ export type UserUpdateWithoutFoldersInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFoldersInput = {
@@ -2894,6 +3134,7 @@ export type UserUncheckedUpdateWithoutFoldersInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFolderSharesInput = {
@@ -2934,6 +3175,7 @@ export type UserCreateWithoutFolderSharesInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFolderSharesInput = {
@@ -2974,6 +3216,7 @@ export type UserUncheckedCreateWithoutFolderSharesInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutUserInput
   noteImages?: Prisma.NoteImageUncheckedCreateNestedManyWithoutUserInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFolderSharesInput = {
@@ -3030,6 +3273,7 @@ export type UserUpdateWithoutFolderSharesInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFolderSharesInput = {
@@ -3070,6 +3314,7 @@ export type UserUncheckedUpdateWithoutFolderSharesInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutUserNestedInput
   noteImages?: Prisma.NoteImageUncheckedUpdateManyWithoutUserNestedInput
+  calendarTasks?: Prisma.CalendarTaskUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -3088,6 +3333,7 @@ export type UserCountOutputType = {
   notifications: number
   notes: number
   noteImages: number
+  calendarTasks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3101,6 +3347,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   notes?: boolean | UserCountOutputTypeCountNotesArgs
   noteImages?: boolean | UserCountOutputTypeCountNoteImagesArgs
+  calendarTasks?: boolean | UserCountOutputTypeCountCalendarTasksArgs
 }
 
 /**
@@ -3183,6 +3430,13 @@ export type UserCountOutputTypeCountNoteImagesArgs<ExtArgs extends runtime.Types
   where?: Prisma.NoteImageWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCalendarTasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CalendarTaskWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3223,6 +3477,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   notes?: boolean | Prisma.User$notesArgs<ExtArgs>
   noteImages?: boolean | Prisma.User$noteImagesArgs<ExtArgs>
+  calendarTasks?: boolean | Prisma.User$calendarTasksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3329,6 +3584,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notifications?: boolean | Prisma.User$notificationsArgs<ExtArgs>
   notes?: boolean | Prisma.User$notesArgs<ExtArgs>
   noteImages?: boolean | Prisma.User$noteImagesArgs<ExtArgs>
+  calendarTasks?: boolean | Prisma.User$calendarTasksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3348,6 +3604,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     notes: Prisma.$NotePayload<ExtArgs>[]
     noteImages: Prisma.$NoteImagePayload<ExtArgs>[]
+    calendarTasks: Prisma.$CalendarTaskPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3782,6 +4039,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notifications<T extends Prisma.User$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notes<T extends Prisma.User$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   noteImages<T extends Prisma.User$noteImagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$noteImagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NoteImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  calendarTasks<T extends Prisma.User$calendarTasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$calendarTasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CalendarTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4487,6 +4745,30 @@ export type User$noteImagesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.NoteImageScalarFieldEnum | Prisma.NoteImageScalarFieldEnum[]
+}
+
+/**
+ * User.calendarTasks
+ */
+export type User$calendarTasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CalendarTask
+   */
+  select?: Prisma.CalendarTaskSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CalendarTask
+   */
+  omit?: Prisma.CalendarTaskOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CalendarTaskInclude<ExtArgs> | null
+  where?: Prisma.CalendarTaskWhereInput
+  orderBy?: Prisma.CalendarTaskOrderByWithRelationInput | Prisma.CalendarTaskOrderByWithRelationInput[]
+  cursor?: Prisma.CalendarTaskWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CalendarTaskScalarFieldEnum | Prisma.CalendarTaskScalarFieldEnum[]
 }
 
 /**

@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Note: 'Note',
+  CalendarTask: 'CalendarTask',
   NoteImage: 'NoteImage',
   Notification: 'Notification',
   Payment: 'Payment',
@@ -124,11 +125,25 @@ export const NoteScalarFieldEnum = {
   content: 'content',
   color: 'color',
   isPinned: 'isPinned',
+  date: 'date',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const CalendarTaskScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  title: 'title',
+  isCompleted: 'isCompleted',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type CalendarTaskScalarFieldEnum = (typeof CalendarTaskScalarFieldEnum)[keyof typeof CalendarTaskScalarFieldEnum]
 
 
 export const NoteImageScalarFieldEnum = {

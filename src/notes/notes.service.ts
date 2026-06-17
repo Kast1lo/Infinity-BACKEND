@@ -14,7 +14,8 @@ export class NotesService {
 
   async list(userId: string) {
     return this.prisma.note.findMany({
-      where:   { userId },
+      // date = null → обычные заметки; датированные принадлежат календарю.
+      where:   { userId, date: null },
       orderBy: [{ isPinned: 'desc' }, { updatedAt: 'desc' }],
     });
   }

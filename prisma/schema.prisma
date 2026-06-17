@@ -57,6 +57,7 @@ model User {
   notifications Notification[]
   notes         Note[]
   noteImages    NoteImage[]
+  calendarTasks CalendarTask[]
 
   @@index([email])
   @@index([planType])
@@ -64,17 +65,34 @@ model User {
 }
 
 model Note {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
-  title     String   @default("")
-  content   String   @default("")  // rich-text HTML
+  title     String    @default("")
+  content   String    @default("")  // rich-text HTML
   color     String?
-  isPinned  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isPinned  Boolean   @default(false)
+  // Дата для мини-заметки календаря. null = обычная заметка (раздел «Заметки»).
+  date      DateTime? @db.Date
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isPinned, updatedAt])
+  @@index([userId, date])
+}
+
+// Лёгкая задача дня в календаре (личная тудушка, без привязки к проектам).
+model CalendarTask {
+  id          String   @id @default(uuid())
+  userId      String
+  date        DateTime @db.Date
+  title       String
+  isCompleted Boolean  @default(false)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
 }
 
 // Картинки, вставленные в заметки. Хранятся в S3, отдаются публично по
